@@ -1,8 +1,10 @@
 # Ohio Flow Co — Project Progress
 
-**Progress status:** Current through Phase 1.4  
-**Last updated:** August 6, 2026  
-**Recommended next task:** Phase 1.5 — Crawl files
+**Progress status:** Phase 2.2 complete; Phase 2.1 delivery pending
+
+**Last updated:** August 6, 2026
+
+**Recommended next task:** Phase 2.1 — Select and configure the email delivery provider and adapter
 
 ## Purpose and maintenance rule
 
@@ -27,9 +29,9 @@ At the completion of every phase or subphase:
 
 | Phase | Status | Current summary |
 |---|---|---|
-| Phase 0 — Decisions and assets | In progress | Core brand, phone, positioning, service scope, domain, and route direction are decided. Lead delivery, analytics ownership, photos, case studies, and the final Wix URL crawl remain open. |
-| Phase 1 — Foundation | In progress | Phases 1.1 through 1.4 are complete. Crawl and analytics foundations remain. |
-| Phase 2 — Conversion system | Not started | Request forms, notifications, uploads, tracking, and lead handoff are not built. |
+| Phase 0 — Decisions and assets | In progress | Core brand, phone, positioning, service scope, domain, route direction, and the sole lead recipient are decided. Analytics ownership, photos, case studies, and the final Wix URL crawl remain open. |
+| Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated. Live analytics activation still depends on the Phase 0.4 owner/account decision. |
+| Phase 2 — Conversion system | In progress | The short Request Service form now supports residential, commercial, contractor, and municipal paths through one validation and submission flow. Email delivery, photos, confirmation, and production tracking remain. |
 | Phase 3 — Core pages | Not started | Only a minimal homepage placeholder exists. |
 | Phase 4 — Trust, legal, and polish | Not started | Legal pages, structured data, image pipeline, and final QA remain. |
 | Phase 5 — Launch engineering | Not started | Redirects, deployment, and launch validation remain. |
@@ -44,13 +46,13 @@ At the completion of every phase or subphase:
 | 0.1 Brand identity and domain | One canonical public name, legal name, and primary domain | Complete | Locked **Ohio Flow Co** as the display/legal brand and `toledosewerandwater.com` as the primary domain. Buying `ohioflowco.com` is recommended as a redirect but is not confirmed. |
 | 0.2 Public phone | One number used everywhere | Complete | Locked `(567) 358-1055` and rejected the old 419 numbers. |
 | 0.3 Offered services | Written yes/no service list | Complete | Locked the underground sewer, water, stormwater, drainage, excavation, trenching, commercial, and contractor/municipal scope. Unconfirmed services are explicitly excluded. |
-| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Awaiting input | Need the form-delivery email, notification recipients, and confirmation of any existing GA4, GTM, Google Ads, Meta, call-tracking, or CRM accounts. |
+| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Awaiting input | Form submissions and immediate notifications will go only to `Ohioflowcollc@gmail.com`, with email as the initial handoff. GA4, GTM, Google Ads, Meta, call-tracking, and CRM ownership remain unconfirmed and paused. |
 | 0.5 Real photos and project facts | Enough approved assets for the home page and at least one or two case studies | Awaiting input | The plan is to use approved Instagram/Facebook project images. Sam still needs to provide permission and 2–3 project summaries with location, problem, work performed, result, and photos. |
 | 0.6 Wix URL inventory and redirect plan | Complete old-to-new map | Draft | A clean destination structure and initial redirect map exist. A full crawl of the live Wix site is still required before Phase 5. |
 
 ### Phase 0 summary
 
-The project now has a stable specialist identity and avoids unsupported service claims. The remaining Phase 0 items do not block the next foundation tasks, but they will block conversion wiring, final content, and launch.
+The project now has a stable specialist identity, confirmed lead recipient, and no unsupported service claims. Remaining Phase 0 inputs do not block local form development, but they still block live analytics, final proof content, and launch validation.
 
 ## Phase 1 — Foundation
 
@@ -62,8 +64,8 @@ The project now has a stable specialist identity and avoids unsupported service 
 | 1.2 Global layout | Header, footer, navigation, and mobile call bar keep Call and Request Service reachable | Complete | Built the sticky responsive header, pathname-aware navigation, accessible mobile menu, shared Call/Request Service components, full footer, fixed mobile call bar, skip link, safe-area clearance, and flex-column root shell. |
 | 1.3 Design system | Colors, typography, spacing, surfaces, and components match the industrial/local brief | Complete | Added semantic visual tokens, responsive gutters and section spacing, system font stacks, focus treatment, industrial grid motifs, and reusable Container, Section, Eyebrow, SectionHeading, Surface, and refined CTA primitives. Applied the system to the shell and kept the homepage minimal. |
 | 1.4 Shared SEO shell | Reusable title, description, canonical, Open Graph, and breadcrumb behavior | Complete | Added typed metadata and canonical helpers, explicit homepage metadata, complete Open Graph/Twitter defaults, a validated social card, and an accessible breadcrumb primitive. |
-| 1.5 Crawl files | `robots.txt`, sitemap, and `llms.txt` stub | Not started | No crawl files exist yet. They must use the canonical domain and only expose intended routes. |
-| 1.6 Analytics foundation | GA4/GTM integration points and event stubs | Not started | Account ownership and identifiers are not confirmed. The code should support later IDs without hardcoding or blocking the site. |
+| 1.5 Crawl files | `robots.txt`, sitemap, and `llms.txt` stub | Complete | Added production crawl endpoints, a canonical published-route registry, and a static machine-readable business summary. Only the substantive homepage is exposed until later routes are built. |
+| 1.6 Analytics foundation | GA4/GTM integration points and event stubs | Complete | Added a dormant-by-default GTM loader, application-owned pageviews, conversion click events, typed form-event stubs, validation, and an activation contract. Live GA4 delivery awaits the confirmed production container and privacy/consent decision. |
 
 ### Phase 1.1 completion summary
 
@@ -107,18 +109,66 @@ The project now has a stable specialist identity and avoids unsupported service 
 - Added an accessible Server Component breadcrumb with explicit labels, linked ancestors, hidden separators, and an unlinked current page.
 - Kept robots, sitemap, `llms.txt`, JSON-LD, analytics, forms, and full route content out of scope.
 
+### Phase 1.5 completion summary
+
+- Added typed Next.js metadata routes for `/robots.txt` and `/sitemap.xml`.
+- Added `src/lib/routes.ts` as the single inventory of substantive published routes.
+- Limited the sitemap to the homepage while planned navigation destinations still return not found.
+- Omitted invented modification dates, change-frequency hints, and priority values.
+- Added a force-static `/llms.txt` route sourced from canonical brand, contact, city, and confirmed-service constants.
+- Added the Phase 0 confirmed service scope to `src/lib/site.ts` so machine-readable output does not duplicate or expand business claims.
+- Verified 200 responses, canonical URLs, response content types, sitemap scope, and production generation.
+- Recorded that public previews still need provider-level crawl protection after hosting is selected.
+
+### Phase 1.6 completion summary
+
+- Added one root analytics integration using built-in `next/script`, without adding a dependency.
+- Selected GTM as the sole future transport, with GA4 to be configured inside the confirmed production container.
+- Added a typed, namespaced data-layer contract for pageviews, phone clicks, Request Service clicks, form starts, confirmed leads, and form errors.
+- Added pathname-only pageview tracking for the initial route and distinct App Router route changes.
+- Instrumented every shell Call and Request Service surface with bounded placement values.
+- Added future form helpers that cannot accept contact details, messages, filenames, or arbitrary payloads.
+- Kept third-party analytics dormant unless `NEXT_PUBLIC_ANALYTICS_ENABLED=true` and a valid `NEXT_PUBLIC_GTM_ID` are supplied.
+- Added `.env.example` and `docs/analytics.md` with activation, GTM mapping, privacy boundary, and duplicate-prevention instructions.
+- Verified disabled output contains no GTM request, a valid test configuration emits exactly one loader, and invalid enabled configuration fails the build clearly.
+- Live GA4 receipt was not claimed or tested because account ownership, the production ID, and the privacy/consent approach remain unconfirmed.
+
 ## Phase 2 — Conversion system
 
 **Expected outcome:** Every service inquiry reaches the correct person, produces a confirmation, and can be attributed to its source.
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 2.1 Short Request Service form | Core contact, service, location, and source fields submit successfully | Not started | Requires the Phase 0.4 delivery decision. |
-| 2.2 Residential and commercial paths | Distinct entry paths with appropriate questions | Not started | Define shared fields and audience-specific fields without duplicating the whole form. |
-| 2.3 Photo upload | Photos are accepted, validated, and stored or forwarded safely | Not started | Storage and delivery architecture must be selected. |
-| 2.4 Thank-you page and notification | Submitter receives confirmation and the team is notified | Not started | Requires confirmed recipient and notification owner. |
-| 2.5 Click-to-call tracking | Header, footer, menu, and call-bar interactions produce measurable events | Not started | Coordinate with Phase 1.6 event helpers. |
-| 2.6 CRM or email handoff | Leads arrive in the system Sam actually monitors | Not started | Email can be the initial handoff if no CRM exists. |
+| 2.1 Short Request Service form | Core contact, service, location, and source fields submit successfully | In progress | Built the `/request-service` route, short form, pure server validation, accessible error states, baseline honeypot, and fail-closed delivery boundary. Completion still requires a configured email provider to confirm external handoff. |
+| 2.2 Residential and commercial paths | Distinct entry paths with appropriate questions | Complete | Added one accessible four-choice audience selector. Residential requests collect the person's property relationship; commercial, contractor, and municipal requests collect the company or organization name. Shared fields, validation, and submission remain unified. |
+| 2.3 Photo upload | Photos are accepted, validated, and stored or forwarded safely | Not started | Photos will be forwarded without long-term cloud storage for now; file limits and safe forwarding still need implementation. |
+| 2.4 Thank-you page and notification | Submitter receives confirmation and the team is notified | Not started | The sole recipient is confirmed as `Ohioflowcollc@gmail.com`; provider delivery and the thank-you route remain. |
+| 2.5 Click-to-call tracking | Header, footer, menu, and call-bar interactions produce measurable events | Not started | Phase 1.6 now emits the foundation events; production GTM conversion mapping and end-to-end validation remain. |
+| 2.6 CRM or email handoff | Leads arrive in the system Sam actually monitors | Not started | Email to `Ohioflowcollc@gmail.com` is the initial handoff; provider configuration and end-to-end receipt validation remain. |
+
+### Phase 2.1 in-progress summary
+
+- Added a noindex `/request-service` page with canonical metadata, explicit breadcrumb, contact fallback, and Northwest Ohio service-area context.
+- Added required name, phone, service, city, ZIP, and self-reported source fields, plus optional email and project details.
+- Kept residential/commercial branching, company-specific questions, and photo uploads out of the Phase 2.1 form.
+- Added one pure form-data parser and validator with trimming, allowlisted services and sources, phone/email/ZIP checks, length limits, duplicate/non-string rejection, and a honeypot.
+- Added a Server Action and server-only delivery boundary. The boundary fails closed until an email provider confirms handoff; it does not log, temporarily store, or falsely acknowledge leads.
+- Added accessible linked error summaries, field-level errors, pending-state protection, value preservation, and a phone fallback on submission failure.
+- Wired `ofc_form_start` and bounded validation/submission error events. `ofc_generate_lead` remains gated behind confirmed external delivery.
+- Added a zero-dependency unit-test harness with validator and delivery-orchestration coverage.
+- Kept the honeypot as baseline protection only; provider-compatible abuse controls, idempotency, and safe email rendering are required before outbound delivery is enabled.
+- Kept `/request-service` out of the published-route registry while delivery is incomplete.
+
+### Phase 2.2 completion summary
+
+- Added four explicit project audiences: residential, commercial, contractor, and municipal/public agency.
+- Kept one Request Service form and one Server Action instead of duplicating audience-specific forms.
+- Added progressive disclosure that works before React hydration: residential requests reveal a property-relationship field, while the other three paths reveal a company or organization field.
+- Kept both conditional controls mounted so entered values survive path changes and failed submissions; only the currently relevant path is validated and shown as erroneous.
+- Added allowlisted server validation for audience and residential relationship, normalized organization-name validation, duplicate/non-string rejection for active fields, and safe rejection of tampered audience values.
+- Converted the validated delivery contract to a discriminated lead shape that physically omits the inactive audience field before any provider adapter receives it.
+- Added regression coverage for all four audiences, active and inactive conditional fields, malformed data, value preservation, and exact delivery payload minimization.
+- Kept photo uploads, provider-backed email, and live analytics activation out of Phase 2.2 as planned.
 
 ## Phase 3 — Core pages
 
@@ -178,9 +228,11 @@ The project now has a stable specialist identity and avoids unsupported service 
 
 ## Current open inputs
 
-- Confirm the email address or system that should receive Request Service submissions.
-- Confirm who should receive immediate lead notifications.
-- Determine whether GA4, GTM, Google Ads, Meta, call tracking, or a CRM already exists.
+- Select and configure the outbound email provider, verified sender, and secret credentials needed to deliver requests to `Ohioflowcollc@gmail.com`.
+- Select a Vercel-compatible rate limit or bot challenge before email activation; the delivery adapter must also define retry idempotency and escape all lead content outside static email headers.
+- Confirm who owns the production GTM container and GA4 property, obtain the production GTM ID, and decide the privacy/consent approach before activation.
+- Determine whether Google Ads, Meta, call tracking, or a CRM already exists.
+- Confirm Vercel as the production host; it is the current preferred but not yet locked target.
 - Obtain permission to use real social-media project photos.
 - Obtain 2–3 project summaries and matching images from Sam.
 - Confirm whether `ohioflowco.com` was purchased for redirect use.
@@ -193,6 +245,10 @@ The project now has a stable specialist identity and avoids unsupported service 
 | August 6, 2026 | Phase 1.2 production build and lint | Passed |
 | August 6, 2026 | Phase 1.3 production build, TypeScript checking, lint, and whitespace validation | Passed |
 | August 6, 2026 | Phase 1.4 production build, rendered metadata inspection, social-image dimensions, lint, and whitespace validation | Passed |
+| August 6, 2026 | Phase 1.5 production build, lint, whitespace validation, direct HTTP status/content-type checks, and crawl-output inspection | Passed |
+| August 6, 2026 | Phase 1.6 lint, disabled production build, configured test build, invalid-config fail-closed check, rendered-loader count, CTA instrumentation inspection, and whitespace validation | Passed |
+| August 6, 2026 | Phase 2.1 validator and delivery-state unit tests (15), production build, TypeScript checking, lint, rendered 200/noindex metadata check, and direct valid-submission fail-closed check | Passed; entered values were preserved, no false success appeared, and provider delivery intentionally remains unconfigured |
+| August 6, 2026 | Phase 2.2 audience-path validation and delivery-state unit tests (23 total), production build, TypeScript checking, lint, whitespace validation, rendered 200/noindex form check, and direct non-residential fail-closed submission | Passed; all four paths render through one form, inactive data is omitted, the selected non-residential path and normalized organization value were preserved, and no false success appeared |
 
 ## Progress log
 
@@ -203,4 +259,8 @@ The project now has a stable specialist identity and avoids unsupported service 
 | August 6, 2026 | Phase 1.2 global conversion shell was completed and validated. |
 | August 6, 2026 | Phase 1.3 design system was completed and validated. |
 | August 6, 2026 | Phase 1.4 shared SEO shell was completed and validated. |
+| August 6, 2026 | Phase 1.5 crawl files and canonical published-route inventory were completed and validated. |
+| August 6, 2026 | Phase 1.6 dormant analytics foundation, typed event contract, and conversion-shell instrumentation were completed and validated. |
+| August 6, 2026 | Phase 2.1 began with the short Request Service form, validation and test contracts, form analytics, and a server delivery boundary that fails closed pending provider setup. |
+| August 6, 2026 | Phase 2.2 completed the residential, commercial, contractor, and municipal Request Service paths with conditional questions, one shared server contract, minimized delivery payloads, and expanded regression coverage. |
 | August 6, 2026 | Living architecture and progress records were created for mandatory maintenance after future phases and subphases. |

@@ -4,6 +4,10 @@ import type {
   ReactNode,
 } from "react";
 
+import {
+  analyticsEventNames,
+  type AnalyticsLocation,
+} from "@/lib/analytics";
 import { navigation, site } from "@/lib/site";
 
 export type CtaVariant = "accent" | "brand" | "outline" | "outline-inverse";
@@ -66,16 +70,20 @@ export function CtaLink({
 }
 
 type PresetCtaProps = Omit<CtaLinkProps, "children" | "href"> & {
+  analyticsLocation: AnalyticsLocation;
   label?: ReactNode;
 };
 
 export function CallLink({
+  analyticsLocation,
   label = site.phone,
   ...props
 }: PresetCtaProps) {
   return (
     <CtaLink
       aria-label={`Call ${site.name} at ${site.phone}`}
+      data-analytics-event={analyticsEventNames.phoneClick}
+      data-analytics-location={analyticsLocation}
       href={site.phoneHref}
       {...props}
     >
@@ -85,11 +93,17 @@ export function CallLink({
 }
 
 export function RequestServiceLink({
+  analyticsLocation,
   label = navigation.cta.label,
   ...props
 }: PresetCtaProps) {
   return (
-    <CtaLink href={navigation.cta.href} {...props}>
+    <CtaLink
+      data-analytics-event={analyticsEventNames.requestServiceClick}
+      data-analytics-location={analyticsLocation}
+      href={navigation.cta.href}
+      {...props}
+    >
       {label}
     </CtaLink>
   );

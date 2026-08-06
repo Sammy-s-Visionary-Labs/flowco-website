@@ -129,6 +129,26 @@ h3 {
   margin-bottom: calc(var(--mobile-call-bar-height) + env(safe-area-inset-bottom));
 }
 
+@supports selector(:has(*)) {
+  .audience-switcher .audience-path {
+    display: none;
+  }
+
+  .audience-switcher:has(
+      input[name="audience"][value="residential"]:checked
+    )
+    .audience-residential-path {
+    display: block;
+  }
+
+  .audience-switcher:has(
+      input[name="audience"]:checked:not([value="residential"])
+    )
+    .audience-organization-path {
+    display: block;
+  }
+}
+
 @media (min-width: 64rem) {
   html {
     scroll-padding-top: 9rem;

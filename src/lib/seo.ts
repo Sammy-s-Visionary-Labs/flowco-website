@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 export const defaultSeoTitle = `${site.name} | Sewer, Water, Drainage & Excavation`;
 export const defaultSeoDescription = `${site.name} provides underground sewer, water line, drainage, and excavation services for homes and businesses across ${site.serviceArea}.`;
 
-type SitePath = "/" | `/${string}`;
+export type SitePath = "/" | `/${string}`;
 type TitleMode = "absolute" | "append-brand";
 
 type SocialImage = {

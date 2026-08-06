@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Analytics } from "@/components/analytics/Analytics";
 import { MobileCallBar } from "@/components/layout/MobileCallBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         </main>
         <SiteFooter />
         <MobileCallBar />
+        <Analytics />
       </body>
     </html>
   );

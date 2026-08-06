@@ -84,6 +84,7 @@ export function SiteHeader() {
 
           <div className="hidden items-center gap-3 lg:flex">
             <CallLink
+              analyticsLocation="header_desktop"
               className="min-w-[11.75rem]"
               label={
                 <span className="flex items-baseline gap-2">
@@ -95,10 +96,14 @@ export function SiteHeader() {
               }
               variant="outline-inverse"
             />
-            <RequestServiceLink className="min-w-[9.75rem]" />
+            <RequestServiceLink
+              analyticsLocation="header_desktop"
+              className="min-w-[9.75rem]"
+            />
           </div>
 
           <RequestServiceLink
+            analyticsLocation="header_mobile"
             className="whitespace-nowrap lg:hidden"
             size="sm"
           />
@@ -192,11 +197,15 @@ export function SiteHeader() {
 
             <div className="mt-5 grid gap-3 border-t border-line pt-5 sm:grid-cols-2">
               <CallLink
+                analyticsLocation="mobile_menu"
                 label={`Call ${site.phone}`}
                 onClick={closeMenu}
                 variant="brand"
               />
-              <RequestServiceLink onClick={closeMenu} />
+              <RequestServiceLink
+                analyticsLocation="mobile_menu"
+                onClick={closeMenu}
+              />
             </div>
             <p className="mt-4 text-center text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">
               Serving {site.serviceArea}

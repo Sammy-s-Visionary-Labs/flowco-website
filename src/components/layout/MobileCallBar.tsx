@@ -8,12 +8,17 @@ export function MobileCallBar() {
     >
       <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2.5">
         <CallLink
+          analyticsLocation="mobile_call_bar"
           className="w-full"
           label="Call Now"
           size="lg"
           variant="brand"
         />
-        <RequestServiceLink className="w-full" size="lg" />
+        <RequestServiceLink
+          analyticsLocation="mobile_call_bar"
+          className="w-full"
+          size="lg"
+        />
       </div>
     </aside>
   );
