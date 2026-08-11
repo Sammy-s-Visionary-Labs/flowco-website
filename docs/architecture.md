@@ -1,6 +1,6 @@
 # Ohio Flow Co — Project Architecture
 
-**Architecture status:** Phases 2.1–2.4 and 2.6 complete; Phase 2.5 analytics activation remains in progress
+**Architecture status:** Phase 2 is complete for the current build scope with external analytics activation deferred; Phase 3 core pages are integrated, with proof and owner-content gates still open for Phases 3.2 and 3.9
 
 **Last reviewed:** August 11, 2026
 
@@ -40,7 +40,7 @@ Do not silently change canonical business details in individual components. Upda
 | Upload normalization | Sharp decodes and re-encodes bounded project photos in request memory |
 | Lead notification | Server-only Resend email handoff with static headers, plain-text content, normalized JPEG attachments, and deterministic idempotency |
 | Global shell | Root layout with header, main content, footer, and mobile call bar |
-| Current routes | `/`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
+| Current routes | `/`, `/services`, five service-intent routes, `/commercial`, `/service-areas`, `/service-areas/toledo`, `/about`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
 | Crawl surfaces | Typed Next.js metadata routes plus a static plain-text route |
 | Build command | `npm run build`, using Next.js's Webpack build path |
 | Deployment target | Vercel remains the provisional production target; the Resend secret is stored there for testing, and the Node/Sharp/Resend path is verified on a protected Vercel Preview. Final production hosting confirmation remains pending. |
@@ -68,6 +68,10 @@ ohio flow co/
 │   └── request-service-validation.test.ts
 └── src/
     ├── app/
+    │   ├── about/
+    │   │   └── page.tsx
+    │   ├── commercial/
+    │   │   └── page.tsx
     │   ├── globals.css
     │   ├── llms.txt/
     │   │   └── route.ts
@@ -76,19 +80,36 @@ ohio flow co/
     │   ├── request-service/
     │   │   ├── actions.ts
     │   │   └── page.tsx
+    │   ├── service-areas/
+    │   │   ├── page.tsx
+    │   │   └── toledo/
+    │   │       └── page.tsx
+    │   ├── services/
+    │   │   ├── page.tsx
+    │   │   └── [implemented-service-route]/
+    │   │       └── page.tsx
     │   ├── robots.ts
     │   └── sitemap.ts
     ├── components/
+    │   ├── about/
+    │   │   └── AboutPageContent.tsx
     │   ├── analytics/
     │   │   ├── Analytics.tsx
     │   │   ├── AnalyticsEventBridge.tsx
     │   │   └── PageViewTracker.tsx
     │   ├── forms/
     │   │   └── RequestServiceForm.tsx
+    │   ├── home/
+    │   │   ├── HomeHero.tsx
+    │   │   └── HomePageContent.tsx
     │   ├── layout/
     │   │   ├── MobileCallBar.tsx
     │   │   ├── SiteFooter.tsx
     │   │   └── SiteHeader.tsx
+    │   ├── locations/
+    │   │   └── LocationIntentPage.tsx
+    │   ├── services/
+    │   │   └── ServiceIntentPage.tsx
     │   └── ui/
     │       ├── Breadcrumbs.tsx
     │       ├── Container.tsx
@@ -100,6 +121,7 @@ ohio flow co/
     └── lib/
         ├── analytics-config.ts
         ├── analytics.ts
+        ├── location-pages.ts
         ├── request-service-delivery.server.ts
         ├── request-service-email.ts
         ├── request-service-photos.ts
@@ -107,6 +129,7 @@ ohio flow co/
         ├── request-service.ts
         ├── routes.ts
         ├── seo.ts
+        ├── service-pages.ts
         └── site.ts
 ```
 
@@ -130,9 +153,20 @@ Analytics hooks (non-visual)
 
 The body is a minimum-height flex column and the main element uses `flex-1`, keeping the footer at the bottom on short pages.
 
-`src/app/page.tsx` remains a deliberately minimal placeholder. Full homepage content belongs to Phase 3.1.
+`src/app/page.tsx` is the complete Phase 3.1 homepage. It owns homepage metadata and delegates the responsive content hierarchy to `HomePageContent` and the isolated motion treatment to `HomeHero`.
 
 `src/app/request-service/page.tsx` is the first implemented conversion route. It owns page metadata, breadcrumb and page composition while delegating form interaction to `RequestServiceForm`. The route fails closed whenever provider delivery is unconfigured or unconfirmed, is `noindex,follow`, and remains outside `publishedRoutes` while contacts are test-only and public abuse protection is not activated.
+
+### Core page content layer
+
+- `src/lib/service-pages.ts` owns typed, route-specific content for the five service-intent pages and the commercial page. It keeps titles, descriptions, intent, scope, signs, process, FAQs, and closing prompts page-owned rather than generating thin pages from service names.
+- `ServiceIntentPage.tsx` is the shared Server Component renderer for those definitions. Each route wrapper still owns its canonical metadata and explicit breadcrumb.
+- Water-service repair/replacement, stormwater/drainage, and excavation/trenching are intentionally combined because the confirmed scope and current content depth do not justify separate thin routes.
+- `src/app/services/page.tsx` is a substantive services hub that exposes every implemented service and the commercial path.
+- `src/lib/location-pages.ts` owns distinct location content and `LocationIntentPage.tsx` renders it. The initial Toledo page uses locally specific sewer, water, and stormwater context; it is not a city-name substitution template.
+- `src/app/service-areas/page.tsx` is the published location hub. Future city pages must supply distinct local substance before registration.
+- `AboutPageContent.tsx` renders the integrated About page using confirmed positioning and service facts. The page remains in Phase 3.9 owner-content review until authentic company history, team facts, and final factual approval are supplied.
+- All conversion actions on these pages use `CallLink`, `PhoneLink`, or `RequestServiceLink`; no Phase 3 page owns a raw `tel:` destination.
 
 ### Request Service form layer
 
@@ -151,7 +185,7 @@ The body is a minimum-height flex column and the main element uses `flex-1`, kee
 - Optional photos remain outside text form values and action state. Up to three files totaling 3 MiB are allowed, while the Server Action request ceiling is 4 MiB to leave multipart headroom below the provisional Vercel Function limit. The form presents these limits as “MB” for familiar customer-facing copy.
 - The delivery interface receives one `{ lead, attachments, idempotencyKey }` payload. Attachments contain only normalized JPEG bytes, a generated `.jpg` filename, and the narrowed `image/jpeg` invariant; original filenames and browser file metadata never cross the handoff boundary. The idempotency key is a versioned SHA-256 digest of the full normalized payload and contains no readable contact data.
 - Photo bytes exist only during validation, email request construction, and the provider handoff. No filesystem, object store, database, cache, analytics event, or log retains them in the application. Resend and the recipient mailbox can retain the sent message and sanitized attachments under their respective policies; the final Privacy Policy and operating procedure must state the approved retention/deletion practice.
-- `tests/request-service-validation.test.ts` exercises the analytics, form, image, email, and delivery contracts through the TypeScript compiler and Node test runner. The suite now contains 40 tests covering bounded click-to-call attributes and payloads, all audiences, browser and React/Next no-file sentinels, real image normalization, corrupt inputs, resource limits, EXIF/ICC/IPTC/XMP removal, action-state minimization, opaque idempotency, static email headers, plain-text rendering, exact Resend requests, fail-closed provider behavior, the test-contact production guard, receipt non-disclosure, and a second request after confirmation.
+- `tests/request-service-validation.test.ts` exercises the analytics, form, image, email, delivery, navigation, and phone-link contracts through the TypeScript compiler and Node test runner. The suite contains 42 tests covering bounded click-to-call attributes and payloads, all audiences, browser and React/Next no-file sentinels, real image normalization, corrupt inputs, resource limits, EXIF/ICC/IPTC/XMP removal, action-state minimization, opaque idempotency, static email headers, plain-text rendering, exact Resend requests, fail-closed provider behavior, the test-contact production guard, receipt non-disclosure, a second request after confirmation, published primary-navigation destinations, and source-wide enforcement of the shared phone primitives.
 
 ### Text and option envelope
 
@@ -207,6 +241,7 @@ The canonical phone, phone link, public email, and inherited lead recipient are 
 
 - `SiteHeader.tsx` is a Client Component because it owns mobile-menu state, pathname-aware navigation, Escape handling, and focus return.
 - `SiteFooter.tsx` is a Server Component containing company information, navigation, cities, legal links, and conversion calls to action.
+- Footer legal destinations are filtered against `publishedRoutes`, so the planned Privacy, Terms, and Accessibility links do not render or lead to not-found pages before Phase 4 publishes them.
 - `MobileCallBar.tsx` is a Server Component that keeps Call Now and Request Service fixed at the bottom below the large-desktop breakpoint.
 
 ### Analytics layer
@@ -219,7 +254,7 @@ The canonical phone, phone link, public email, and inherited lead recipient are 
 - `src/lib/analytics-config.ts` requires both `NEXT_PUBLIC_ANALYTICS_ENABLED=true` and a syntactically valid `NEXT_PUBLIC_GTM_ID`; otherwise the transport is disabled or the enabled build fails closed.
 - GTM is the only planned transport. GA4 will be configured inside the confirmed production GTM container rather than loaded independently.
 - Events contain bounded structural fields only. Application code excludes contact details, form contents, uploaded-file information, raw URLs, query strings, referrers, and arbitrary payloads.
-- Analytics activation is paused. Existing GA4, GTM, advertising, call-tracking, and CRM accounts must be inventoried before anyone creates replacement production accounts or enables the placeholder environment values.
+- Analytics activation is intentionally deferred until the website is otherwise ready for pre-launch integration. Existing GA4, GTM, advertising, call-tracking, and CRM accounts must then be inventoried before anyone creates replacement production accounts or enables the placeholder environment values.
 - Server-returned validation and submission failures emit bounded form-error events. A client-only photo preflight error is displayed accessibly but is not currently sent to the data layer.
 - `docs/analytics.md` is the activation, event-mapping, data-minimization, and duplicate-prevention contract.
 
@@ -304,7 +339,7 @@ The accent is intentionally darker than the original suggested `#c45c26`, allowi
 
 ## Routing and SEO status
 
-The homepage remains a Phase 1 placeholder and `/request-service` is implemented as a noindex Phase 2 conversion route. Other navigation destinations intentionally exist before their pages and may return not found until Phase 3.
+The homepage and registered Phase 3 core pages are substantive public content routes. `/request-service` remains a noindex Phase 2 conversion route while test contacts and the public abuse-control gate remain active. Primary navigation exposes only implemented public destinations; planned Residential, Projects, and Resources links are withheld until those routes contain substantive content.
 
 `src/lib/seo.ts` now owns the shared SEO architecture:
 
@@ -316,7 +351,7 @@ The homepage remains a Phase 1 placeholder and `/request-service` is implemented
 - Route-specific canonical and Open Graph URLs do not live in the root layout, preventing homepage URLs from leaking into future nested routes.
 - The default 1200×630 social card is `public/og.png`. Its brand, service-category, and service-area language are confirmed; it also contains the working tagline, which still requires owner confirmation or replacement before public release.
 
-`src/lib/routes.ts` is the canonical crawl-surface registry. During local and prelaunch foundation work it contains only `/`, allowing the sitemap and `llms.txt` machinery to be validated even though the rendered homepage is still a visible development placeholder. This is a temporary root-route exception: the homepage must be replaced in Phase 3.1 before any public production launch or sitemap submission. Planned destinations are not added while they return not found or lack substantive content.
+`src/lib/routes.ts` is the canonical crawl-surface registry. It now contains the substantive homepage, services hub, five service-intent pages, commercial page, service-area hub, Toledo page, and About page. Planned destinations are not added while they return not found or lack substantive content. `/request-service` remains deliberately excluded by T-037 despite its implementation.
 
 The crawl architecture is implemented as follows:
 
@@ -330,7 +365,7 @@ The crawl architecture is implemented as follows:
 
 Structured data belongs to Phase 4.3.
 
-Planned route families include:
+Current and planned route families include:
 
 ```text
 /
@@ -356,7 +391,7 @@ The current architecture provides conversion entry points and a fail-closed lead
 
 - Phone links currently use the test-only destination `tel:+14194869657`.
 - Request Service links target `/request-service#request-form` so the shared CTA reaches the form directly.
-- All current phone and Request Service links emit bounded, placement-aware data-layer events. Phase 2.5 closed the two inline Request Service phone-link gaps and centralized every `tel:` surface behind `PhoneLink` or `CallLink`.
+- All current phone and Request Service links emit bounded, placement-aware data-layer events. Phase 2.5 centralized every `tel:` surface behind `PhoneLink` or `CallLink`; the Phase 3 regression guard rejects new raw phone destinations.
 - `/request-service` renders one short form with residential, commercial, contractor, and municipal paths, one shared field contract, authoritative server validation for all submitted data, advisory browser preflight for photo count/size/type, and safe failure states.
 - Form starts and Server Action validation/submission failures emit bounded events; client-only photo preflight errors remain local. Confirmed-lead events emit only after external delivery succeeds, a path proven by the August 11 Vercel Preview tests.
 - The current test-only lead and immediate-notification recipient is `needytrooper04@gmail.com`; an owner-confirmed real recipient must replace it before production.
@@ -365,9 +400,9 @@ The current architecture provides conversion entry points and a fail-closed lead
 - A provider email workflow now exists; no CRM integration or customer autoresponder exists.
 - Optional project photos are normalized into generated JPEG attachments and passed directly to Resend without separate website storage. The Preview test delivered `project-photo-1.jpg`, and the owner confirmed that it opened successfully.
 - The honeypot is baseline protection only. Per-request image limits do not limit request frequency, so compatible rate limiting or a bot challenge is required before this image-processing route is exposed on any public deployment.
-- No live GA4, GTM, advertising, or call-tracking transport is configured yet.
+- No live GA4, GTM, advertising, or call-tracking transport is configured yet; the owner intentionally deferred that external integration until pre-launch.
 - Pageview and conversion hooks remain local until the explicit analytics flag and a valid production GTM ID are supplied.
-- Phase 2 provider-backed receipt, mailbox, and attachment verification is complete. External analytics mapping remains separately paused and is the only open Phase 2 subphase.
+- Phase 2 provider-backed receipt, mailbox, and attachment verification is complete. The application-side analytics contract is also complete for the current build scope; external analytics mapping is a deferred pre-launch task rather than an active Phase 2 blocker.
 
 ### Outbound-delivery safeguards and remaining gates
 
@@ -415,6 +450,10 @@ The register separates non-engineering decisions (business, product, content, an
 | B-022 | During development testing only, render `(419) 486-9657` and `needytrooper04@gmail.com`, and route any future test lead handoff only to that email. These values are not approved for production and must be replaced with owner-confirmed real contact information before launch. | Active test override; production launch blocker | Owner direction, August 7, 2026 |
 | B-023 | Confirm successful Request Service submissions on the same page only after provider-confirmed delivery. Do not send a customer autoresponder at this stage and do not promise a response time; explain the review/follow-up process and retain the phone path. | Active; live-verified in Vercel Preview | Phase 2.4; Phase 2.6 |
 | B-024 | Use Resend for the testing lead handoff. The verified sending domain is `notifications.ohioflowco.com`, the static sender is `requests@notifications.ohioflowco.com`, and the sole testing recipient remains `needytrooper04@gmail.com`. The API key is stored in Vercel. This testing configuration does not approve the current contacts for production or finalize Vercel as the production host. | Active testing integration; live handoff verified | Owner direction, Phase 2.6 |
+| B-025 | Finish the website before integrating Google Analytics. Preserve the application-owned pageview, conversion, form, and phone event contract, but defer external GTM/GA4 account selection, consent, activation, mapping, and receipt verification until pre-launch. | Active owner direction | Phase 2.5 deferral, August 11, 2026 |
+| B-026 | Do not fabricate project proof or use customer-uploaded service-request photos as marketing proof. Phase 3.2 cannot be called complete against its defined proof requirement until approved real project facts and assets exist. | Active content gate | Phases 0.5 and 3.2 |
+| B-027 | Keep water-service repair/replacement, stormwater/drainage, and excavation/trenching combined while confirmed scope and available content do not justify separate substantive pages. Split them only after distinct intent, facts, and proof support each route. | Active content architecture | Phases 3.4–3.6 |
+| B-028 | The About page may use confirmed positioning and service-area facts now, but final Phase 3.9 completion requires authentic owner-approved company history, team, experience, and operating facts. | Awaiting owner content | Phase 3.9 integration |
 
 ### Technical and design decisions
 
@@ -447,29 +486,34 @@ The register separates non-engineering decisions (business, product, content, an
 | T-025 | Decode accepted images under strict resource limits, auto-orient and resize them, strip embedded EXIF/GPS, ICC, IPTC, and XMP data by re-encoding to JPEG, generate attachment filenames, and pass only normalized attachments to the delivery adapter. | Active | Phase 2.3 |
 | T-026 | Before `/request-service` is exposed publicly, add rate limiting or a compatible bot challenge that protects multipart parsing and Sharp work; per-request file limits alone are insufficient. | Public-deployment activation gate | Phase 2.3 audit |
 | T-027 | Before outbound email activation, use static server-owned headers, inert body content, retry-safe idempotency, server-only credentials, a durable provider receipt, and a provider verified for the encoded attachment envelope and retention policy. | Application and attachment-envelope requirements verified; retention procedure pending | Phase 2.3 audit; Phase 2.6 implementation and live verification |
-| T-028 | Keep `publishedRoutes` as the crawl-surface source, with `/` as a temporary prelaunch validation exception. Replace the placeholder homepage before public launch or sitemap submission; all later routes require substantive content. | Active | Phase 1.5 documentation audit |
+| T-028 | Keep `publishedRoutes` as the crawl-surface source, with `/` as a temporary prelaunch validation exception. Replace the placeholder homepage before public launch or sitemap submission; all later routes require substantive content. | Superseded by T-041 after Phase 3.1 | Phase 1.5 documentation audit |
 | T-029 | Sharp is the sole image-normalization dependency. Keep photo processing on the Node.js runtime, disable Sharp's cache, process files serially, and verify its native bundle and multipart behavior on the selected host. | Active; Vercel Preview path verified, final production environment revalidation pending | Phase 2.3 audit; Phase 2.6 live verification |
 | T-030 | Any future submission-confirmation route must be `noindex` and excluded from `publishedRoutes`; it may present success only after a durable provider receipt. | Future-route constraint; current Phase 2.4 flow stays inline | Phase 2 documentation audit |
 | T-031 | Normalize only a sole exact empty optional-file sentinel—including React/Next's synthetic `blob` filename—to no attachment. Do not discard repeated, mixed, named, or MIME-altered zero-byte entries. | Active | Phase 2.3 no-photo regression |
 | T-032 | Keep the temporary phone, `tel:` link, public email, and inherited lead recipient centralized in `site.ts`; expose `contactDataStatus.productionReady = false` until Phase 5 replaces them with owner-confirmed production data. | Active production gate | Test-contact override |
 | T-033 | Replace the form with a focused same-page status panel only when submission state is `success`; success remains gated by a nonblank provider receipt. Keep provider receipts and submitted values out of client state, prevent accidental duplicate submission, and restore a cleared form only through an explicit second-request action. | Active; end-to-end verified in Vercel Preview | Phase 2.4; Phase 2.6 live verification |
-| T-034 | Emit every `tel:` link through a shared tracked phone primitive using one typed attribute helper. Push only `ofc_phone_click` and an allowlisted `cta_location`; exclude the displayed number, `tel:` value, page data, and customer data. Keep GTM/GA4 transport disabled until account ownership, consent, mapping, and duplicate checks are complete. | Active application contract; external verification pending | Phase 2.5 |
+| T-034 | Emit every `tel:` link through a shared tracked phone primitive using one typed attribute helper. Push only `ofc_phone_click` and an allowlisted `cta_location`; exclude the displayed number, `tel:` value, page data, and customer data. Keep GTM/GA4 transport disabled until account ownership, consent, mapping, and duplicate checks are complete. | Active application contract; external activation deferred to pre-launch | Phase 2.5; B-025 |
 | T-035 | Send internal Request Service notifications through Resend using native server-side `fetch`, the Vercel-held `RESEND_API_KEY`, one verified static sender, one canonical recipient, a static subject, a plain-text body, Base64 normalized JPEG attachments, a 10-second timeout, and a nonblank Resend email ID as the only success receipt. Add no provider SDK, customer reply-to header, application persistence, or sensitive logging. | Active; live handoff verified in Vercel Preview | Phase 2.6 |
 | T-036 | Derive the Resend idempotency header from a versioned SHA-256 digest of the complete normalized lead and sanitized attachment payload. This makes retries of the same payload converge without returning the key or provider receipt in client state; any changed normalized content produces a new key. | Active | Phase 2.6 |
 | T-037 | Return `not_configured` on Vercel production while canonical contact data is marked test-only. Permit current provider testing only in a non-production environment and keep `/request-service` outside published crawl surfaces until real production contacts and public abuse controls are in place. | Active production and publication guard; Preview handoff complete | Phase 2.6 |
+| T-038 | Keep service and location page content in typed route-owned definitions rendered by shared Server Components. Page wrappers retain explicit metadata and breadcrumbs; shared structure must not collapse distinct intent into city-name or service-name substitutions. | Active | Phases 3.2–3.8 |
+| T-039 | Rendered navigation may contain only implemented substantive destinations. Publish `/services` as the hub for implemented service routes; reintroduce Residential, Projects, or Resources only when their destination pages exist; and filter planned legal navigation until Phase 4 publishes those routes. | Active | Phase 3 integration audit |
+| T-040 | Preserve tracked phone coverage across new pages with two static regressions: every primary navigation destination must be registered as published, and source files outside the CTA primitive may not emit `site.phoneHref` or literal `tel:` links directly. | Active | Phase 3 integration audit |
+| T-041 | Keep `publishedRoutes` as the substantive crawl-surface source. Register the completed homepage and core Phase 3 pages; withhold `/request-service` under T-037 and withhold planned routes until their public content exists. | Active | Phase 3.1–3.9 integration |
 | D-001 | Use deep navy, construction orange, light gray canvas, and white surfaces. | Active | Phase 1.3 |
 | D-002 | Use the darker `#b64f1f` accent for accessible white CTA text. | Active | Phase 1.3 |
 | D-003 | Use system fonts rather than remote font dependencies. | Active | Phase 1.3 |
 | D-004 | Use restrained radii, clear rails, subtle grids, and limited motion for an industrial/local character. | Active | Phase 1.3 |
 | D-005 | Use a typography-led 1200×630 default social card with no invented project photography, logo mark, equipment, or unsupported claims. | Active | Phase 1.4 |
+| D-006 | Use restrained homepage hero motion only as progressive enhancement and honor reduced-motion preferences; do not require animation for content comprehension or conversion. | Active | Phase 3.1 |
 | R-001 | Replace weak Wix URL names with descriptive service and service-area routes; preserve old traffic through 301 redirects at launch. | Active plan | Phase 0.6 |
 
 ## Expected future architectural additions
 
 These are planned boundaries, not implemented architecture:
 
-- **Remaining Phase 2:** owner-approved GTM/GA4 activation, production click/form mapping, consent implementation, duplicate prevention, and analytics receipt validation. Provider delivery and same-page confirmation verification are complete.
-- **Phase 3:** full route tree for service, commercial, project, location, about, and contact content.
+- **Deferred analytics:** owner-approved GTM/GA4 account selection, production click/form mapping, consent implementation, duplicate prevention, and receipt validation during pre-launch. The current application event contract remains active and tested.
+- **Remaining Phase 3:** approved real proof for Phase 3.2, authentic owner-approved About facts for Phase 3.9, Phase 3.10 contact/content work on the existing Request Service foundation, and Phase 3.11 projects/case studies.
 - **Phase 4:** legal content, structured data, image pipeline, and complete accessibility QA.
 - **Phase 5:** redirects, deployment configuration, launch validation, and search-engine submission.
 
@@ -498,3 +542,4 @@ These are planned boundaries, not implemented architecture:
 | August 7, 2026 | Phase 2.5 in progress | Centralized all `tel:` surfaces behind tracked phone primitives, covered the Request Service failure and confirmation links, and added bounded-event regression tests. External GTM/GA4 mapping remains disabled pending the existing-account and consent decisions. |
 | August 7, 2026 | Phase 2.6 in progress | Added the Resend provider adapter, verified static sender configuration, testing-recipient routing, plain-text notification rendering, Base64 sanitized JPEG attachments, deterministic idempotency, server-only Vercel credential boundary, timeout/failure handling, and durable-receipt validation without adding an SDK or application storage. Live deployed receipt and mailbox verification remain pending. |
 | August 11, 2026 | Phases 2.1, 2.4, and 2.6 complete | Verified the protected Vercel Preview end to end with representative no-photo and photo requests. Provider-gated same-page confirmation appeared for both, both internal messages reached the sole testing recipient, and `project-photo-1.jpg` arrived and opened successfully. This changed no runtime architecture; it closed the external delivery gates while retaining the test-contact production block, public abuse-control gate, retention-policy input, and paused Phase 2.5 analytics activation. |
+| August 11, 2026 | Phase 3.1–3.9 controlled integration | Integrated the contributed core pages into the validated Phase 2.6 branch instead of replacing it. Added substantive home, services, service-intent, commercial, service-area, Toledo, and About routes; typed shared service/location content renderers; published-route registration; customer-facing copy; and tracked CTA enforcement. Removed rendered navigation links to unimplemented destinations and added `/services` as their implemented hub. Preserved the Phase 2 form, Sharp normalization, Resend delivery, confirmation, test-contact production guard, and dormant analytics contract. Phases 3.2 and 3.9 remain open for real proof and authentic owner-approved facts. The integrated system passed 42 tests, lint, a 17-route production build, desktop rendering checks, and 390×844 mobile interaction/overflow checks. |

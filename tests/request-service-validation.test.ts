@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 
@@ -28,7 +30,8 @@ import {
   createRequestServiceIdempotencyKey,
   processRequestServiceSubmission,
 } from "../src/lib/request-service-submission";
-import { leadDelivery, site } from "../src/lib/site";
+import { publishedRoutes } from "../src/lib/routes";
+import { leadDelivery, navigation, site } from "../src/lib/site";
 
 const validValues: RequestServiceFormValues = {
   fullName: "Sam Customer",
@@ -83,6 +86,46 @@ test("emits one privacy-safe click-to-call event without contact data", () => {
       Reflect.deleteProperty(globalThis, "window");
     }
   }
+});
+
+test("keeps every main navigation destination on a published route", () => {
+  const publishedPaths = new Set<string>(publishedRoutes.map(({ path }) => path));
+
+  for (const item of navigation.main) {
+    assert.equal(
+      publishedPaths.has(item.href),
+      true,
+      `${item.label} points to unpublished route ${item.href}`,
+    );
+  }
+});
+
+test("keeps direct phone destinations inside the shared phone primitives", () => {
+  const sourceRoot = join(process.cwd(), "src");
+  const violations: string[] = [];
+
+  function auditDirectory(directory: string) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const path = join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        auditDirectory(path);
+        continue;
+      }
+
+      if (!entry.name.endsWith(".tsx") || entry.name === "CtaLink.tsx") {
+        continue;
+      }
+
+      const source = readFileSync(path, "utf8");
+      if (source.includes("href={site.phoneHref}") || /href=["']tel:/u.test(source)) {
+        violations.push(path.replace(`${process.cwd()}/`, ""));
+      }
+    }
+  }
+
+  auditDirectory(sourceRoot);
+  assert.deepEqual(violations, []);
 });
 
 function createFormData(

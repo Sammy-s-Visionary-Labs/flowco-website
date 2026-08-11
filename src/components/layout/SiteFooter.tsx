@@ -7,9 +7,17 @@ import {
 } from "@/components/ui/CtaLink";
 import { Container } from "@/components/ui/Container";
 import { analyticsEventNames } from "@/lib/analytics";
+import { publishedRoutes } from "@/lib/routes";
 import { navigation, site } from "@/lib/site";
 
 export function SiteFooter() {
+  const publishedPaths = new Set<string>(
+    publishedRoutes.map(({ path }) => path),
+  );
+  const publishedLegalNavigation = navigation.legal.filter((item) =>
+    publishedPaths.has(item.href),
+  );
+
   return (
     <footer className="site-footer industrial-grid-inverse bg-brand-deep text-white">
       <Container className="py-12 sm:py-14 lg:py-16">
@@ -120,20 +128,22 @@ export function SiteFooter() {
           <p className="text-xs leading-5 text-white/50">
             © {new Date().getFullYear()} {site.legalName}. All rights reserved.
           </p>
-          <nav aria-label="Legal" className="mt-4 sm:mt-0">
-            <ul className="flex flex-wrap gap-x-5 gap-y-3" role="list">
-              {navigation.legal.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    className="inline-flex min-h-11 items-center text-xs font-semibold text-white/60 underline decoration-transparent underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
-                    href={item.href}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {publishedLegalNavigation.length > 0 ? (
+            <nav aria-label="Legal" className="mt-4 sm:mt-0">
+              <ul className="flex flex-wrap gap-x-5 gap-y-3" role="list">
+                {publishedLegalNavigation.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      className="inline-flex min-h-11 items-center text-xs font-semibold text-white/60 underline decoration-transparent underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                      href={item.href}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null}
         </div>
       </Container>
     </footer>

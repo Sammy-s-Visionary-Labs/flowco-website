@@ -31,12 +31,9 @@ export const navigation = {
   main: [
     { label: "Home", href: "/" },
     { label: "Services", href: "/services" },
-    { label: "Residential", href: "/residential" },
     { label: "Commercial", href: "/commercial" },
-    { label: "Projects", href: "/projects" },
     { label: "Service Areas", href: "/service-areas" },
     { label: "About", href: "/about" },
-    { label: "Resources", href: "/resources" },
   ],
   cta: { label: "Request Service", href: "/request-service#request-form" },
   legal: [

@@ -1,10 +1,10 @@
 # Ohio Flow Co — Project Progress
 
-**Progress status:** Phases 2.1–2.4 and 2.6 complete; Phase 2.5 analytics activation remains in progress
+**Progress status:** Phase 2 is complete for the current build scope with analytics activation deferred; Phase 3.1 and 3.3–3.8 are complete, while Phase 3.2 proof and Phase 3.9 owner-content review remain in progress
 
 **Last updated:** August 11, 2026
 
-**Recommended next task:** Resolve the paused Phase 2.5 analytics account and consent inputs, or begin Phase 3.1 while tracking analytics activation as an external hold
+**Recommended next task:** Continue Phase 3.10 while approved project proof for Phase 3.2 and authentic owner/company facts for Phase 3.9 remain tracked inputs
 
 ## Purpose and maintenance rule
 
@@ -21,6 +21,7 @@ At the completion of every phase or subphase:
 
 - **Complete:** Implemented and validated for the defined scope.
 - **In progress:** Work has started but the completion condition is not met.
+- **Deferred:** Intentionally postponed until a later project gate; completed foundations remain preserved.
 - **Awaiting input:** Progress depends on a business decision or asset from the owner.
 - **Draft:** A working direction exists but must be verified before launch.
 - **Not started:** The dedicated subphase has not begun; reusable foundations from earlier phases may already exist.
@@ -31,8 +32,8 @@ At the completion of every phase or subphase:
 |---|---|---|
 | Phase 0 — Decisions and assets | In progress | Core brand, positioning, service scope, domain, and route direction are decided. Phone, public email, and lead recipient are temporarily overridden with test values and must be reconfirmed for production. Analytics ownership, approved marketing photos, case studies, and the Wix URL crawl remain open. |
 | Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated. Live analytics activation still depends on the Phase 0.4 owner/account decision. |
-| Phase 2 — Conversion system | In progress | Phases 2.1–2.4 and 2.6 are complete, including provider-confirmed Vercel Preview submissions and mailbox/attachment delivery. Phase 2.5 application coverage is implemented, but external GTM/GA4 activation remains paused pending owner/account and consent inputs. |
-| Phase 3 — Core pages | Not started | Only a minimal homepage placeholder exists. |
+| Phase 2 — Conversion system | Complete | Phases 2.1–2.4 and 2.6 are complete, including provider-confirmed Vercel Preview submissions and mailbox/attachment delivery. Phase 2.5 application coverage is complete; the owner intentionally deferred external GTM/GA4 activation until the website is otherwise ready for pre-launch integration. |
+| Phase 3 — Core pages | In progress | Phase 3.1 and 3.3–3.8 are complete. Phase 3.2 has complete service-page structure and copy but cannot meet its proof requirement until approved real assets exist. The integrated Phase 3.9 About page remains in owner-content review; Phases 3.10 and 3.11 have not begun. |
 | Phase 4 — Trust, legal, and polish | Not started | Legal pages, structured data, image pipeline, and final QA remain. |
 | Phase 5 — Launch engineering | Not started | Redirects, deployment, and launch validation remain. |
 | Phase 6 — Expansion | Not started | Location expansion, articles, additional case studies, and reporting remain. |
@@ -44,6 +45,7 @@ At the completion of every phase or subphase:
 - Do not add an application-owned persistent photo store for customer uploads at this stage.
 - Treat Vercel as the preferred but unconfirmed production host. If another host is chosen, revalidate Node/Sharp support, request and memory limits, abuse controls, and preview indexing behavior.
 - Keep analytics configuration as disabled placeholders. Inventory any existing GA4, GTM, advertising, call-tracking, and CRM accounts before creating or enabling production integrations.
+- Finish building the website before integrating Google Analytics. Preserve the application event contract and tracked call primitives, then activate and verify the external GTM/GA4 mapping during pre-launch work.
 - Use Resend for development/test lead notification. Send only from `requests@notifications.ohioflowco.com` on the verified `notifications.ohioflowco.com` domain and only to `needytrooper04@gmail.com`; keep the API key server-only in Vercel.
 - Publish only confirmed company facts and services. Real project photography and case-study facts require permission; unsupported service, emergency, financing, or procurement claims remain excluded.
 
@@ -81,7 +83,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 | 1.2 Global layout | Header, footer, navigation, and mobile call bar keep Call and Request Service reachable | Complete | Built the sticky responsive header, pathname-aware navigation, accessible mobile menu, shared Call/Request Service components, full footer, fixed mobile call bar, skip link, safe-area clearance, and flex-column root shell. |
 | 1.3 Design system | Colors, typography, spacing, surfaces, and components match the industrial/local brief | Complete | Added semantic visual tokens, responsive gutters and section spacing, system font stacks, focus treatment, industrial grid motifs, and reusable Container, Section, Eyebrow, SectionHeading, Surface, and refined CTA primitives. Applied the system to the shell and kept the homepage minimal. |
 | 1.4 Shared SEO shell | Reusable title, description, canonical, Open Graph, and breadcrumb behavior | Complete | Added typed metadata and canonical helpers, explicit homepage metadata, complete Open Graph/Twitter defaults, a validated social card, and an accessible breadcrumb primitive. |
-| 1.5 Crawl files | `robots.txt`, sitemap, and `llms.txt` stub | Complete | Added crawl endpoints, a canonical crawl-surface registry, and a static machine-readable business summary. `/` is currently a temporary prelaunch validation entry even though its visible content remains a Phase 1 placeholder. |
+| 1.5 Crawl files | `robots.txt`, sitemap, and `llms.txt` stub | Complete | Added crawl endpoints, a canonical crawl-surface registry, and a static machine-readable business summary. The registry now contains the substantive Phase 3 homepage, service, commercial, service-area, and About routes. |
 | 1.6 Analytics foundation | GA4/GTM integration points and event stubs | Complete | Added a dormant-by-default GTM loader, application-owned pageviews, conversion click events, typed form-event stubs, validation, and an activation contract. Live GA4 delivery awaits the confirmed production container and privacy/consent decision. |
 
 ### Phase 1.1 completion summary
@@ -110,8 +112,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Refined CTA sizing, weight, states, and shared exports.
 - Added visible focus treatment that works on light and dark surfaces.
 - Added restrained CSS grid textures for an industrial visual language.
-- Updated the header, footer, and placeholder page to consume the shared system.
-- Did not build full homepage content; that remains Phase 3.1.
+- Updated the header, footer, and initial placeholder page to consume the shared system; Phase 3.1 later replaced that placeholder with the full homepage.
 
 ### Phase 1.4 completion summary
 
@@ -130,7 +131,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 
 - Added typed Next.js metadata routes for `/robots.txt` and `/sitemap.xml`.
 - Added `src/lib/routes.ts` as the single crawl-surface inventory.
-- Limited the sitemap to `/` as a temporary prelaunch validation entry while planned navigation destinations return not found. The visible homepage is still a development placeholder and must be replaced in Phase 3.1 before public launch or sitemap submission.
+- Initially limited the sitemap to `/` as a temporary validation entry. Phase 3 later replaced the placeholder homepage and added only substantive core pages to the same canonical route registry.
 - Omitted invented modification dates, change-frequency hints, and priority values.
 - Added a force-static `/llms.txt` route sourced from canonical brand, contact, city, and confirmed-service constants.
 - Added the Phase 0 confirmed service scope to `src/lib/site.ts` so machine-readable output does not duplicate or expand business claims.
@@ -160,7 +161,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 | 2.2 Residential and commercial paths | Distinct entry paths with appropriate questions | Complete | Added one accessible four-choice audience selector. Residential requests collect the person's property relationship; commercial, contractor, and municipal requests collect the company or organization name. Shared fields, validation, and submission remain unified. |
 | 2.3 Photo handling | Photos are selected, validated, normalized, and passed safely to the delivery boundary without application persistence | Complete | Added optional JPEG/PNG/WebP selection for up to three photos and 3 MiB combined. Files are decoded under strict limits, resized and re-encoded as EXIF/GPS/ICC/IPTC/XMP-stripped JPEG attachments, held only for the request, and passed to the fail-closed boundary. The generated `project-photo-1.jpg` was delivered and opened successfully in the live Phase 2.6 Preview test. |
 | 2.4 Post-delivery thank-you experience | Submitter receives confirmation only after provider-confirmed delivery | Complete | Implemented a focused same-page confirmation that replaces the form, explains review and follow-up, prevents accidental duplicate submission, and supports an explicit second request. Both live Preview tests showed this state only after provider-confirmed handoff. |
-| 2.5 Click-to-call tracking | Header, footer, menu, call-bar, and page interactions produce measurable events | In progress | Completed typed application-side coverage for every rendered `tel:` link, including Request Service failure and confirmation states, with privacy-safe placement-only payloads. Production GTM/GA4 mapping, consent activation, duplicate checks, and receipt validation remain paused pending owner/account inputs. |
+| 2.5 Click-to-call tracking | Header, footer, menu, call-bar, and page interactions produce measurable events | Deferred | Completed typed application-side coverage for every rendered `tel:` link, including the Phase 3 pages and Request Service failure/confirmation states, with privacy-safe placement-only payloads. The owner intentionally deferred production GTM/GA4 mapping, consent activation, duplicate checks, and receipt validation until pre-launch. |
 | 2.6 Provider email handoff and internal notification | Leads and attachments reach the configured internal mailbox with a durable provider receipt | Complete | Implemented Resend delivery from the verified notification subdomain to the sole testing recipient, static headers, plain-text content, sanitized attachments, deterministic idempotency, Vercel-secret handling, and durable-receipt validation. Protected Vercel Preview tests delivered both no-photo and photo emails; the generated JPEG attachment arrived and opened successfully. Production still requires replacing all test contacts. |
 
 ### Phase 2.1 completion summary
@@ -213,15 +214,15 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Expanded the unit suite to 33 tests, including receipt non-disclosure and processing another request from a prior confirmed state.
 - The protected Vercel Preview showed provider-gated same-page success for both no-photo and photo submissions, and both corresponding emails arrived in the testing mailbox.
 
-### Phase 2.5 in-progress summary
+### Phase 2.5 deferred summary
 
 - Audited every active phone surface: desktop header, mobile menu, persistent mobile call bar, footer number and CTA, Request Service page CTA, unconfirmed-submission fallback, and confirmed-submission follow-up.
 - Added a shared inline `PhoneLink` and retained the styled `CallLink`; these are now the only components that emit `tel:` destinations.
 - Centralized phone event attributes in a typed helper so every call action uses `ofc_phone_click` and one allowlisted placement.
 - Closed the two previously untracked Request Service inline phone links without changing their visible design or navigation behavior.
 - Kept payloads limited to `cta_location`. Phone numbers, email addresses, routes, customer data, form values, and uploaded-file information are excluded.
-- Added regression coverage for all allowed placements and the exact privacy-safe data-layer event, bringing the suite to 35 tests.
-- Kept GTM and GA4 disabled. Phase 2.5 remains in progress until account ownership and consent are resolved and the single event mapping is verified without duplicates in GTM Preview and GA4 DebugView.
+- Added regression coverage for all allowed placements and the exact privacy-safe data-layer event. Phase 3 integration extended that guard so every source phone link must still use a shared tracked primitive.
+- Kept GTM and GA4 disabled. The application-side deliverable is complete; external activation and single-mapping verification in GTM Preview and GA4 DebugView are intentionally deferred until pre-launch.
 
 ### Phase 2.6 completion summary
 
@@ -237,7 +238,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Expanded the suite to 40 tests and passed lint, whitespace validation, TypeScript checking, and a production build. Tests cover opaque/stable idempotency, exact static email routing, safe body/attachment construction, secret/idempotency headers, provider failures, receipt validation, and the test-contact production guard.
 - Completed live verification on August 11, 2026. The Preview returned same-page success for a no-photo request and a photo request; the owner confirmed both emails arrived at the testing recipient and that `project-photo-1.jpg` arrived and opened. This closes Phase 2.1's delivery gate and Phase 2.4's external-verification gate.
 
-## Phase documentation audit through 2.6
+## Phase documentation audit through Phase 3 core-page integration
 
 This audit compares the repository, phase ledger, architecture change log, and decision register. It confirms completion only where the bounded deliverable exists and has validation evidence.
 
@@ -248,18 +249,22 @@ This audit compares the repository, phase ledger, architecture change log, and d
 | 0.3 | Complete | Confirmed service scope, specialist positioning, and excluded claims are recorded in B-006–B-008 and canonical service data. |
 | 1.1 | Complete | Stack, package/runtime requirements, strict TypeScript, build path, canonical data, and scaffold reconstruction are recorded. |
 | 1.2 | Complete | Global shell, conversion surfaces, responsive breakpoint, mobile behavior, and accessibility foundations are recorded. |
-| 1.3 | Complete | Semantic tokens, typography, spacing, components, contrast decision, and the deliberate homepage deferral are recorded. |
+| 1.3 | Complete | Semantic tokens, typography, spacing, components, contrast decision, and the later Phase 3.1 replacement of the original placeholder are recorded. |
 | 1.4 | Complete | Metadata composition, canonical rules, social card, breadcrumbs, and deferred SEO work are recorded. |
-| 1.5 | Complete | Crawl endpoints and registry are recorded with the corrected prelaunch `/` exception; no claim of a finished homepage remains. |
+| 1.5 | Complete | Crawl endpoints and the canonical substantive-route registry are recorded; the original temporary homepage exception is superseded by the completed Phase 3.1 page. |
 | 1.6 | Complete | Dormant GTM transport, typed events, data minimization, duplicate prevention, account-inventory pause, and activation gates are recorded. |
 | 2.1 | Complete | The short form, server-authoritative validation, fail-closed handoff, success gate, anti-spam baseline, and provider/mailbox-backed Preview verification are recorded. |
 | 2.2 | Complete | Four audiences, conditional fields, progressive disclosure, active-field validation, and minimized discriminated payloads are recorded. |
 | 2.3 | Complete | Exact upload envelope, Sharp/Node constraints, EXIF/GPS/ICC/IPTC/XMP removal, accessibility/reselection behavior, request-only retention, and provider deferral are recorded. |
 | 2.4 | Complete | Same-page confirmation, focus behavior, next-step copy, duplicate-submission protection, second-request handling, receipt/data minimization, and the provider-backed no-photo/photo Preview proof are recorded. |
-| 2.5 | In progress | Complete application-side phone-link coverage, the typed placement-only payload, shared primitives, data minimization, analytics pause, and external mapping/verification gates are recorded. |
+| 2.5 | Deferred | Complete application-side phone-link coverage, the typed placement-only payload, shared primitives, data minimization, and the owner-directed pre-launch deferral of external analytics activation are recorded. |
 | 2.6 | Complete | Resend selection, verified sender, sole testing recipient, Vercel secret boundary, static headers, plain-text content, normalized attachments, idempotency, fail-closed behavior, provider receipt, privacy implications, and completed live verification are recorded. |
+| 3.1 | Complete | Full homepage hierarchy, confirmed service scope, service-area context, conversion paths, responsive behavior, and restrained motion are recorded. |
+| 3.2 | In progress | The sewer-repair intent page, process, FAQs, metadata, breadcrumbs, and CTAs are implemented; the defined proof requirement remains blocked by Phase 0.5 approved assets and facts. |
+| 3.3–3.8 | Complete | The remaining core service pages, commercial path, service hub, service-area hub, and unique Toledo page are implemented and recorded with their content-combination and claim-safety decisions. |
+| 3.9 | In progress | A substantive About page is integrated and tracked correctly, but authentic owner/company narrative and final factual approval are still required. |
 
-Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only open Phase 2 subphase: application coverage is implemented, but approved external analytics mapping and verification remain paused. No Phase 3, 4, 5, or 6 subphase is recorded as complete.
+Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete for the current website-build scope; external analytics activation is explicitly deferred rather than treated as an active blocker. Phase 3 is in progress, with proof and authentic owner facts preventing overstatement of Phases 3.2 and 3.9. No Phase 4, 5, or 6 subphase is recorded as complete.
 
 ## Phase 3 — Core pages
 
@@ -267,17 +272,39 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only 
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 3.1 Home | First screen answers what Ohio Flow Co does, where it works, and how to contact it | Not started | Current page is only a Phase 1 placeholder. |
-| 3.2 Sewer Line Repair | Complete intent page with scope, process, proof, FAQs, and CTAs | Not started | Use only confirmed capabilities. |
-| 3.3 Sewer Line Replacement | Complete replacement-intent page | Not started | Do not claim trenchless methods without confirmation. |
-| 3.4 Water Service Line | Repair and confirmed replacement/installation scope | Not started | Clarify page split only if search intent and content depth justify it. |
-| 3.5 Stormwater and Drainage | Complete stormwater/drainage intent coverage | Not started | May be one or two pages based on available proof and distinct intent. |
-| 3.6 Site Excavation and Utility Trenching | Complete excavation/trenching page or justified split | Not started | Emphasize underground utility specialization. |
-| 3.7 Commercial Services | Contractor, commercial, and municipal-ready service page | Not started | Must avoid unsupported certifications or procurement claims. |
-| 3.8 Toledo service-area page | Unique Toledo content, not a city-name substitution page | Not started | First local landing page. |
-| 3.9 About | Entity and trust page aligned with public business information | Not started | Requires authentic company facts from Sam. |
+| 3.1 Home | First screen answers what Ohio Flow Co does, where it works, and how to contact it | Complete | Replaced the Phase 1 placeholder with a full conversion homepage using confirmed services, Northwest Ohio coverage, shared tracked CTAs, service pathways, process guidance, and responsive visual treatment. |
+| 3.2 Sewer Line Repair | Complete intent page with scope, process, proof, FAQs, and CTAs | In progress | Intent, scope, signs, process, FAQs, metadata, breadcrumbs, and CTAs are complete. Approved real project proof does not yet exist, so no proof was invented or substituted. |
+| 3.3 Sewer Line Replacement | Complete replacement-intent page | Complete | Added a substantive replacement-intent page without claiming unconfirmed trenchless methods. |
+| 3.4 Water Service Line | Repair and confirmed replacement/installation scope | Complete | Combined repair and replacement/installation in one substantive page because current confirmed scope and content depth do not justify a thin split. |
+| 3.5 Stormwater and Drainage | Complete stormwater/drainage intent coverage | Complete | Combined stormwater and drainage in one substantive intent page while retaining both user needs and avoiding unsupported proof claims. |
+| 3.6 Site Excavation and Utility Trenching | Complete excavation/trenching page or justified split | Complete | Combined excavation and trenching in one page centered on underground utility work; current content does not justify separate thin routes. |
+| 3.7 Commercial Services | Contractor, commercial, and municipal-ready service page | Complete | Added distinct commercial, contractor, and municipal pathways without unsupported certification, emergency, capacity, or procurement claims. |
+| 3.8 Toledo service-area page | Unique Toledo content, not a city-name substitution page | Complete | Added a service-area hub and a unique Toledo page with locally relevant water, sewer, and stormwater context rather than a reusable city-name template. |
+| 3.9 About | Entity and trust page aligned with public business information | In progress | Integrated a substantive page built only from confirmed positioning and service facts, and corrected its phone CTA to use shared tracking. Authentic owner history, team facts, and final owner approval remain required. |
 | 3.10 Contact and Request Service | Full inquiry workflow page | Not started | The Phase 2 Request Service route is a reusable foundation; the dedicated Phase 3 contact/content scope has not begun. |
 | 3.11 Projects and case-study template | Gallery and reusable case-study structure with at least one real project if assets exist | Not started | Depends on Phase 0.5 assets and facts. |
+
+### Phase 3.1 completion summary
+
+- Replaced the development placeholder with a complete, responsive homepage that explains the company, confirmed underground utility services, Northwest Ohio coverage, working process, and conversion options.
+- Used shared Call and Request Service primitives for every conversion surface and kept the phone payload privacy-safe.
+- Added restrained hero motion with a reduced-motion fallback and no invented project photography or proof.
+
+### Phase 3.2–3.8 implementation summary
+
+- Added a published `/services` hub and substantive pages for sewer repair, sewer replacement, water service lines, stormwater and drainage, excavation and trenching, and commercial work.
+- Used typed page-owned content in `service-pages.ts` with one shared rendering component so structure stays consistent while headings, intent, scope, process, FAQs, and metadata remain route-specific.
+- Combined water repair/replacement, stormwater/drainage, and excavation/trenching where the confirmed scope and available content did not justify thin page splits.
+- Added a service-area hub and a unique Toledo page using locally relevant public infrastructure context; future city routes still require distinct local substance.
+- Kept public copy customer-facing and restricted to confirmed capabilities. Internal editorial notes, unsupported certifications, emergency claims, financing claims, procurement claims, and fabricated proof were excluded.
+- Added canonical metadata, breadcrumbs, published-route registration, and tracked CTAs throughout. Main navigation now exposes only implemented substantive routes; Residential, Projects, and Resources will return when those destinations exist. Planned legal links stay in canonical navigation data but do not render until their Phase 4 pages are published.
+- Phase 3.2 remains in progress solely because its expected deliverable includes real proof. Approved photos and project facts are still required before that claim can be closed.
+
+### Phase 3.9 integration summary
+
+- Integrated the contributed About page without replacing the validated Phase 2.6 form, delivery, upload, and analytics foundations.
+- Rewrote implementation-facing language as public company copy and routed its phone action through the shared tracked phone primitive.
+- Kept the phase in progress because the owner has not yet supplied authentic company-history, team, experience, or operating facts needed for final trust content.
 
 ## Phase 4 — Trust, legal, and polish
 
@@ -322,10 +349,10 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only 
 - Obtain the owner-confirmed production phone, `tel:` destination, public email, and internal lead recipient; replace every test fixture and mark canonical contact data production-ready before deployment.
 - Select a deployment-compatible rate limit or bot challenge before `/request-service` is exposed publicly. Retry idempotency and static non-customer headers are implemented, but they do not replace request-frequency abuse protection.
 - Decide and document lead/photo retention and deletion for the email provider and company mailbox before the Privacy Policy is finalized.
-- Inventory existing GTM, GA4, Google Ads, Meta, call-tracking, and CRM accounts; confirm ownership, obtain the production GTM ID if one exists, and decide privacy/consent before activation. Do not create replacement production accounts without approval.
+- During pre-launch work, inventory existing GTM, GA4, Google Ads, Meta, call-tracking, and CRM accounts; confirm ownership, obtain the production GTM ID if one exists, and decide privacy/consent before activation. This is intentionally deferred while the website is built; do not create replacement production accounts without approval.
 - Confirm Vercel as the production host. If a different host is selected, revalidate request limits, Node/Sharp/native bundling, memory behavior, abuse controls, and preview crawl protection.
-- Obtain permission to use real social-media project photos.
-- Obtain 2–3 project summaries and matching images from Sam.
+- Obtain permission to use real social-media project photos. This blocks the proof portion of Phase 3.2 and the project work in Phase 3.11.
+- Obtain 2–3 project summaries and matching images from Sam, plus authentic company-history/team facts for final Phase 3.9 review.
 - Confirm whether `Keeping Northwest Ohio Flowing.` is approved as the public tagline.
 - Confirm whether `ohioflowco.com` was purchased for redirect use.
 - Crawl the full Wix site, inventory every source URL, and create the first old-to-new redirect map before implementation.
@@ -337,7 +364,7 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only 
 - Keep the test-contact production blocker visible until Phase 5 replaces `(419) 486-9657`, `tel:+14194869657`, and `needytrooper04@gmail.com` with owner-confirmed real values.
 - Follow `docs/email-delivery.md` for the completed Preview verification record and the remaining retention, abuse-control, contact-replacement, and production-reverification gates.
 - Confirm the working tagline before public release. If it changes, update canonical data and rendered copy and regenerate `public/og.png`, where the current tagline is baked into the image.
-- Complete full browser, responsive, keyboard, assistive-technology, and production conversion QA in Phases 4.5 and 5.2; validations through Phase 2.6 are implementation- and Preview-level rather than a final launch certification.
+- Complete full browser, responsive, keyboard, assistive-technology, and production conversion QA in Phases 4.5 and 5.2; Phase 3 integration checks are route-level implementation checks rather than a final launch certification.
 
 ## Validation record
 
@@ -359,6 +386,7 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only 
 | August 7, 2026 | Phase 2.5 click-to-call contract tests (35 total), complete `tel:` source audit, lint, whitespace validation, isolated production build, and generated-output inspection | Passed; every allowlisted placement and the exact contact-free `ofc_phone_click` payload are covered, no direct phone destination remains outside the shared primitives, and all 13 prerendered phone-link instances contain the required event name and placement attributes |
 | August 7, 2026 | Phase 2.6 Resend request/idempotency/provider tests (40 total), TypeScript checking, lint, whitespace validation, and production build | Passed locally; exact static sender/recipient routing, plain-text body construction, Base64 normalized attachment handling, opaque payload-bound idempotency, secret headers, fail-closed responses, production test-contact blocking, and nonblank receipt validation are covered. |
 | August 11, 2026 | Protected Vercel Preview end-to-end tests of the no-photo and photo Request Service paths | Passed; provider-gated same-page success appeared for both submissions, the owner confirmed both messages arrived at `needytrooper04@gmail.com`, and the generated `project-photo-1.jpg` attachment arrived and opened successfully. This closes Phases 2.1, 2.4, and 2.6. |
+| August 11, 2026 | Controlled Phase 3 integration: 42 regression tests, lint, TypeScript production build, static route generation, desktop route inspection, 390×844 responsive inspection, mobile navigation interaction, metadata/canonical checks, rendered broken-link audit, tracked-phone audit, and Request Service form-preservation check | Passed; all 12 content/conversion routes rendered with one H1, correct unique metadata and canonical URLs, no horizontal overflow, no links to planned not-found destinations, no untracked phone actions, no browser warnings, and the intact four-audience form with optional multi-photo input. The build generated all 17 framework routes without changing the Phase 2 delivery boundary. |
 
 ## Progress log
 
@@ -381,4 +409,6 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only 
 | August 7, 2026 | Began Phase 2.4 by implementing the provider-gated same-page thank-you experience, next-step guidance, duplicate-submission protection, and an accessible second-request path; external activation remains dependent on Phase 2.6. |
 | August 7, 2026 | Began Phase 2.5 by completing application-side click-to-call coverage and privacy-safe event tests while preserving the owner-directed pause on GTM/GA4 activation. |
 | August 7, 2026 | Began Phase 2.6 by implementing the Resend internal-notification adapter for the verified notification subdomain, Vercel-held secret, sole testing recipient, sanitized JPEG attachments, deterministic idempotency, and durable-receipt success gate; live Vercel/mailbox verification remains pending. |
-| August 11, 2026 | Completed Phase 2.6 through protected Vercel Preview tests with and without a photo; provider-gated confirmation, both mailbox deliveries, and the generated attachment were verified. The same evidence completed the external gates for Phases 2.1 and 2.4. Phase 2 remains in progress only because Phase 2.5 external analytics activation is paused. |
+| August 11, 2026 | Completed Phase 2.6 through protected Vercel Preview tests with and without a photo; provider-gated confirmation, both mailbox deliveries, and the generated attachment were verified. The same evidence completed the external gates for Phases 2.1 and 2.4. At that checkpoint, external Phase 2.5 analytics activation remained paused. |
+| August 11, 2026 | Recorded the owner decision to finish the website before Google Analytics integration, completing Phase 2 for the current build scope and deferring only the external GTM/GA4 activation and verification work to pre-launch. |
+| August 11, 2026 | Completed the controlled integration of the contributed Phase 3 core pages into the validated Phase 2.6 branch. Phase 3.1 and 3.3–3.8 are complete; Phase 3.2 remains open only for approved proof, and the contributed Phase 3.9 About page remains open for authentic owner facts and approval. Added a services hub, removed rendered links to unimplemented destinations, corrected customer-facing copy and phone tracking, preserved the full Request Service workflow, and passed the 42-test, lint, production-build, and browser validation set. |
