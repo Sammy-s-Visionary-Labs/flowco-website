@@ -84,8 +84,10 @@ export function initializeGoogleAnalytics(measurementId: string) {
   const analyticsState = analyticsWindow as unknown as Record<string, unknown>;
   const initializedKey = `ofc-ga-initialized-${measurementId}`;
   analyticsWindow.dataLayer ??= [];
-  analyticsWindow.gtag ??= function gtag(...args: unknown[]) {
-    analyticsWindow.dataLayer?.push(args);
+  analyticsWindow.gtag ??= function gtag() {
+    // Google gtag.js requires the function's Arguments object, not a rest array.
+    // eslint-disable-next-line prefer-rest-params
+    analyticsWindow.dataLayer?.push(arguments);
   };
 
   setGoogleAnalyticsDisabled(measurementId, false);

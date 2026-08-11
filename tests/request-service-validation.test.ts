@@ -156,8 +156,14 @@ test("initializes one privacy-limited GA4 queue and supports revocation", () => 
     initializeGoogleAnalytics("G-TEST1234567");
     trackPageView("/services?ignored=yes#scope");
 
-    const commandNames = dataLayer.map((entry) =>
-      Array.isArray(entry) ? entry[0] : null,
+    const commands = dataLayer.map((entry) =>
+      Array.from(entry as ArrayLike<unknown>),
+    );
+    const commandNames = commands.map(([commandName]) => commandName);
+    assert.ok(
+      dataLayer.every(
+        (entry) => Object.prototype.toString.call(entry) === "[object Arguments]",
+      ),
     );
     assert.deepEqual(commandNames, [
       "consent",
@@ -166,12 +172,12 @@ test("initializes one privacy-limited GA4 queue and supports revocation", () => 
       "config",
       "event",
     ]);
-    assert.deepEqual(dataLayer[3], [
+    assert.deepEqual(commands[3], [
       "config",
       "G-TEST1234567",
       { send_page_view: false },
     ]);
-    assert.deepEqual(dataLayer[4], [
+    assert.deepEqual(commands[4], [
       "event",
       analyticsEventNames.pageView,
       {
@@ -185,21 +191,24 @@ test("initializes one privacy-limited GA4 queue and supports revocation", () => 
       (globalThis.window as unknown as Record<string, unknown>)[
         "ga-disable-G-TEST1234567"
       ],
-      true,
+        true,
     );
-    assert.deepEqual(dataLayer.at(-1), [
-      "consent",
-      "update",
-      {
-        ad_personalization: "denied",
-        ad_storage: "denied",
-        ad_user_data: "denied",
-        analytics_storage: "denied",
-        functionality_storage: "denied",
-        personalization_storage: "denied",
-        security_storage: "granted",
-      },
-    ]);
+    assert.deepEqual(
+      Array.from(dataLayer.at(-1) as ArrayLike<unknown>),
+      [
+        "consent",
+        "update",
+        {
+          ad_personalization: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          analytics_storage: "denied",
+          functionality_storage: "denied",
+          personalization_storage: "denied",
+          security_storage: "granted",
+        },
+      ],
+    );
     assert.ok(cookieWrites.some((value) => value.startsWith("_ga=")));
   } finally {
     if (originalWindow) {
