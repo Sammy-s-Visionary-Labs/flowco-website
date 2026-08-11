@@ -1,11 +1,9 @@
 import Link from "next/link";
 
-import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import {
-  CallLink,
-  PhoneLink,
-  RequestServiceLink,
-} from "@/components/ui/CtaLink";
+import { PhoneLink } from "@/components/ui/CtaLink";
+import { ConversionBand } from "@/components/ui/ConversionBand";
+import { FaqList } from "@/components/ui/FaqList";
+import { PageHero } from "@/components/ui/PageHero";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
 import { publishedLocationPages } from "@/lib/location-pages";
@@ -55,10 +53,6 @@ for (const page of publishedServicePages) {
   }
 }
 
-const publishedServiceLinks = publishedServicePages.filter((page) =>
-  page.path.startsWith("/services/"),
-);
-
 const publishedLocationHrefByCity = new Map<string, string>(
   publishedLocationPages.map((page) => [page.city, page.path]),
 );
@@ -66,39 +60,15 @@ const publishedLocationHrefByCity = new Map<string, string>(
 export function AboutPageContent() {
   return (
     <>
-      <Section spacing="compact" tone="surface">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: "Home" },
-            { label: "About" },
-          ]}
-        />
-
-        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.7fr)] lg:items-end lg:gap-14">
-          <SectionHeading
-            as="h1"
-            className="max-w-4xl"
-            description={`${site.name} is a specialized sewer, water, drainage, and excavation contractor serving homes, businesses, contractors, and municipalities throughout ${site.serviceArea}.`}
-            eyebrow="About the company"
-            title={`About ${site.name}`}
-          />
-
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <CallLink
-              analyticsLocation="page_content"
-              className="w-full"
-              label={`Call ${site.phone}`}
-              size="lg"
-            />
-            <RequestServiceLink
-              analyticsLocation="page_content"
-              className="w-full"
-              size="lg"
-              variant="outline"
-            />
-          </div>
-        </div>
-      </Section>
+      <PageHero
+        breadcrumbs={[
+          { href: "/", label: "Home" },
+          { label: "About" },
+        ]}
+        description={`${site.name} is a specialized sewer, water, drainage, and excavation contractor serving homes, businesses, contractors, and municipalities throughout ${site.serviceArea}.`}
+        eyebrow="About the company"
+        title={`About ${site.name}`}
+      />
 
       <Section className="industrial-grid" spacing="default">
         <SectionHeading
@@ -108,168 +78,129 @@ export function AboutPageContent() {
           title="An underground utility specialist for Northwest Ohio"
         />
 
-        <dl className="mt-10 grid gap-8 border-t border-line pt-10 md:grid-cols-2">
-          <div>
-            <dt className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-              Operating name
-            </dt>
-            <dd className="mt-3 font-display text-2xl font-black tracking-[-0.03em] text-brand-deep">
-              {site.name}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-              Legal name
-            </dt>
-            <dd className="mt-3 font-display text-2xl font-black tracking-[-0.03em] text-brand-deep">
-              {site.legalName}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-              Service model
-            </dt>
-            <dd className="mt-3 text-base leading-7 text-ink-muted sm:leading-8">
-              Service-area contractor. We come to the property and do not
-              operate a public storefront.
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-              Primary territory
-            </dt>
-            <dd className="mt-3 text-base leading-7 text-ink-muted sm:leading-8">
-              {site.serviceArea}, led by Toledo and nearby communities.
-            </dd>
-          </div>
+        <dl className="mt-12 grid gap-4 md:grid-cols-2">
+          {[
+            ["Operating name", site.name],
+            ["Legal name", site.legalName],
+            ["Service model", "Service-area contractor. We come to the property and do not operate a public storefront."],
+            ["Primary territory", `${site.serviceArea}, led by Toledo and nearby communities.`],
+          ].map(([term, description], index) => (
+            <div className="brand-card min-h-44 p-6 sm:p-7" key={term}>
+              <dt className="flex items-center gap-3 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-accent-deep">
+                <span className="text-accent">0{index + 1}</span>
+                {term}
+              </dt>
+              <dd className="mt-7 max-w-lg font-display text-xl font-black leading-tight tracking-[-0.03em] text-brand-deep sm:text-2xl">
+                {description}
+              </dd>
+            </div>
+          ))}
         </dl>
       </Section>
 
-      <Section spacing="default" tone="muted">
-        <SectionHeading
-          as="h2"
-          description="Our work centers on the underground services property owners, businesses, contractors, and municipal partners request most often."
-          eyebrow="What we do"
-          title="Core underground services"
-        />
-
-        <ul
-          className="mt-10 divide-y divide-line border-y border-line"
-          role="list"
-        >
-          {confirmedServices.map((service) => {
-            const href = publishedServiceHrefById.get(service.id);
-
-            return (
-              <li className="py-4 sm:py-5" key={service.id}>
-                {href ? (
-                  <Link
-                    className="font-display text-lg font-bold tracking-[-0.02em] text-brand-deep underline decoration-transparent underline-offset-4 transition-colors hover:decoration-accent sm:text-xl"
-                    href={href}
-                  >
-                    {service.label}
-                  </Link>
-                ) : (
-                  <span className="font-display text-lg font-bold tracking-[-0.02em] text-brand-deep sm:text-xl">
-                    {service.label}
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-
-        {publishedServiceLinks.length > 0 ? (
-          <p className="mt-8 max-w-3xl text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
-            Explore detailed service information for{" "}
-            {publishedServiceLinks.map((page) => page.label).join(", ")}.
-          </p>
-        ) : null}
-      </Section>
-
       <Section spacing="default" tone="surface">
-        <SectionHeading
-          as="h2"
-          description={`${site.name} comes to the property. Toledo is the lead community, with surrounding ${site.serviceArea} cities also served.`}
-          eyebrow="Where we work"
-          title={`Serving ${site.serviceArea}`}
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16">
+          <SectionHeading
+            as="h2"
+            description="Our work centers on the underground services property owners, businesses, contractors, and municipal partners request most often."
+            eyebrow="What we do"
+            title="Core underground services"
+          />
 
-        <ul className="mt-10 flex flex-wrap gap-x-3 gap-y-3" role="list">
-          {site.primaryCities.map((city) => {
-            const href = publishedLocationHrefByCity.get(city);
-
-            return (
-              <li key={city}>
-                {href ? (
-                  <Link
-                    className="inline-flex border border-brand bg-brand px-4 py-2.5 text-sm font-bold text-white underline decoration-transparent underline-offset-4 transition-colors hover:decoration-white"
-                    href={href}
-                  >
-                    {city}
-                  </Link>
-                ) : (
-                  <span className="inline-flex border border-line bg-canvas px-4 py-2.5 text-sm font-bold text-brand-deep">
-                    {city}
+          <ul className="grid gap-3 sm:grid-cols-2" role="list">
+            {confirmedServices.map((service, index) => {
+              const href = publishedServiceHrefById.get(service.id);
+              const content = (
+                <>
+                  <span className="text-[0.625rem] font-black tracking-[0.18em] text-accent-deep">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                  <span className="mt-5 block font-display text-lg font-black leading-tight tracking-[-0.03em] text-brand-deep">
+                    {service.label}
+                  </span>
+                </>
+              );
 
-        <p className="mt-8 max-w-3xl text-base leading-7 text-ink-muted sm:leading-8">
-          Explore the{" "}
-          <Link
-            className="font-bold text-brand underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-            href="/service-areas"
-          >
-            service areas
-          </Link>{" "}
-          hub and the dedicated{" "}
-          <Link
-            className="font-bold text-brand underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-            href="/service-areas/toledo"
-          >
-            Toledo
-          </Link>{" "}
-          page for local detail.
-        </p>
+              return (
+                <li key={service.id}>
+                  {href ? (
+                    <Link
+                      className="brand-card block min-h-32 p-5 transition-transform hover:-translate-y-1 hover:border-accent"
+                      href={href}
+                    >
+                      {content}
+                    </Link>
+                  ) : (
+                    <div className="brand-card min-h-32 p-5">{content}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </Section>
 
       <Section className="industrial-grid" spacing="default">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            as="h2"
+            description={`${site.name} comes to the property. Toledo is the lead community, with surrounding ${site.serviceArea} cities also served.`}
+            eyebrow="Where we work"
+            title={`Serving ${site.serviceArea}`}
+          />
+
+          <div>
+            <ul className="flex flex-wrap gap-3 border-l-4 border-accent pl-5 sm:pl-7" role="list">
+              {site.primaryCities.map((city) => {
+                const href = publishedLocationHrefByCity.get(city);
+                return (
+                  <li key={city}>
+                    {href ? (
+                      <Link
+                        className="inline-flex border-2 border-brand bg-brand px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-canvas transition-colors hover:border-accent hover:bg-accent hover:text-brand-deep"
+                        href={href}
+                      >
+                        {city}
+                      </Link>
+                    ) : (
+                      <span className="inline-flex border border-line bg-surface px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-brand-deep">
+                        {city}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-7 text-sm leading-6 text-ink-muted">
+              Explore the{" "}
+              <Link className="font-bold text-brand underline decoration-accent/50 underline-offset-4" href="/service-areas">
+                service areas hub
+              </Link>{" "}
+              for local coverage details.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      <Section className="industrial-grid-inverse" spacing="default" tone="brand">
         <SectionHeading
           as="h2"
           description="One underground specialty. Different starting points depending on who needs the work done."
           eyebrow="Who we help"
           title="Residential, commercial, and partner customers"
+          tone="light"
         />
 
-        <ul
-          className="mt-12 grid gap-10 border-t border-line pt-10 lg:grid-cols-3 lg:gap-8"
-          role="list"
-        >
+        <ul className="mt-12 grid gap-4 lg:grid-cols-3" role="list">
           {audiences.map((audience) => (
-            <li key={audience.title}>
-              <Eyebrow>{audience.title}</Eyebrow>
-              <p className="mt-4 text-base leading-7 text-ink-muted sm:leading-8">
+            <li className="border border-canvas/12 bg-brand-deep/58 p-6 sm:p-8" key={audience.title}>
+              <Eyebrow tone="light">{audience.title}</Eyebrow>
+              <p className="mt-10 text-base leading-7 text-canvas/70 sm:leading-8">
                 {audience.body}
               </p>
             </li>
           ))}
         </ul>
-
-        <p className="mt-10 max-w-3xl text-base leading-7 text-ink-muted sm:leading-8">
-          Commercial, contractor, and municipal pathways are covered in more
-          detail on the{" "}
-          <Link
-            className="font-bold text-brand underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-            href="/commercial"
-          >
-            commercial services
-          </Link>{" "}
-          page.
-        </p>
       </Section>
 
       <Section spacing="default" tone="muted">
@@ -280,39 +211,31 @@ export function AboutPageContent() {
           title={`How to reach ${site.name}`}
         />
 
-        <address className="mt-10 not-italic">
-          <ul className="divide-y divide-line border-y border-line" role="list">
-            <li className="flex flex-col gap-2 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
-              <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-                Phone
-              </span>
-              <PhoneLink
-                analyticsLocation="page_content"
-                className="font-display text-xl font-bold tracking-[-0.02em] text-brand-deep underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-              >
-                {site.phone}
-              </PhoneLink>
-            </li>
-            <li className="flex flex-col gap-2 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
-              <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-                Email
-              </span>
-              <a
-                className="break-all font-display text-xl font-bold tracking-[-0.02em] text-brand-deep underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-                href={`mailto:${site.email}`}
-              >
-                {site.email}
-              </a>
-            </li>
-            <li className="flex flex-col gap-2 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
-              <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-subtle">
-                Website
-              </span>
-              <span className="font-display text-xl font-bold tracking-[-0.02em] text-brand-deep">
-                {site.domain.replace(/^https?:\/\//, "")}
-              </span>
-            </li>
-          </ul>
+        <address className="mt-12 grid gap-4 not-italic md:grid-cols-3">
+          <div className="brand-card p-6">
+            <span className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-accent-deep">Phone</span>
+            <PhoneLink
+              analyticsLocation="page_content"
+              className="mt-6 block break-all font-display text-xl font-black tracking-[-0.03em] text-brand-deep underline decoration-accent/50 underline-offset-4"
+            >
+              {site.phone}
+            </PhoneLink>
+          </div>
+          <div className="brand-card p-6">
+            <span className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-accent-deep">Email</span>
+            <a
+              className="mt-6 block break-all font-display text-lg font-black tracking-[-0.03em] text-brand-deep underline decoration-accent/50 underline-offset-4"
+              href={`mailto:${site.email}`}
+            >
+              {site.email}
+            </a>
+          </div>
+          <div className="brand-card p-6">
+            <span className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-accent-deep">Website</span>
+            <span className="mt-6 block break-all font-display text-lg font-black tracking-[-0.03em] text-brand-deep">
+              {site.domain.replace(/^https?:\/\//, "")}
+            </span>
+          </div>
         </address>
       </Section>
 
@@ -323,51 +246,19 @@ export function AboutPageContent() {
           eyebrow="FAQ"
           title={`About ${site.name}`}
         />
-
-        <div className="mt-10 divide-y divide-line border-y border-line">
-          {aboutFaqs.map((faq) => (
-            <div className="py-6 sm:py-7" key={faq.question}>
-              <h3 className="font-display text-xl font-black tracking-[-0.03em] text-brand-deep sm:text-2xl">
-                {faq.question}
-              </h3>
-              <p className="mt-3 max-w-3xl text-base leading-7 text-ink-muted sm:leading-8">
-                {faq.answer}
-              </p>
-            </div>
-          ))}
-        </div>
+        <FaqList faqs={aboutFaqs} />
       </Section>
 
-      <Section
-        className="industrial-grid-inverse"
-        spacing="spacious"
-        tone="brand"
-      >
-        <div className="max-w-3xl">
-          <Eyebrow tone="light">Work with us</Eyebrow>
-          <h2 className="mt-5 font-display text-[clamp(2.25rem,5vw,3.75rem)] font-black leading-[0.96] tracking-[-0.045em] text-balance">
-            Need underground utility help in {site.serviceArea}?
-          </h2>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8">
+      <ConversionBand
+        body={
+          <>
             Call {site.name} or send a service request. Tell us where the
             property is and what underground work you need.
-          </p>
-
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <CallLink
-              analyticsLocation="page_content"
-              label={`Call ${site.phone}`}
-              size="lg"
-              variant="accent"
-            />
-            <RequestServiceLink
-              analyticsLocation="page_content"
-              size="lg"
-              variant="outline-inverse"
-            />
-          </div>
-        </div>
-      </Section>
+          </>
+        }
+        eyebrow="Work with us"
+        title={`Need underground utility help in ${site.serviceArea}?`}
+      />
     </>
   );
 }

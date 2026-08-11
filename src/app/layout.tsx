@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-canvas text-ink antialiased">
         <a
-          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-sm bg-white px-4 py-3 text-sm font-bold text-brand shadow-menu transition-transform focus:translate-y-0 focus:outline-3 focus:outline-offset-3 focus:outline-accent"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-sm bg-accent px-4 py-3 text-sm font-black text-brand-deep shadow-menu transition-transform focus:translate-y-0 focus:outline-3 focus:outline-offset-3 focus:outline-accent"
           href="#main-content"
         >
           Skip to main content

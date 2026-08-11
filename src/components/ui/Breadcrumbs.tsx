@@ -8,33 +8,55 @@ export type BreadcrumbItem = {
 type BreadcrumbsProps = {
   className?: string;
   items: readonly BreadcrumbItem[];
+  tone?: "dark" | "light";
 };
 
-export function Breadcrumbs({ className = "", items }: BreadcrumbsProps) {
+export function Breadcrumbs({
+  className = "",
+  items,
+  tone = "dark",
+}: BreadcrumbsProps) {
   if (items.length === 0) {
     return null;
   }
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-y-2 text-sm text-ink-muted" role="list">
+      <ol
+        className={`flex flex-wrap items-center gap-y-2 text-sm ${
+          tone === "light" ? "text-white/60" : "text-ink-muted"
+        }`}
+        role="list"
+      >
         {items.map((item, index) => {
           const isCurrent = index === items.length - 1;
 
           return (
             <li className="flex min-w-0 items-center" key={`${item.label}-${index}`}>
               {index > 0 ? (
-                <span aria-hidden="true" className="mx-2.5 shrink-0 text-line-strong">
+                <span
+                  aria-hidden="true"
+                  className={`mx-2.5 shrink-0 ${
+                    tone === "light" ? "text-accent/70" : "text-line-strong"
+                  }`}
+                >
                   /
                 </span>
               ) : null}
               {isCurrent ? (
-                <span aria-current="page" className="font-bold text-brand">
+                <span
+                  aria-current="page"
+                  className={`font-bold ${
+                    tone === "light" ? "text-accent-light" : "text-brand"
+                  }`}
+                >
                   {item.label}
                 </span>
               ) : item.href ? (
                 <Link
-                  className="inline-flex min-h-11 items-center font-semibold underline decoration-transparent underline-offset-4 transition-colors hover:text-brand hover:decoration-accent"
+                  className={`inline-flex min-h-11 items-center font-semibold underline decoration-transparent underline-offset-4 transition-colors hover:decoration-accent ${
+                    tone === "light" ? "hover:text-white" : "hover:text-brand"
+                  }`}
                   href={item.href}
                 >
                   {item.label}

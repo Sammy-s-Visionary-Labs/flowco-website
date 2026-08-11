@@ -1,3 +1,4 @@
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { CallLink, RequestServiceLink } from "@/components/ui/CtaLink";
 import { Container } from "@/components/ui/Container";
 import { site } from "@/lib/site";
@@ -6,7 +7,7 @@ export function HomeHero() {
   return (
     <section
       aria-labelledby="home-hero-heading"
-      className="home-hero relative isolate overflow-hidden bg-brand-deep text-white"
+      className="home-hero relative isolate overflow-hidden bg-brand-deep text-canvas"
     >
       <div
         aria-hidden="true"
@@ -14,28 +15,29 @@ export function HomeHero() {
       />
       <div
         aria-hidden="true"
-        className="industrial-grid-inverse pointer-events-none absolute inset-0 opacity-70"
+        className="industrial-grid-inverse pointer-events-none absolute inset-0 opacity-45"
       />
 
-      <Container className="relative flex min-h-[min(88svh,52rem)] flex-col justify-end pb-14 pt-16 sm:pb-16 sm:pt-20 lg:min-h-[min(82svh,48rem)] lg:pb-20 lg:pt-24">
+      <Container className="relative z-10 grid min-h-[min(88svh,54rem)] items-center gap-12 py-14 sm:py-16 lg:grid-cols-[minmax(0,1.08fr)_minmax(21rem,0.72fr)] lg:gap-16 lg:py-20">
         <div className="home-hero-copy max-w-4xl">
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-accent-light">
+          <p className="flex items-center gap-3 text-[0.6875rem] font-black uppercase tracking-[0.21em] text-accent-light">
+            <span aria-hidden="true" className="size-2 bg-accent" />
             {site.serviceArea}
           </p>
 
           <h1
-            className="mt-5 font-display text-[clamp(3.25rem,12vw,7.5rem)] font-black leading-[0.86] tracking-[-0.055em] text-balance"
+            className="mt-6 font-display text-[clamp(3.5rem,9vw,7.25rem)] font-black leading-[0.83] tracking-[-0.065em] text-balance"
             id="home-hero-heading"
           >
-            {site.name}
+            Underground utility specialists.
           </h1>
 
-          <p className="mt-6 max-w-3xl font-display text-[clamp(1.35rem,3.4vw,2.35rem)] font-bold leading-[1.12] tracking-[-0.03em] text-white/92 text-balance">
-            Sewer, water line, drainage &amp; excavation specialists serving
-            Northwest Ohio.
+          <p className="mt-7 max-w-2xl border-l-4 border-accent pl-5 text-lg font-semibold leading-8 text-canvas/88 sm:text-xl sm:leading-9">
+            Sewer, water, drainage, and excavation work for Northwest Ohio
+            properties and project partners.
           </p>
 
-          <p className="mt-5 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-canvas/66 sm:text-lg sm:leading-8">
             Professional underground utility work for homes, businesses,
             contractors, and municipalities throughout the Toledo area.
           </p>
@@ -54,6 +56,29 @@ export function HomeHero() {
               size="lg"
               variant="outline-inverse"
             />
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-md border border-canvas/15 bg-brand/38 p-7 shadow-panel backdrop-blur-[2px] sm:p-9 lg:max-w-none">
+          <span className="absolute -left-px -top-px h-1.5 w-24 bg-accent" />
+          <span className="absolute -bottom-px -right-px h-1.5 w-24 bg-accent" />
+          <BrandLogo
+            alt={`${site.name}: sewer, water, drainage and excavation`}
+            className="mx-auto h-auto w-full max-w-[23rem]"
+            priority
+            variant="primary-reverse"
+          />
+          <div className="mt-7 grid grid-cols-2 gap-px bg-canvas/15 text-center text-[0.625rem] font-black uppercase tracking-[0.13em] text-canvas/74">
+            {[
+              "Residential",
+              "Commercial",
+              "Contractors",
+              "Municipal",
+            ].map((label) => (
+              <span className="bg-brand-deep/75 px-3 py-3" key={label}>
+                {label}
+              </span>
+            ))}
           </div>
         </div>
       </Container>

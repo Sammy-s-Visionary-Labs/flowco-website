@@ -105,6 +105,10 @@ export function createPageMetadata({
 export const rootMetadata: Metadata = {
   metadataBase: new URL(site.domain),
   applicationName: site.name,
+  icons: {
+    icon: "/brand/logo-mark.svg",
+    shortcut: "/brand/logo-mark.svg",
+  },
   title: {
     default: defaultSeoTitle,
     template: `%s | ${site.name}`,

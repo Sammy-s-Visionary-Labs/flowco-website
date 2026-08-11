@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { CallLink, RequestServiceLink } from "@/components/ui/CtaLink";
-import { Section } from "@/components/ui/Section";
+import { ConversionBand } from "@/components/ui/ConversionBand";
+import { PageHero } from "@/components/ui/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Section } from "@/components/ui/Section";
 import { publishedLocationPages } from "@/lib/location-pages";
 import { createPageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
@@ -17,39 +17,15 @@ export const metadata = createPageMetadata({
 export default function ServiceAreasPage() {
   return (
     <>
-      <Section spacing="compact" tone="surface">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: "Home" },
-            { label: "Service Areas" },
-          ]}
-        />
-
-        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.7fr)] lg:items-end lg:gap-14">
-          <SectionHeading
-            as="h1"
-            className="max-w-4xl"
-            description={`${site.name} is a service-area contractor serving Toledo and nearby communities throughout ${site.serviceArea}. Start with Toledo or contact us to confirm coverage for your property.`}
-            eyebrow={`${site.serviceArea} coverage`}
-            title="Service areas"
-          />
-
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <CallLink
-              analyticsLocation="page_content"
-              className="w-full"
-              label={`Call ${site.phone}`}
-              size="lg"
-            />
-            <RequestServiceLink
-              analyticsLocation="page_content"
-              className="w-full"
-              size="lg"
-              variant="outline"
-            />
-          </div>
-        </div>
-      </Section>
+      <PageHero
+        breadcrumbs={[
+          { href: "/", label: "Home" },
+          { label: "Service Areas" },
+        ]}
+        description={`${site.name} is a service-area contractor serving Toledo and nearby communities throughout ${site.serviceArea}. Start with Toledo or contact us to confirm coverage for your property.`}
+        eyebrow={`${site.serviceArea} coverage`}
+        title="Service areas"
+      />
 
       <Section className="industrial-grid" spacing="default">
         <SectionHeading
@@ -59,37 +35,60 @@ export default function ServiceAreasPage() {
           title="Featured service areas"
         />
 
-        <ul
-          className="mt-10 divide-y divide-line border-y border-line"
-          role="list"
-        >
-          {publishedLocationPages.map((page) => (
-            <li className="py-4 sm:py-5" key={page.path}>
+        <ul className="mt-12 grid gap-5" role="list">
+          {publishedLocationPages.map((page, index) => (
+            <li key={page.path}>
               <Link
-                className="font-display text-lg font-bold tracking-[-0.02em] text-brand-deep underline decoration-transparent underline-offset-4 transition-colors hover:decoration-accent sm:text-xl"
+                className="brand-card group grid gap-6 p-6 transition-transform hover:-translate-y-1 hover:border-accent sm:p-8 lg:grid-cols-[8rem_minmax(0,1fr)_auto] lg:items-center"
                 href={page.path}
               >
-                {page.city}
+                <span className="font-display text-6xl font-black leading-none tracking-[-0.07em] text-accent">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span>
+                  <span className="block font-display text-3xl font-black tracking-[-0.045em] text-brand-deep">
+                    {page.city}
+                  </span>
+                  <span className="mt-3 block max-w-3xl text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
+                    {page.description}
+                  </span>
+                </span>
+                <span aria-hidden="true" className="text-3xl text-accent-deep">
+                  →
+                </span>
               </Link>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
-                {page.description}
-              </p>
             </li>
           ))}
         </ul>
 
-        <div className="mt-12 max-w-3xl">
-          <h2 className="font-display text-2xl font-black tracking-[-0.03em] text-brand-deep">
+        <div className="mt-16 grid gap-8 border-t border-line pt-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <h2 className="font-display text-3xl font-black leading-none tracking-[-0.045em] text-brand-deep sm:text-4xl">
             Also serving nearby communities
           </h2>
-          <p className="mt-3 text-base leading-7 text-ink-muted sm:leading-8">
-            Beyond Toledo, {site.name} serves{" "}
-            {site.primaryCities.join(", ")}, and surrounding communities across{" "}
-            {site.serviceArea}. Contact us with the property city or ZIP so we
-            can confirm the service area and next step.
-          </p>
+          <div>
+            <ul className="flex flex-wrap gap-3" role="list">
+              {site.primaryCities.map((city) => (
+                <li
+                  className="border border-line bg-surface px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-brand-deep"
+                  key={city}
+                >
+                  {city}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 max-w-3xl text-base leading-7 text-ink-muted sm:leading-8">
+              Contact us with the property city or ZIP so we can confirm the
+              service area and next step.
+            </p>
+          </div>
         </div>
       </Section>
+
+      <ConversionBand
+        body="Tell us the property city or ZIP and what underground work you need. We will confirm coverage and the right next step."
+        eyebrow="Confirm your service area"
+        title={`Planning underground work in ${site.serviceArea}?`}
+      />
     </>
   );
 }

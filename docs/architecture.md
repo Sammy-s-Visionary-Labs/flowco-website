@@ -29,7 +29,7 @@ Do not silently change canonical business details in individual components. Upda
 | Application framework | Next.js 16 App Router |
 | UI runtime | React 19 |
 | Language | TypeScript with strict checking |
-| Styling | Tailwind CSS 4 through PostCSS, supported by semantic CSS tokens |
+| Styling | Tailwind CSS 4 through PostCSS, supported by brand-derived semantic CSS tokens |
 | Package manager | npm with `npm@11.11.0` declared and `package-lock.json` committed |
 | Node requirement | Node.js 20.9 or newer |
 | Rendering model | Server Components by default; Client Components only for browser interaction |
@@ -39,7 +39,8 @@ Do not silently change canonical business details in individual components. Upda
 | Analytics contract | Typed first-party `dataLayer` events with an optional GTM transport |
 | Upload normalization | Sharp decodes and re-encodes bounded project photos in request memory |
 | Lead notification | Server-only Resend email handoff with static headers, plain-text content, normalized JPEG attachments, and deterministic idempotency |
-| Global shell | Root layout with header, main content, footer, and mobile call bar |
+| Global shell | Root layout with a Bedrock header, main content, branded footer, and mobile call bar |
+| Brand assets | Six SVG exports derived from the supplied OFC brand-guidelines PDF, wrapped by one typed `BrandLogo` component |
 | Current routes | `/`, `/services`, five service-intent routes, `/commercial`, `/service-areas`, `/service-areas/toledo`, `/about`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
 | Crawl surfaces | Typed Next.js metadata routes plus a static plain-text route |
 | Build command | `npm run build`, using Next.js's Webpack build path |
@@ -56,7 +57,17 @@ ohio flow co/
 │   ├── email-delivery.md
 │   └── progress.md
 ├── public/
+│   ├── brand/
+│   │   ├── logo-mark[-reverse].svg
+│   │   ├── logo-monogram[-reverse].svg
+│   │   ├── logo-primary[-reverse].svg
+│   │   └── README.md
 │   └── og.png
+├── scripts/
+│   └── brand/
+│       ├── extract_logos.py
+│       ├── font-outline.m
+│       └── generate-og.mjs
 ├── package.json
 ├── package-lock.json
 ├── next.config.ts
@@ -97,6 +108,8 @@ ohio flow co/
     │   │   ├── Analytics.tsx
     │   │   ├── AnalyticsEventBridge.tsx
     │   │   └── PageViewTracker.tsx
+    │   ├── brand/
+    │   │   └── BrandLogo.tsx
     │   ├── forms/
     │   │   └── RequestServiceForm.tsx
     │   ├── home/
@@ -112,8 +125,11 @@ ohio flow co/
     │   │   └── ServiceIntentPage.tsx
     │   └── ui/
     │       ├── Breadcrumbs.tsx
+    │       ├── ConversionBand.tsx
     │       ├── Container.tsx
     │       ├── CtaLink.tsx
+    │       ├── FaqList.tsx
+    │       ├── PageHero.tsx
     │       ├── Section.tsx
     │       ├── SectionHeading.tsx
     │       ├── Surface.tsx
@@ -239,8 +255,8 @@ The canonical phone, phone link, public email, and inherited lead recipient are 
 
 ### Global layout components
 
-- `SiteHeader.tsx` is a Client Component because it owns mobile-menu state, pathname-aware navigation, Escape handling, and focus return.
-- `SiteFooter.tsx` is a Server Component containing company information, navigation, cities, legal links, and conversion calls to action.
+- `SiteHeader.tsx` is a Client Component because it owns mobile-menu state, pathname-aware navigation, Escape handling, and focus return. The desktop and mobile shells use the reverse OFC monogram on a Bedrock surface with Excavation Gold conversion controls.
+- `SiteFooter.tsx` is a Server Component containing the reverse primary logo, company information, navigation, cities, legal links, and conversion calls to action.
 - Footer legal destinations are filtered against `publishedRoutes`, so the planned Privacy, Terms, and Accessibility links do not render or lead to not-found pages before Phase 4 publishes them.
 - `MobileCallBar.tsx` is a Server Component that keeps Call Now and Request Service fixed at the bottom below the large-desktop breakpoint.
 
@@ -260,12 +276,16 @@ The canonical phone, phone link, public email, and inherited lead recipient are 
 
 ### Shared UI layer
 
+- `BrandLogo` is the typed, dimension-aware wrapper for primary, monogram, and mark SVGs in standard and reverse treatments.
 - `Container` standardizes maximum widths and responsive gutters.
 - `Section` standardizes section tone, vertical rhythm, and container placement.
 - `Eyebrow` and `SectionHeading` provide consistent page and section hierarchy.
 - `Surface` provides reusable bordered panels with surface, muted, brand, and accent-edge treatments.
 - `CtaLink`, `CallLink`, and `RequestServiceLink` provide consistent conversion links without duplicating contact destinations.
 - `Breadcrumbs` renders an explicit, accessible route trail without client-side pathname parsing. Ancestors are links and the final item is an unlinked `aria-current="page"` label.
+- `PageHero` provides the shared branded lead-in for service, location, About, and Request Service routes.
+- `ConversionBand` provides the dark high-intent closing section used across the content routes.
+- `FaqList` provides native, keyboard-accessible disclosure behavior using `details` and `summary`.
 - `src/components/ui/index.ts` is the public export surface for shared UI primitives.
 
 ## Design-system architecture
@@ -276,40 +296,40 @@ The design system is defined primarily in `src/app/globals.css` and consumed thr
 
 | Role | Current value | Use |
 |---|---:|---|
-| Brand | `#1b2f3a` | Primary navy controls and identity |
-| Brand deep | `#11232d` | Footer and high-emphasis dark surfaces |
-| Brand soft | `#294552` | Secondary brand treatment |
-| Accent | `#b64f1f` | Primary conversion actions and visual rails |
-| Accent strong | `#963d17` | Hover states and accessible focus treatment |
-| Accent deep | `#7f3212` | High-contrast validation and emphasis text |
-| Accent light | `#f2a276` | Accent text on dark backgrounds |
-| Accent soft | `#f8e8df` | Low-emphasis validation backgrounds |
-| Canvas | `#f3f5f6` | Page background |
-| Surface | `#ffffff` | Cards and navigation surfaces |
-| Surface muted | `#e9eef0` | Secondary panels |
-| Ink | `#14242c` | Primary body text |
-| Ink muted | `#50616a` | Supporting text |
-| Ink subtle | `#66777f` | Secondary labels and hints |
-| Line | `#d9e0e3` | Standard borders and dividers |
-| Line strong | `#bac7cc` | Form-control and stronger structural borders |
+| Brand / Trench Green | `#4d5442` | Secondary dark fields, identity, and decorative structure |
+| Brand deep / Bedrock | `#2b2825` | Header, footer, hero, ink, and high-emphasis dark surfaces |
+| Brand soft | `#68715a` | Derived secondary green treatment |
+| Accent / Excavation Gold | `#d3a956` | Primary conversion controls, focus, rules, and active states |
+| Accent strong | `#b88632` | Derived gold hover treatment |
+| Accent deep | `#85611f` | High-contrast gold-family text and validation emphasis |
+| Accent light | `#efd79f` | Supporting accent text on dark backgrounds |
+| Accent soft | `#f3e6c9` | Low-emphasis accent fields |
+| Canvas / Porcelain | `#f7eddf` | Page background and reverse logo field |
+| Surface | `#fffaf2` | Warm card and form surfaces |
+| Surface muted | `#e9dfd0` | Secondary panels |
+| Ink | `#2b2825` | Primary body text |
+| Ink muted | `#655f57` | Supporting text |
+| Ink subtle | `#82786c` | Secondary labels and hints |
+| Line | `#d8cbb8` | Standard warm borders and dividers |
+| Line strong | `#b9aa94` | Form-control and stronger structural borders |
 
-The accent is intentionally darker than the original suggested `#c45c26`, allowing white CTA text to meet normal-text contrast requirements.
+Bedrock, Trench Green, Excavation Gold, and Porcelain come directly from the supplied brand guide. Supporting values are controlled warm derivatives used for interaction states and hierarchy.
 
 ### Typography
 
-- Body copy uses a system UI font stack. There are no remote font requests.
-- Display headings use a condensed-first system stack with reliable fallbacks.
+- Body copy requests `Source Sans 3` first, then Avenir Next and system fallbacks. There are no remote font requests.
+- Display headings request the guide's `Sonar Sans` first, then heavy locally available fallbacks. The licensed Sonar Sans webfont has not been supplied, so the current build deliberately falls back without making a network request.
 - Heading sizes use responsive `clamp()` scales.
-- Eyebrows use uppercase text, increased tracking, and an orange rail.
-- The hierarchy is designed to feel industrial and capable without resembling a technology startup.
+- Eyebrows use uppercase text, increased tracking, and a gold square/rule motif.
+- The hierarchy is designed to feel like durable underground field work: large condensed display type, squared conversion controls, warm paper fields, technical grids, and restrained circular linework taken from the logo geometry.
 
 ### Spacing and surfaces
 
 - Page and compact header gutters use separate responsive tokens to preserve 320-pixel layouts.
 - Sections use compact, default, or spacious responsive vertical-spacing tokens.
-- Controls and panels use restrained radii rather than pill-shaped or highly rounded styling.
+- Controls and panels are square or minimally rounded rather than pill-shaped.
 - Shadows are subtle and functional: controls, panels, menus, headers, and the mobile call bar have separate tokens.
-- A low-contrast CSS grid motif is available for industrial texture without using stock graphics or generated SVG artwork.
+- Light and dark technical-grid motifs provide industrial texture without stock photography or fabricated project proof.
 
 ## Responsive architecture
 
@@ -500,12 +520,16 @@ The register separates non-engineering decisions (business, product, content, an
 | T-039 | Rendered navigation may contain only implemented substantive destinations. Publish `/services` as the hub for implemented service routes; reintroduce Residential, Projects, or Resources only when their destination pages exist; and filter planned legal navigation until Phase 4 publishes those routes. | Active | Phase 3 integration audit |
 | T-040 | Preserve tracked phone coverage across new pages with two static regressions: every primary navigation destination must be registered as published, and source files outside the CTA primitive may not emit `site.phoneHref` or literal `tel:` links directly. | Active | Phase 3 integration audit |
 | T-041 | Keep `publishedRoutes` as the substantive crawl-surface source. Register the completed homepage and core Phase 3 pages; withhold `/request-service` under T-037 and withhold planned routes until their public content exists. | Active | Phase 3.1–3.9 integration |
-| D-001 | Use deep navy, construction orange, light gray canvas, and white surfaces. | Active | Phase 1.3 |
-| D-002 | Use the darker `#b64f1f` accent for accessible white CTA text. | Active | Phase 1.3 |
-| D-003 | Use system fonts rather than remote font dependencies. | Active | Phase 1.3 |
-| D-004 | Use restrained radii, clear rails, subtle grids, and limited motion for an industrial/local character. | Active | Phase 1.3 |
-| D-005 | Use a typography-led 1200×630 default social card with no invented project photography, logo mark, equipment, or unsupported claims. | Active | Phase 1.4 |
+| D-001 | Use deep navy, construction orange, light gray canvas, and white surfaces. | Superseded by D-007 | Phase 1.3 |
+| D-002 | Use the darker `#b64f1f` accent for accessible white CTA text. | Superseded by D-007 | Phase 1.3 |
+| D-003 | Use system fonts rather than remote font dependencies. | Superseded by D-008 | Phase 1.3 |
+| D-004 | Use restrained radii, clear rails, subtle grids, and limited motion for an industrial/local character. | Superseded by D-009 | Phase 1.3 |
+| D-005 | Use a typography-led 1200×630 default social card with no invented project photography, logo mark, equipment, or unsupported claims. | Superseded by D-010 | Phase 1.4 |
 | D-006 | Use restrained homepage hero motion only as progressive enhancement and honor reduced-motion preferences; do not require animation for content comprehension or conversion. | Active | Phase 3.1 |
+| D-007 | Use the supplied brand guide's Bedrock `#2b2825`, Trench Green `#4d5442`, Excavation Gold `#d3a956`, and Porcelain `#f7eddf` as the canonical website palette; derive supporting interaction and surface values from that warm family. | Active | Design revamp, August 11, 2026 |
+| D-008 | Request Sonar Sans for display and Source Sans 3 for body copy without remote font dependencies. Until licensed webfont files are supplied, use Avenir Next and system fallbacks. | Active with font-file follow-up | Design revamp, August 11, 2026 |
+| D-009 | Use the logo's squared forms, circles, underground-line cues, gold rails, and technical grids throughout the shell and content pages. Keep project photography absent until approved real assets exist. | Active | Design revamp, August 11, 2026 |
+| D-010 | Use the supplied OFC artwork in the header, hero, footer, metadata icon, and regenerated 1200×630 social card. Keep all website logo exports as outlined SVG artwork so they do not depend on proprietary fonts at runtime. | Active | Design revamp, August 11, 2026 |
 | R-001 | Replace weak Wix URL names with descriptive service and service-area routes; preserve old traffic through 301 redirects at launch. | Active plan | Phase 0.6 |
 
 ## Expected future architectural additions
@@ -544,3 +568,4 @@ These are planned boundaries, not implemented architecture:
 | August 11, 2026 | Phases 2.1, 2.4, and 2.6 complete | Verified the protected Vercel Preview end to end with representative no-photo and photo requests. Provider-gated same-page confirmation appeared for both, both internal messages reached the sole testing recipient, and `project-photo-1.jpg` arrived and opened successfully. This changed no runtime architecture; it closed the external delivery gates while retaining the test-contact production block, public abuse-control gate, retention-policy input, and paused Phase 2.5 analytics activation. |
 | August 11, 2026 | Phase 3.1–3.9 controlled integration | Integrated the contributed core pages into the validated Phase 2.6 branch instead of replacing it. Added substantive home, services, service-intent, commercial, service-area, Toledo, and About routes; typed shared service/location content renderers; published-route registration; customer-facing copy; and tracked CTA enforcement. Removed rendered navigation links to unimplemented destinations and added `/services` as their implemented hub. Preserved the Phase 2 form, Sharp normalization, Resend delivery, confirmation, test-contact production guard, and dormant analytics contract. Phases 3.2 and 3.9 remain open for real proof and authentic owner-approved facts. The integrated system passed 42 tests, lint, a 17-route production build, desktop rendering checks, and 390×844 mobile interaction/overflow checks. |
 | August 11, 2026 | Phase 3 integration Preview verification | Verified the deployed branch across all 12 content/conversion routes at desktop and 390×844 mobile sizes. Metadata, canonicals, one-H1 structure, navigation, tracked phone attributes, horizontal overflow, the four-audience Request Service form, optional photo input, and browser console all passed. Vercel SSO and `x-robots-tag: noindex` provide the required Preview crawl protection. No runtime architecture changed, and no new lead was submitted because the unchanged Phase 2 provider handoff was already verified. |
+| August 11, 2026 | Brand-guided design revamp | Replaced the provisional navy/orange system with the supplied Bedrock, Trench Green, Excavation Gold, and Porcelain palette. Extracted the primary, monogram, and mark artwork into outlined standard/reverse SVGs; added a typed logo wrapper, shared page hero, FAQ, and conversion-band components; redesigned the global shell and every implemented content/conversion route; regenerated the social card; and preserved the existing route, analytics, form, upload, and delivery architecture. |

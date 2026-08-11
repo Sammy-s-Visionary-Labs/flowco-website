@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { CallLink, RequestServiceLink } from "@/components/ui/CtaLink";
+import { ConversionBand } from "@/components/ui/ConversionBand";
+import { PageHero } from "@/components/ui/PageHero";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
 import { createPageMetadata } from "@/lib/seo";
@@ -21,39 +21,15 @@ export const metadata = createPageMetadata({
 export default function ServicesPage() {
   return (
     <>
-      <Section spacing="compact" tone="surface">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: "Home" },
-            { label: "Services" },
-          ]}
-        />
-
-        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.7fr)] lg:items-end lg:gap-14">
-          <SectionHeading
-            as="h1"
-            className="max-w-4xl"
-            description={`${site.name} handles focused underground sewer, water, drainage, excavation, and utility work for homes, businesses, contractors, and municipalities throughout ${site.serviceArea}.`}
-            eyebrow={`${site.serviceArea} underground utility work`}
-            title="Services"
-          />
-
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <CallLink
-              analyticsLocation="page_content"
-              className="w-full"
-              label={`Call ${site.phone}`}
-              size="lg"
-            />
-            <RequestServiceLink
-              analyticsLocation="page_content"
-              className="w-full"
-              size="lg"
-              variant="outline"
-            />
-          </div>
-        </div>
-      </Section>
+      <PageHero
+        breadcrumbs={[
+          { href: "/", label: "Home" },
+          { label: "Services" },
+        ]}
+        description={`${site.name} handles focused underground sewer, water, drainage, excavation, and utility work for homes, businesses, contractors, and municipalities throughout ${site.serviceArea}.`}
+        eyebrow={`${site.serviceArea} underground utility work`}
+        title="Services"
+      />
 
       <Section className="industrial-grid" spacing="default">
         <SectionHeading
@@ -63,66 +39,65 @@ export default function ServicesPage() {
           title="Underground work built around the property"
         />
 
-        <ul className="mt-10 divide-y divide-line border-y border-line" role="list">
-          {coreServicePages.map((page) => (
-            <li className="py-6 sm:py-7" key={page.path}>
+        <ul className="mt-12 grid gap-4 md:grid-cols-2" role="list">
+          {coreServicePages.map((page, index) => (
+            <li key={page.path}>
               <Link
-                className="font-display text-xl font-black tracking-[-0.03em] text-brand-deep underline decoration-transparent underline-offset-4 transition-colors hover:decoration-accent sm:text-2xl"
+                className="brand-card group flex min-h-64 flex-col p-6 transition-transform hover:-translate-y-1 hover:border-accent sm:p-8"
                 href={page.path}
               >
-                {page.label}
+                <span className="text-[0.6875rem] font-black tracking-[0.18em] text-accent-deep">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="mt-8 block max-w-md font-display text-2xl font-black leading-none tracking-[-0.04em] text-brand-deep sm:text-3xl">
+                  {page.label}
+                </span>
+                <span className="mt-4 block max-w-xl text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
+                  {page.scopeDescription}
+                </span>
+                <span aria-hidden="true" className="mt-auto pt-8 text-2xl text-accent-deep">
+                  →
+                </span>
               </Link>
-              <p className="mt-3 max-w-3xl text-base leading-7 text-ink-muted sm:leading-8">
-                {page.scopeDescription}
-              </p>
             </li>
           ))}
         </ul>
       </Section>
 
-      <Section spacing="default" tone="surface">
-        <Eyebrow>Commercial and partner work</Eyebrow>
-        <h2 className="mt-5 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-none tracking-[-0.045em] text-brand-deep text-balance">
-          Planning work for a business, contractor, or municipality?
-        </h2>
-        <p className="mt-5 max-w-3xl text-base leading-7 text-ink-muted sm:text-lg sm:leading-8">
-          Start with the commercial services pathway for organization details,
-          project context, and underground utility scopes that involve property
-          teams or project partners.
-        </p>
-        <Link
-          className="mt-7 inline-flex min-h-11 items-center font-bold text-brand underline decoration-accent/40 underline-offset-4 transition-colors hover:decoration-accent"
-          href="/commercial"
-        >
-          Explore commercial services
-        </Link>
-      </Section>
-
-      <Section className="industrial-grid-inverse" spacing="spacious" tone="brand">
-        <div className="max-w-3xl">
-          <Eyebrow tone="light">Start a service request</Eyebrow>
-          <h2 className="mt-5 font-display text-[clamp(2.25rem,5vw,3.75rem)] font-black leading-[0.96] tracking-[-0.045em] text-balance">
-            Need underground utility help in {site.serviceArea}?
-          </h2>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8">
-            Call {site.name} or tell us the property location and what is going
-            wrong. Photos are optional.
-          </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <CallLink
-              analyticsLocation="page_content"
-              label={`Call ${site.phone}`}
-              size="lg"
-              variant="accent"
-            />
-            <RequestServiceLink
-              analyticsLocation="page_content"
-              size="lg"
-              variant="outline-inverse"
-            />
+      <Section className="industrial-grid-inverse" spacing="default" tone="brand">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-end lg:gap-16">
+          <div>
+            <Eyebrow tone="light">Commercial and partner work</Eyebrow>
+            <h2 className="mt-6 font-display text-[clamp(2.5rem,5vw,4.75rem)] font-black leading-[0.9] tracking-[-0.055em] text-canvas text-balance">
+              Planning work for a business, contractor, or municipality?
+            </h2>
+          </div>
+          <div className="border-l-4 border-accent pl-5 sm:pl-8">
+            <p className="text-base leading-7 text-canvas/72 sm:text-lg sm:leading-8">
+              Start with the commercial services pathway for organization
+              details, project context, and underground utility scopes that
+              involve property teams or project partners.
+            </p>
+            <Link
+              className="mt-7 inline-flex min-h-12 items-center border-b-2 border-accent text-xs font-black uppercase tracking-[0.1em] text-accent-light transition-colors hover:text-canvas"
+              href="/commercial"
+            >
+              Explore commercial services →
+            </Link>
           </div>
         </div>
       </Section>
+
+      <ConversionBand
+        body={
+          <>
+            Call {site.name} or tell us the property location and what is going
+            wrong. Photos are optional.
+          </>
+        }
+        eyebrow="Start a service request"
+        title={`Need underground utility help in ${site.serviceArea}?`}
+      />
     </>
   );
 }

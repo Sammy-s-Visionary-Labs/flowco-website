@@ -13,10 +13,10 @@ type SectionProps = ComponentPropsWithoutRef<"section"> & {
 };
 
 const toneStyles: Record<SectionTone, string> = {
-  brand: "bg-brand-deep text-white",
+  brand: "bg-brand-deep text-canvas",
   canvas: "bg-canvas text-ink",
   muted: "bg-surface-muted text-ink",
-  surface: "bg-white text-ink",
+  surface: "bg-surface text-ink",
 };
 
 const spacingStyles: Record<SectionSpacing, string> = {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   CallLink,
   PhoneLink,
@@ -19,23 +20,20 @@ export function SiteFooter() {
   );
 
   return (
-    <footer className="site-footer industrial-grid-inverse bg-brand-deep text-white">
+    <footer className="site-footer industrial-grid-inverse border-t-4 border-accent bg-brand-deep text-canvas">
       <Container className="py-12 sm:py-14 lg:py-16">
         <div className="grid gap-11 lg:grid-cols-12 lg:gap-8">
           <section aria-labelledby="footer-company-heading" className="lg:col-span-5">
-            <div className="border-l-4 border-accent pl-4">
-              <h2
-                className="font-display text-2xl font-black tracking-[-0.025em]"
-                id="footer-company-heading"
-              >
-                {site.name}
-              </h2>
-              <p className="mt-1 text-sm font-medium text-white/70">
-                {site.tagline}
-              </p>
-            </div>
+            <h2 className="sr-only" id="footer-company-heading">
+              {site.name}
+            </h2>
+            <BrandLogo
+              alt={site.name}
+              className="h-auto w-full max-w-[17rem]"
+              variant="primary-reverse"
+            />
 
-            <p className="mt-6 max-w-md text-sm leading-6 text-white/75">
+            <p className="mt-6 max-w-md border-l-2 border-accent pl-4 text-sm leading-6 text-canvas/72">
               Underground sewer, water line, drainage, and excavation work for
               homes, businesses, and properties across {site.serviceArea}.
             </p>
@@ -43,12 +41,12 @@ export function SiteFooter() {
             <address className="mt-5 space-y-2 not-italic">
               <PhoneLink
                 analyticsLocation="footer_contact"
-                className="flex min-h-11 w-fit items-center text-base font-bold text-white underline decoration-white/35 underline-offset-4 transition-colors hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="flex min-h-11 w-fit items-center text-base font-bold text-canvas underline decoration-canvas/35 underline-offset-4 transition-colors hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 {site.phone}
               </PhoneLink>
               <a
-                className="flex min-h-11 w-fit items-center break-all text-sm text-white/75 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="flex min-h-11 w-fit items-center break-all text-sm text-canvas/72 underline decoration-canvas/25 underline-offset-4 transition-colors hover:text-canvas hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
                 href={`mailto:${site.email}`}
               >
                 {site.email}
@@ -70,7 +68,7 @@ export function SiteFooter() {
             className="lg:col-span-3 lg:pl-4"
           >
             <h2
-              className="text-xs font-extrabold uppercase tracking-[0.16em] text-white/55"
+              className="text-xs font-extrabold uppercase tracking-[0.16em] text-accent-light"
               id="footer-navigation-heading"
             >
               Explore
@@ -79,7 +77,7 @@ export function SiteFooter() {
               {navigation.main.map((item) => (
                 <li key={item.href}>
                   <Link
-                    className="inline-flex min-h-11 items-center font-semibold text-white/80 underline decoration-transparent underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                    className="inline-flex min-h-11 items-center font-semibold text-canvas/78 underline decoration-transparent underline-offset-4 transition-colors hover:text-canvas hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
                     href={item.href}
                   >
                     {item.label}
@@ -88,7 +86,7 @@ export function SiteFooter() {
               ))}
               <li className="col-span-2 mt-1 lg:col-span-1">
                 <Link
-                  className="inline-flex min-h-11 items-center font-bold text-accent-light underline decoration-accent/50 underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                  className="inline-flex min-h-11 items-center font-bold text-accent-light underline decoration-accent/50 underline-offset-4 transition-colors hover:text-canvas hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
                   data-analytics-event={analyticsEventNames.requestServiceClick}
                   data-analytics-location="footer_nav"
                   href={navigation.cta.href}
@@ -101,7 +99,7 @@ export function SiteFooter() {
 
           <section aria-labelledby="footer-service-area-heading" className="lg:col-span-4">
             <h2
-              className="text-xs font-extrabold uppercase tracking-[0.16em] text-white/55"
+              className="text-xs font-extrabold uppercase tracking-[0.16em] text-accent-light"
               id="footer-service-area-heading"
             >
               Service Area
@@ -110,22 +108,22 @@ export function SiteFooter() {
             <ul className="mt-4 flex flex-wrap gap-2" role="list">
               {site.primaryCities.map((city) => (
                 <li
-                  className="rounded-sm border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-white/75"
+                  className="rounded-sm border border-canvas/15 bg-brand/35 px-3 py-2 text-sm font-medium text-canvas/75"
                   key={city}
                 >
                   {city}
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-sm leading-6 text-white/60">
+            <p className="mt-5 text-sm leading-6 text-canvas/58">
               Also serving surrounding communities. {site.name} is a service-area
               contractor and does not maintain a public storefront.
             </p>
           </section>
         </div>
 
-        <div className="mt-12 border-t border-white/15 pt-7 sm:mt-14 sm:flex sm:items-center sm:justify-between sm:gap-6">
-          <p className="text-xs leading-5 text-white/50">
+        <div className="mt-12 border-t border-canvas/15 pt-7 sm:mt-14 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <p className="text-xs leading-5 text-canvas/48">
             © {new Date().getFullYear()} {site.legalName}. All rights reserved.
           </p>
           {publishedLegalNavigation.length > 0 ? (
@@ -134,7 +132,7 @@ export function SiteFooter() {
                 {publishedLegalNavigation.map((item) => (
                   <li key={item.href}>
                     <Link
-                      className="inline-flex min-h-11 items-center text-xs font-semibold text-white/60 underline decoration-transparent underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                      className="inline-flex min-h-11 items-center text-xs font-semibold text-canvas/60 underline decoration-transparent underline-offset-4 transition-colors hover:text-canvas hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
                       href={item.href}
                     >
                       {item.label}

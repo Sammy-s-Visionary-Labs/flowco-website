@@ -10,10 +10,10 @@ type SurfaceProps = ComponentPropsWithoutRef<"div"> & {
 
 const toneStyles: Record<SurfaceTone, string> = {
   "accent-edge":
-    "relative overflow-hidden border border-line bg-white shadow-panel before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-accent",
-  brand: "border border-brand bg-brand text-white shadow-panel",
+    "relative overflow-hidden border border-line bg-surface shadow-panel before:absolute before:inset-x-0 before:top-0 before:h-1.5 before:bg-accent",
+  brand: "border border-brand bg-brand text-canvas shadow-panel",
   muted: "border border-line bg-surface-muted text-ink",
-  surface: "border border-line bg-white text-ink shadow-panel",
+  surface: "border border-line bg-surface text-ink shadow-panel",
 };
 
 const paddingStyles: Record<SurfacePadding, string> = {
@@ -30,7 +30,7 @@ export function Surface({
 }: SurfaceProps) {
   return (
     <div
-      className={`rounded-md ${toneStyles[tone]} ${paddingStyles[padding]} ${className}`}
+      className={`rounded-sm ${toneStyles[tone]} ${paddingStyles[padding]} ${className}`}
       {...props}
     />
   );

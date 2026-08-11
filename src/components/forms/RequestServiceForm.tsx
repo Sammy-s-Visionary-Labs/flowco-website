@@ -38,7 +38,7 @@ const fieldLabels: Record<RequestServiceFieldName, string> = {
 };
 
 const inputStyles =
-  "min-h-12 w-full rounded-sm border border-line-strong bg-white px-3.5 py-2.5 text-base text-ink shadow-sm transition-colors placeholder:text-ink-subtle/75 hover:border-brand/55 focus:border-brand aria-invalid:border-accent-deep aria-invalid:bg-accent-soft/40 disabled:cursor-not-allowed disabled:bg-surface-muted";
+  "min-h-12 w-full rounded-sm border-2 border-line-strong bg-surface px-3.5 py-2.5 text-base text-ink shadow-sm transition-colors placeholder:text-ink-subtle/75 hover:border-brand/60 focus:border-accent focus:ring-2 focus:ring-accent/20 aria-invalid:border-accent-deep aria-invalid:bg-accent-soft/40 disabled:cursor-not-allowed disabled:bg-surface-muted";
 
 function fieldDescriptionIds(
   fieldName: RequestServiceFieldName,
@@ -238,7 +238,7 @@ export function RequestServiceForm() {
       <div
         ref={feedbackRef}
         aria-labelledby="request-service-confirmation-heading"
-        className="space-y-8 rounded-md border border-brand/20 bg-surface-muted p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent sm:p-8"
+        className="space-y-8 rounded-sm border border-brand/20 border-t-4 border-t-accent bg-surface-muted p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent sm:p-8"
         id="request-form"
         role="status"
         tabIndex={-1}
@@ -264,8 +264,8 @@ export function RequestServiceForm() {
             What happens next
           </h3>
           <ol className="mt-4 grid gap-4 sm:grid-cols-2">
-            <li className="rounded-sm border border-line bg-white p-4">
-              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-black text-white">
+            <li className="rounded-sm border border-line bg-surface p-4">
+              <span className="flex size-8 items-center justify-center bg-accent text-sm font-black text-brand-deep">
                 1
               </span>
               <p className="mt-3 font-extrabold text-brand-deep">
@@ -276,8 +276,8 @@ export function RequestServiceForm() {
                 photos you provided.
               </p>
             </li>
-            <li className="rounded-sm border border-line bg-white p-4">
-              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-black text-white">
+            <li className="rounded-sm border border-line bg-surface p-4">
+              <span className="flex size-8 items-center justify-center bg-accent text-sm font-black text-brand-deep">
                 2
               </span>
               <p className="mt-3 font-extrabold text-brand-deep">
@@ -303,7 +303,7 @@ export function RequestServiceForm() {
             .
           </p>
           <button
-            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-sm border border-line-strong bg-white px-4 py-2 text-sm font-bold text-brand-deep transition-colors hover:border-brand hover:bg-surface focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-brand bg-surface px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-brand-deep transition-colors hover:bg-brand hover:text-canvas focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
             onClick={handleStartAnotherRequest}
             type="button"
           >
@@ -535,7 +535,7 @@ export function RequestServiceForm() {
         </p>
 
         <div
-          className={`audience-switcher rounded-md border bg-white p-4 sm:p-5 ${
+          className={`audience-switcher rounded-sm border bg-surface p-4 sm:p-5 ${
             visibleFieldErrors.audience
               ? "border-accent-deep bg-accent-soft/20"
               : "border-line"
@@ -822,7 +822,7 @@ export function RequestServiceForm() {
               showPhotoReselectionNotice ? ["photos-reset"] : [],
             )}
             aria-invalid={Boolean(visibleFieldErrors.photos)}
-            className={`${inputStyles} mt-2 cursor-pointer py-2 file:mr-4 file:rounded-sm file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-brand-soft`}
+            className={`${inputStyles} mt-2 cursor-pointer py-2 file:mr-4 file:rounded-sm file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-canvas hover:file:bg-brand-soft`}
             id="photos"
             key={`photos-${state.attempt}`}
             multiple
@@ -833,7 +833,7 @@ export function RequestServiceForm() {
           />
           {photosWereReselected ? (
             <button
-              className="mt-3 inline-flex min-h-11 items-center justify-center rounded-sm border border-line-strong bg-white px-4 py-2 text-sm font-bold text-brand-deep transition-colors hover:border-brand hover:bg-surface-muted focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="mt-3 inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-line-strong bg-surface px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-brand-deep transition-colors hover:border-brand hover:bg-surface-muted focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
               onClick={handleRemovePhotos}
               type="button"
             >
@@ -906,7 +906,7 @@ export function RequestServiceForm() {
 
       <div className="border-t border-line pt-6">
         <button
-          className="inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-sm border border-accent bg-accent px-6 py-3.5 text-base font-extrabold text-white shadow-control transition-colors hover:border-accent-strong hover:bg-accent-strong focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-wait disabled:border-ink-subtle disabled:bg-ink-subtle sm:w-auto"
+          className="inline-flex min-h-[3.5rem] w-full items-center justify-center rounded-sm border-2 border-accent bg-accent px-6 py-3.5 text-sm font-black uppercase tracking-[0.09em] text-brand-deep shadow-control transition-colors hover:border-accent-light hover:bg-accent-light focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-wait disabled:border-ink-subtle disabled:bg-ink-subtle disabled:text-canvas sm:w-auto"
           disabled={isPending || Boolean(clientPhotoError)}
           type="submit"
         >

@@ -1,7 +1,10 @@
 export { Breadcrumbs } from "./Breadcrumbs";
 export type { BreadcrumbItem } from "./Breadcrumbs";
+export { ConversionBand } from "./ConversionBand";
 export { Container } from "./Container";
 export type { ContainerSize } from "./Container";
+export { FaqList } from "./FaqList";
+export { PageHero } from "./PageHero";
 export { Section } from "./Section";
 export { Eyebrow, SectionHeading } from "./SectionHeading";
 export { Surface } from "./Surface";
