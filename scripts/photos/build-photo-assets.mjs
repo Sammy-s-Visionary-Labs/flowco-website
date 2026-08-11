@@ -38,22 +38,33 @@ const photos = [
       "020-crane-lifting-concrete-norwalk-concrete-blocks-construction-site-sunny-d-023dd5cc.jpg",
     output: "commercial-precast-work.webp",
   },
+  {
+    input: "021-sewer-line-clean-out-e3b23039.jpg",
+    output: "sewer-installation-survey.webp",
+  },
+  {
+    dimension: 1200,
+    input: "025-old-website-image-ba0c3945.jpg",
+    output: "neighborhood-excavation.webp",
+    quality: 76,
+  },
 ];
 
 await mkdir(outputRoot, { recursive: true });
 
 for (const photo of photos) {
   const outputPath = join(outputRoot, photo.output);
+  const dimension = photo.dimension ?? 1440;
 
   await sharp(join(sourceRoot, photo.input))
     .rotate()
     .resize({
       fit: "inside",
-      height: 1440,
-      width: 1440,
+      height: dimension,
+      width: dimension,
       withoutEnlargement: true,
     })
-    .webp({ effort: 6, quality: 78 })
+    .webp({ effort: 6, quality: photo.quality ?? 78 })
     .toFile(outputPath);
 
   console.log(`Created ${outputPath}`);

@@ -4,9 +4,11 @@ import { ConversionBand } from "@/components/ui/ConversionBand";
 import { PageHero } from "@/components/ui/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
+import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import { publishedLocationPages } from "@/lib/location-pages";
 import { createPageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
+import { workPhotos } from "@/lib/work-photos";
 
 export const metadata = createPageMetadata({
   title: `Service Areas in ${site.serviceArea}`,
@@ -28,12 +30,19 @@ export default function ServiceAreasPage() {
       />
 
       <Section className="industrial-grid" spacing="default">
-        <SectionHeading
-          as="h2"
-          description="Explore detailed service information for the communities at the center of our Northwest Ohio coverage."
-          eyebrow="Local coverage"
-          title="Featured service areas"
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(22rem,1.12fr)] lg:items-start lg:gap-16">
+          <SectionHeading
+            as="h2"
+            description="Explore detailed service information for the communities at the center of our Northwest Ohio coverage."
+            eyebrow="Local coverage"
+            title="Featured service areas"
+          />
+
+          <WorkPhoto
+            className="w-full max-w-3xl"
+            photo={workPhotos.neighborhoodExcavation}
+          />
+        </div>
 
         <ul className="mt-12 grid gap-5" role="list">
           {publishedLocationPages.map((page, index) => (

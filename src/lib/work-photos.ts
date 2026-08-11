@@ -18,6 +18,12 @@ export const workPhotos = {
     caption: "Equipment staged for the next underground field assignment.",
     aspect: "landscape",
   },
+  neighborhoodExcavation: {
+    src: "/work/neighborhood-excavation.webp",
+    alt: "Yellow excavator working at an established residential property",
+    caption: "Excavation equipment working within an established-property site.",
+    aspect: "landscape",
+  },
   residentialExcavation: {
     src: "/work/residential-excavation.webp",
     alt: "Two compact excavators staged on a gravel residential work site",
@@ -35,6 +41,12 @@ export const workPhotos = {
     alt: "Green sewer pipe being installed in an open residential trench",
     caption: "New sewer pipe placed and prepared for a dependable connection.",
     aspect: "portrait",
+  },
+  sewerInstallationSurvey: {
+    src: "/work/sewer-installation-survey.webp",
+    alt: "Worker using a survey pole beside green sewer pipe and a cleanout in an open trench",
+    caption: "Layout and elevation checks alongside open sewer-line work.",
+    aspect: "landscape",
   },
   stormwaterInstallation: {
     src: "/work/stormwater-installation.webp",

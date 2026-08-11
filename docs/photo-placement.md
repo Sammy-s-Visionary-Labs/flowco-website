@@ -1,7 +1,7 @@
 # Photo placement review
 
 This review covers every raster image in `assets/old-website-images`. The source
-archive remains untracked and is not shipped with the site. Only the six selected
+archive remains untracked and is not shipped with the site. Only the eight selected
 images are re-encoded as optimized WebP derivatives in `public/work`.
 
 ## Implemented placement map
@@ -14,6 +14,8 @@ images are re-encoded as optimized WebP derivatives in `public/work`.
 | 011 | Stormwater and drainage | Service scope introduction | Precast structure and crane work best represent larger drainage infrastructure. |
 | 017 | Excavation and trenching | Service scope introduction; homepage field gallery | Strong, authentic equipment photo at a residential work site. |
 | 020 | Commercial | Service scope introduction; homepage field gallery | Commercial-scale crane and precast work clearly distinguishes the partner/project pathway. |
+| 021 | Services | Core services introduction | The installed green sewer line and survey work add process credibility to a previously photo-free overview page. |
+| 025 | Service Areas | Local coverage introduction | An established-property excavation scene adds field context without assigning the unverified project location to a specific city. |
 
 The water-service-line page intentionally has no supplied photo. None of the
 authentic images clearly proves water-line work, and using a sewer or generic
@@ -43,11 +45,11 @@ AI image there would be misleading.
 | 018 | Illustrated excavator graphic with old branding and copy errors. | Exclude. It conflicts with the current identity and photography-led direction. |
 | 019 | Worker inspecting or clearing a manhole with cable equipment. | Hold. Authentic and useful for sewer investigation, but it could imply drain-cleaning services beyond the current confirmed scope. |
 | 020 | Crane crew handling precast structures at a commercial site. | Select for Commercial and the homepage field gallery. |
-| 021 | Residential green-pipe trench with a survey pole and third-party engineering truck. | Hold. Strong process evidence, but third-party branding and identifiable property context make 007 preferable. |
+| 021 | Residential green-pipe trench with a survey pole and third-party engineering truck. | Select for the Services hub. Keep the caption focused on visible survey and installation work without identifying the property, crew, or company shown on the truck. |
 | 022 | Low-angle excavator and pipe trench; synthetic appearance. | Exclude. |
 | 023 | Worker placing black pipe in a garden trench; synthetic stock appearance. | Exclude. |
 | 024 | Worker and surveying equipment looking into an implausible tunnel; synthetic appearance. | Exclude. |
-| 025 | Excavator at an active urban residential site with a person posing beside it. | Hold. Authentic, but the composition and visible safety presentation are weaker than 017. |
+| 025 | Excavator at an active urban residential site with a person posing beside it. | Select for the Service Areas hub as general established-property field work. Do not claim a precise city or customer. |
 | 026 | Large open-pit desert excavation; synthetic appearance. | Exclude. It misrepresents the company’s local utility scale and setting. |
 | 027 | Attributed stock photo of water discharging from a pipe into a pond. | Exclude. It is not an Ohio Flow Co project and reuse rights need separate verification. |
 | 028 | Attributed stock close-up of a sewer cover. | Exclude. It adds little project credibility and reuse rights need separate verification. |
@@ -55,7 +57,7 @@ AI image there would be misleading.
 ## Publishing safeguards
 
 - The archive notes that ownership or license transfer was not independently
-  verified. Confirm that Ohio Flow Co owns or may reuse the six selected photos
+  verified. Confirm that Ohio Flow Co owns or may reuse the eight selected photos
   before merging this review branch into production.
 - Several originals contain EXIF data and five contain GPS coordinates. The
   build script rotates from source orientation, re-encodes to WebP, and does not

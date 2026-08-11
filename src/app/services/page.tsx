@@ -4,9 +4,11 @@ import { ConversionBand } from "@/components/ui/ConversionBand";
 import { PageHero } from "@/components/ui/PageHero";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
+import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import { createPageMetadata } from "@/lib/seo";
 import { publishedServicePages } from "@/lib/service-pages";
 import { site } from "@/lib/site";
+import { workPhotos } from "@/lib/work-photos";
 
 const coreServicePages = publishedServicePages.filter((page) =>
   page.path.startsWith("/services/"),
@@ -32,12 +34,19 @@ export default function ServicesPage() {
       />
 
       <Section className="industrial-grid" spacing="default">
-        <SectionHeading
-          as="h2"
-          description="Choose the service that best matches the problem or project. If you are not sure where to start, send a service request with the location and what you are seeing."
-          eyebrow="Core services"
-          title="Underground work built around the property"
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(22rem,1.12fr)] lg:items-start lg:gap-16">
+          <SectionHeading
+            as="h2"
+            description="Choose the service that best matches the problem or project. If you are not sure where to start, send a service request with the location and what you are seeing."
+            eyebrow="Core services"
+            title="Underground work built around the property"
+          />
+
+          <WorkPhoto
+            className="w-full max-w-3xl"
+            photo={workPhotos.sewerInstallationSurvey}
+          />
+        </div>
 
         <ul className="mt-12 grid gap-4 md:grid-cols-2" role="list">
           {coreServicePages.map((page, index) => (
