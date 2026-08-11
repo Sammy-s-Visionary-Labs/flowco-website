@@ -69,6 +69,13 @@ export function isAnalyticsLocation(
   return analyticsLocations.includes(value as AnalyticsLocation);
 }
 
+export function getPhoneAnalyticsAttributes(location: AnalyticsLocation) {
+  return {
+    "data-analytics-event": analyticsEventNames.phoneClick,
+    "data-analytics-location": location,
+  } as const;
+}
+
 export function trackPageView(pathname: string) {
   pushAnalyticsEvent({
     event: analyticsEventNames.pageView,

@@ -1,11 +1,19 @@
+export const contactDataStatus = {
+  mode: "testing",
+  productionReady: false,
+  replacementRequirement:
+    "Replace the test phone, phone link, public email, and lead recipient with owner-confirmed contact data before production launch.",
+} as const;
+
 export const site = {
   name: "Ohio Flow Co",
   legalName: "Ohio Flow Co",
   tagline: "Keeping Northwest Ohio Flowing.",
   domain: "https://www.toledosewerandwater.com",
-  phone: "(567) 358-1055",
-  phoneHref: "tel:+15673581055",
-  email: "Ohioflowcollc@gmail.com",
+  // TEST ONLY: replace these three contact values before production launch.
+  phone: "(419) 486-9657",
+  phoneHref: "tel:+14194869657",
+  email: "needytrooper04@gmail.com",
   serviceArea: "Northwest Ohio",
   primaryCities: [
     "Toledo",
@@ -39,7 +47,10 @@ export const navigation = {
 };
 
 export const leadDelivery = {
+  provider: "resend",
   recipientEmail: site.email,
+  senderEmail: "requests@notifications.ohioflowco.com",
+  senderName: site.name,
 } as const;
 
 export const confirmedServices = [

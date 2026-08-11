@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-import { CallLink, RequestServiceLink } from "@/components/ui/CtaLink";
+import {
+  CallLink,
+  PhoneLink,
+  RequestServiceLink,
+} from "@/components/ui/CtaLink";
 import { Container } from "@/components/ui/Container";
 import { analyticsEventNames } from "@/lib/analytics";
 import { navigation, site } from "@/lib/site";
@@ -29,14 +33,12 @@ export function SiteFooter() {
             </p>
 
             <address className="mt-5 space-y-2 not-italic">
-              <a
+              <PhoneLink
+                analyticsLocation="footer_contact"
                 className="flex min-h-11 w-fit items-center text-base font-bold text-white underline decoration-white/35 underline-offset-4 transition-colors hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
-                data-analytics-event={analyticsEventNames.phoneClick}
-                data-analytics-location="footer_contact"
-                href={site.phoneHref}
               >
                 {site.phone}
-              </a>
+              </PhoneLink>
               <a
                 className="flex min-h-11 w-fit items-center break-all text-sm text-white/75 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
                 href={`mailto:${site.email}`}

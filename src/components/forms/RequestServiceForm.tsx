@@ -4,10 +4,13 @@ import type { ChangeEvent, FocusEvent } from "react";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import { submitRequestServiceAction } from "@/app/request-service/actions";
+import { PhoneLink } from "@/components/ui/CtaLink";
 import {
+  getRequestServicePhotoMetadataError,
   requestAudienceOptions,
   initialRequestServiceSubmissionState,
   referralSourceOptions,
+  requestServicePhotoLimits,
   residentialRelationshipOptions,
   type RequestServiceFieldName,
   requestServiceOptions,
@@ -31,6 +34,7 @@ const fieldLabels: Record<RequestServiceFieldName, string> = {
   referralSource: "How you heard about us",
   residentialRelationship: "Relationship to the residential property",
   organizationName: "Company or organization name",
+  photos: "Project photos",
 };
 
 const inputStyles =
@@ -40,10 +44,12 @@ function fieldDescriptionIds(
   fieldName: RequestServiceFieldName,
   hasHint: boolean,
   hasError: boolean,
+  additionalIds: string[] = [],
 ) {
   return [
     hasHint ? `${fieldName}-hint` : null,
     hasError ? `${fieldName}-error` : null,
+    ...additionalIds,
   ]
     .filter(Boolean)
     .join(" ") || undefined;
@@ -59,11 +65,22 @@ export function RequestServiceForm() {
     initialRequestServiceSubmissionState,
   );
   const feedbackRef = useRef<HTMLDivElement>(null);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
   const formStartTrackedRef = useRef(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [restartedAfterAttempt, setRestartedAfterAttempt] = useState<
+    number | null
+  >(null);
   const [audienceSelection, setAudienceSelection] = useState({
     attempt: 0,
     value: "",
   });
+  const [photoSelection, setPhotoSelection] = useState<{
+    attempt: number;
+    clearedByUser?: boolean;
+    error?: string;
+    hasFiles: boolean;
+  }>({ attempt: 0, hasFiles: false });
   const [dismissedErrors, setDismissedErrors] = useState<{
     attempt: number;
     fields: Set<RequestServiceFieldName>;
@@ -85,6 +102,12 @@ export function RequestServiceForm() {
 
     feedbackRef.current?.focus();
   }, [state]);
+
+  useEffect(() => {
+    if (restartedAfterAttempt === state.attempt) {
+      firstFieldRef.current?.focus();
+    }
+  }, [restartedAfterAttempt, state.attempt]);
 
   function handleFormFocus(event: FocusEvent<HTMLFormElement>) {
     if (
@@ -117,6 +140,16 @@ export function RequestServiceForm() {
       });
     }
 
+    if (fieldName === "photos" && event.target instanceof HTMLInputElement) {
+      const files = Array.from(event.target.files ?? []);
+      setPhotoSelection({
+        attempt: state.attempt,
+        clearedByUser: false,
+        error: getRequestServicePhotoMetadataError(files),
+        hasFiles: files.length > 0,
+      });
+    }
+
     setDismissedErrors((current) => {
       const fields =
         current.attempt === state.attempt
@@ -138,11 +171,41 @@ export function RequestServiceForm() {
     });
   }
 
+  function handleRemovePhotos() {
+    if (photoInputRef.current) {
+      photoInputRef.current.value = "";
+    }
+
+    setPhotoSelection({
+      attempt: state.attempt,
+      clearedByUser: true,
+      hasFiles: false,
+    });
+    photoInputRef.current?.focus();
+  }
+
+  function handleStartAnotherRequest() {
+    formStartTrackedRef.current = false;
+    setRestartedAfterAttempt(state.attempt);
+  }
+
   const selectedAudience =
     audienceSelection.attempt === state.attempt
       ? audienceSelection.value
       : state.values.audience;
-  const visibleFieldErrors = Object.fromEntries(
+  const photosWereReselected =
+    photoSelection.attempt === state.attempt && photoSelection.hasFiles;
+  const photosWereClearedByUser =
+    photoSelection.attempt === state.attempt && photoSelection.clearedByUser;
+  const clientPhotoError =
+    photoSelection.attempt === state.attempt
+      ? photoSelection.error
+      : undefined;
+  const showPhotoReselectionNotice =
+    state.photosNeedReselection &&
+    !photosWereReselected &&
+    !photosWereClearedByUser;
+  const visibleServerFieldErrors = Object.fromEntries(
     Object.entries(state.fieldErrors).filter(
       ([fieldName]) => {
         const errorIsForInactiveAudiencePath =
@@ -159,10 +222,97 @@ export function RequestServiceForm() {
       },
     ),
   ) as typeof state.fieldErrors;
+  const visibleFieldErrors = {
+    ...visibleServerFieldErrors,
+    ...(clientPhotoError ? { photos: clientPhotoError } : {}),
+  };
   const errorEntries = Object.entries(visibleFieldErrors) as [
     RequestServiceFieldName,
     string,
   ][];
+  const showConfirmation =
+    state.status === "success" && restartedAfterAttempt !== state.attempt;
+
+  if (showConfirmation) {
+    return (
+      <div
+        ref={feedbackRef}
+        aria-labelledby="request-service-confirmation-heading"
+        className="space-y-8 rounded-md border border-brand/20 bg-surface-muted p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent sm:p-8"
+        id="request-form"
+        role="status"
+        tabIndex={-1}
+      >
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-deep">
+            Request confirmed
+          </p>
+          <h2
+            className="mt-3 font-display text-3xl font-black tracking-[-0.035em] text-brand-deep sm:text-4xl"
+            id="request-service-confirmation-heading"
+          >
+            Your service request has been sent
+          </h2>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-ink-muted">
+            Thank you. Your request was accepted for delivery to {site.name}.
+            You do not need to submit it again.
+          </p>
+        </div>
+
+        <div className="border-t border-line pt-6">
+          <h3 className="font-display text-xl font-black text-brand-deep">
+            What happens next
+          </h3>
+          <ol className="mt-4 grid gap-4 sm:grid-cols-2">
+            <li className="rounded-sm border border-line bg-white p-4">
+              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-black text-white">
+                1
+              </span>
+              <p className="mt-3 font-extrabold text-brand-deep">
+                We review the request
+              </p>
+              <p className="mt-1 text-sm leading-6 text-ink-muted">
+                We’ll review the project location, service details, and any
+                photos you provided.
+              </p>
+            </li>
+            <li className="rounded-sm border border-line bg-white p-4">
+              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-black text-white">
+                2
+              </span>
+              <p className="mt-3 font-extrabold text-brand-deep">
+                We follow up with you
+              </p>
+              <p className="mt-1 text-sm leading-6 text-ink-muted">
+                We’ll use the phone number or email you provided to discuss the
+                work and the appropriate next step.
+              </p>
+            </li>
+          </ol>
+        </div>
+
+        <div className="border-t border-line pt-6">
+          <p className="text-sm leading-6 text-ink-muted">
+            Need to add something or discuss the project now? Call {site.name} at{" "}
+            <PhoneLink
+              analyticsLocation="page_content"
+              className="font-bold text-brand underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+            >
+              {site.phone}
+            </PhoneLink>
+            .
+          </p>
+          <button
+            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-sm border border-line-strong bg-white px-4 py-2 text-sm font-bold text-brand-deep transition-colors hover:border-brand hover:bg-surface focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            onClick={handleStartAnotherRequest}
+            type="button"
+          >
+            Send another request
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
@@ -203,6 +353,18 @@ export function RequestServiceForm() {
               </li>
             ))}
           </ul>
+          {showPhotoReselectionNotice ? (
+            <p className="mt-3">
+              Photo selections were cleared.{" "}
+              <a
+                className="font-semibold text-brand underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+                href="#photos"
+              >
+                Choose them again
+              </a>{" "}
+              before resubmitting.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -218,31 +380,26 @@ export function RequestServiceForm() {
           </h2>
           <p className="mt-1">
             {state.formError} Call{" "}
-            <a
+            <PhoneLink
+              analyticsLocation="page_content"
               className="font-bold text-brand underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
-              href={site.phoneHref}
             >
               {site.phone}
-            </a>
+            </PhoneLink>
             .
           </p>
-        </div>
-      ) : null}
-
-      {state.status === "success" ? (
-        <div
-          ref={feedbackRef}
-          className="rounded-sm border-l-4 border-brand bg-surface-muted p-4 text-sm leading-6 text-ink shadow-sm focus:outline-none focus:ring-2 focus:ring-accent"
-          role="status"
-          tabIndex={-1}
-        >
-          <h2 className="font-display text-lg font-black text-brand-deep">
-            Your request was received
-          </h2>
-          <p className="mt-1">
-            Thank you. We’ll use the contact details you provided to follow up
-            about the project.
-          </p>
+          {showPhotoReselectionNotice ? (
+            <p className="mt-2">
+              Photo selections were cleared.{" "}
+              <a
+                className="font-semibold text-brand underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+                href="#photos"
+              >
+                Choose them again
+              </a>{" "}
+              before resubmitting.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -276,6 +433,7 @@ export function RequestServiceForm() {
             maxLength={100}
             name="fullName"
             onChange={handleFieldChange}
+            ref={firstFieldRef}
             required
             type="text"
           />
@@ -651,6 +809,63 @@ export function RequestServiceForm() {
         </div>
 
         <div>
+          <label className="text-sm font-bold text-brand-deep" htmlFor="photos">
+            Project photos{" "}
+            <span className="font-medium text-ink-muted">(optional)</span>
+          </label>
+          <input
+            accept={requestServicePhotoLimits.acceptValue}
+            aria-describedby={fieldDescriptionIds(
+              "photos",
+              true,
+              Boolean(visibleFieldErrors.photos),
+              showPhotoReselectionNotice ? ["photos-reset"] : [],
+            )}
+            aria-invalid={Boolean(visibleFieldErrors.photos)}
+            className={`${inputStyles} mt-2 cursor-pointer py-2 file:mr-4 file:rounded-sm file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-brand-soft`}
+            id="photos"
+            key={`photos-${state.attempt}`}
+            multiple
+            name="photos"
+            onChange={handleFieldChange}
+            ref={photoInputRef}
+            type="file"
+          />
+          {photosWereReselected ? (
+            <button
+              className="mt-3 inline-flex min-h-11 items-center justify-center rounded-sm border border-line-strong bg-white px-4 py-2 text-sm font-bold text-brand-deep transition-colors hover:border-brand hover:bg-surface-muted focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              onClick={handleRemovePhotos}
+              type="button"
+            >
+              Remove selected photos
+            </button>
+          ) : null}
+          <div className="mt-2 space-y-1 text-xs leading-5 text-ink-muted" id="photos-hint">
+            <p>Add up to 3 photos totaling 3 MB. Use JPG, PNG, or WebP.</p>
+            <p>
+              Upload project photos only—avoid IDs, account documents, or other
+              sensitive information. Photos are handled only with this request
+              and are not added to separate website storage.
+            </p>
+          </div>
+          {showPhotoReselectionNotice ? (
+            <p className="mt-2 text-sm font-semibold text-ink-muted" id="photos-reset">
+              Your other entries were preserved. Photo selections were cleared;
+              choose them again before resubmitting.
+            </p>
+          ) : null}
+          {visibleFieldErrors.photos ? (
+            <p
+              className="mt-2 text-sm font-semibold text-accent-deep"
+              id="photos-error"
+              role={clientPhotoError ? "alert" : undefined}
+            >
+              {visibleFieldErrors.photos}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
           <label
             className="text-sm font-bold text-brand-deep"
             htmlFor="referralSource"
@@ -692,7 +907,7 @@ export function RequestServiceForm() {
       <div className="border-t border-line pt-6">
         <button
           className="inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-sm border border-accent bg-accent px-6 py-3.5 text-base font-extrabold text-white shadow-control transition-colors hover:border-accent-strong hover:bg-accent-strong focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-wait disabled:border-ink-subtle disabled:bg-ink-subtle sm:w-auto"
-          disabled={isPending}
+          disabled={isPending || Boolean(clientPhotoError)}
           type="submit"
         >
           {isPending ? "Sending…" : "Send service request"}

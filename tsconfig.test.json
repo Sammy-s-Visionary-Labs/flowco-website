@@ -12,7 +12,10 @@
   },
   "include": [
     "src/lib/request-service.ts",
+    "src/lib/request-service-photos.ts",
     "src/lib/request-service-submission.ts",
+    "src/lib/request-service-email.ts",
+    "src/lib/analytics.ts",
     "src/lib/site.ts",
     "tests/request-service-validation.test.ts"
   ]

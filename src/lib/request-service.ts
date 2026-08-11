@@ -46,12 +46,22 @@ export const residentialRelationshipOptions = [
   { id: "other", label: "Other" },
 ] as const;
 
+export const requestServicePhotoLimits = {
+  acceptedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+  acceptValue: ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp",
+  maxBytesPerFile: 3 * 1024 * 1024,
+  maxFiles: 3,
+  maxInputPixels: 20_000_000,
+  maxOutputDimension: 1920,
+  maxTotalBytes: 3 * 1024 * 1024,
+} as const;
+
 export type RequestServiceAudience =
   (typeof requestAudienceOptions)[number]["id"];
 export type ResidentialRelationship =
   (typeof residentialRelationshipOptions)[number]["id"];
 
-export type RequestServiceFieldName =
+export type RequestServiceTextFieldName =
   | "fullName"
   | "phone"
   | "email"
@@ -64,10 +74,68 @@ export type RequestServiceFieldName =
   | "residentialRelationship"
   | "organizationName";
 
-export type RequestServiceFormValues = Record<RequestServiceFieldName, string>;
+export type RequestServiceFieldName = RequestServiceTextFieldName | "photos";
+export type RequestServiceFormValues = Record<
+  RequestServiceTextFieldName,
+  string
+>;
 export type RequestServiceFieldErrors = Partial<
   Record<RequestServiceFieldName, string>
 >;
+
+export type RequestServicePhotoContentType =
+  (typeof requestServicePhotoLimits.acceptedContentTypes)[number];
+export type RequestServiceAttachment = Readonly<{
+  content: Uint8Array;
+  contentType: "image/jpeg";
+  filename: string;
+}>;
+
+export function normalizeRequestServicePhotoContentType(
+  contentType: string,
+): RequestServicePhotoContentType | null {
+  const normalized = contentType.trim().toLowerCase();
+
+  if (normalized === "image/jpg") {
+    return "image/jpeg";
+  }
+
+  return requestServicePhotoLimits.acceptedContentTypes.find(
+    (allowedType) => allowedType === normalized,
+  ) ?? null;
+}
+
+export function getRequestServicePhotoMetadataError(
+  files: readonly { size: number; type: string }[],
+) {
+  if (files.length > requestServicePhotoLimits.maxFiles) {
+    return `Choose no more than ${requestServicePhotoLimits.maxFiles} photos.`;
+  }
+
+  if (files.some((file) => file.size === 0)) {
+    return "One photo could not be read. Choose it again or use another photo.";
+  }
+
+  if (files.some((file) => file.size > requestServicePhotoLimits.maxBytesPerFile)) {
+    return "Each photo must be 3 MB or less.";
+  }
+
+  const totalBytes = files.reduce((total, file) => total + file.size, 0);
+
+  if (totalBytes > requestServicePhotoLimits.maxTotalBytes) {
+    return "Selected photos must total 3 MB or less.";
+  }
+
+  if (
+    files.some(
+      (file) => normalizeRequestServicePhotoContentType(file.type) === null,
+    )
+  ) {
+    return "Choose JPG, PNG, or WebP photos only.";
+  }
+
+  return undefined;
+}
 
 type SharedRequestServiceLead = Omit<
   RequestServiceFormValues,
@@ -88,14 +156,21 @@ export type RequestServiceDeliveryResult =
   | { providerReceipt: string; status: "confirmed" }
   | { status: "failed" | "not_configured" };
 
+export type RequestServiceDeliveryPayload = Readonly<{
+  attachments: readonly RequestServiceAttachment[];
+  idempotencyKey: string;
+  lead: RequestServiceLead;
+}>;
+
 export type RequestServiceDelivery = (
-  lead: RequestServiceLead,
+  payload: RequestServiceDeliveryPayload,
 ) => Promise<RequestServiceDeliveryResult>;
 
 export type RequestServiceSubmissionState = {
   attempt: number;
   fieldErrors: RequestServiceFieldErrors;
   formError?: string;
+  photosNeedReselection: boolean;
   status: "idle" | "invalid" | "submission_error" | "success";
   values: RequestServiceFormValues;
 };
@@ -131,18 +206,19 @@ export const initialRequestServiceSubmissionState: RequestServiceSubmissionState
   {
     attempt: 0,
     fieldErrors: {},
+    photosNeedReselection: false,
     status: "idle",
     values: emptyRequestServiceValues,
   };
 
 const fieldNames = Object.keys(
   emptyRequestServiceValues,
-) as RequestServiceFieldName[];
+) as RequestServiceTextFieldName[];
 const conditionalFieldNames = [
   "residentialRelationship",
   "organizationName",
-] as const satisfies readonly RequestServiceFieldName[];
-const conditionalFieldNameSet = new Set<RequestServiceFieldName>(
+] as const satisfies readonly RequestServiceTextFieldName[];
+const conditionalFieldNameSet = new Set<RequestServiceTextFieldName>(
   conditionalFieldNames,
 );
 const singleLineControlCharacterPattern = /[\u0000-\u001f\u007f]/;

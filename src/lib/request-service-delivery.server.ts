@@ -1,18 +1,27 @@
 import "server-only";
 
 import type {
+  RequestServiceDeliveryPayload,
   RequestServiceDeliveryResult,
-  RequestServiceLead,
 } from "./request-service";
+import {
+  isRequestServiceDeliveryAllowed,
+  sendRequestServiceEmailWithResend,
+} from "./request-service-email";
+import { contactDataStatus } from "./site";
 
 export async function deliverRequestServiceLead(
-  lead: RequestServiceLead,
+  payload: RequestServiceDeliveryPayload,
 ): Promise<RequestServiceDeliveryResult> {
-  // Phase 2.1 establishes the delivery boundary but intentionally does not
-  // discard leads into logs, memory, or temporary files while email delivery
-  // is unconfigured. Phase 2.4/2.6 will replace this fail-closed result with a
-  // confirmed provider receipt.
-  void lead;
+  if (!isRequestServiceDeliveryAllowed({
+    contactDataIsProductionReady: contactDataStatus.productionReady,
+    vercelEnvironment: process.env.VERCEL_ENV,
+  })) {
+    return { status: "not_configured" };
+  }
 
-  return { status: "not_configured" };
+  return sendRequestServiceEmailWithResend(
+    payload,
+    process.env.RESEND_API_KEY ?? "",
+  );
 }

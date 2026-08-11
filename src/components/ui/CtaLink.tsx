@@ -6,6 +6,7 @@ import type {
 
 import {
   analyticsEventNames,
+  getPhoneAnalyticsAttributes,
   type AnalyticsLocation,
 } from "@/lib/analytics";
 import { navigation, site } from "@/lib/site";
@@ -74,6 +75,28 @@ type PresetCtaProps = Omit<CtaLinkProps, "children" | "href"> & {
   label?: ReactNode;
 };
 
+type PhoneLinkProps = Omit<ComponentPropsWithoutRef<"a">, "href"> & {
+  analyticsLocation: AnalyticsLocation;
+  children?: ReactNode;
+};
+
+export function PhoneLink({
+  analyticsLocation,
+  children = site.phone,
+  ...props
+}: PhoneLinkProps) {
+  return (
+    <a
+      {...props}
+      aria-label={props["aria-label"] ?? `Call ${site.name} at ${site.phone}`}
+      {...getPhoneAnalyticsAttributes(analyticsLocation)}
+      href={site.phoneHref}
+    >
+      {children}
+    </a>
+  );
+}
+
 export function CallLink({
   analyticsLocation,
   label = site.phone,
@@ -81,11 +104,10 @@ export function CallLink({
 }: PresetCtaProps) {
   return (
     <CtaLink
-      aria-label={`Call ${site.name} at ${site.phone}`}
-      data-analytics-event={analyticsEventNames.phoneClick}
-      data-analytics-location={analyticsLocation}
-      href={site.phoneHref}
       {...props}
+      aria-label={`Call ${site.name} at ${site.phone}`}
+      {...getPhoneAnalyticsAttributes(analyticsLocation)}
+      href={site.phoneHref}
     >
       {label}
     </CtaLink>
