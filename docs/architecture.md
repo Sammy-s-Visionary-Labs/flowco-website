@@ -1,8 +1,8 @@
 # Ohio Flow Co — Project Architecture
 
-**Architecture status:** Phase 2.4–2.6 application layers implemented; live provider and analytics verification remain in progress
+**Architecture status:** Phases 2.1–2.4 and 2.6 complete; Phase 2.5 analytics activation remains in progress
 
-**Last reviewed:** August 7, 2026
+**Last reviewed:** August 11, 2026
 
 **Project root:** `/Users/kinghill/Documents/ohio flow co`
 
@@ -43,7 +43,7 @@ Do not silently change canonical business details in individual components. Upda
 | Current routes | `/`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
 | Crawl surfaces | Typed Next.js metadata routes plus a static plain-text route |
 | Build command | `npm run build`, using Next.js's Webpack build path |
-| Deployment target | Vercel remains the provisional production target; the Resend secret is stored there for testing, but final hosting confirmation and live handoff validation are pending |
+| Deployment target | Vercel remains the provisional production target; the Resend secret is stored there for testing, and the Node/Sharp/Resend path is verified on a protected Vercel Preview. Final production hosting confirmation remains pending. |
 
 ## Current file architecture
 
@@ -132,7 +132,7 @@ The body is a minimum-height flex column and the main element uses `flex-1`, kee
 
 `src/app/page.tsx` remains a deliberately minimal placeholder. Full homepage content belongs to Phase 3.1.
 
-`src/app/request-service/page.tsx` is the first implemented conversion route. It owns page metadata, breadcrumb and page composition while delegating form interaction to `RequestServiceForm`. The route fails closed whenever provider delivery is unconfigured or unconfirmed, is `noindex,follow`, and remains outside `publishedRoutes` until external delivery is proven operational.
+`src/app/request-service/page.tsx` is the first implemented conversion route. It owns page metadata, breadcrumb and page composition while delegating form interaction to `RequestServiceForm`. The route fails closed whenever provider delivery is unconfigured or unconfirmed, is `noindex,follow`, and remains outside `publishedRoutes` while contacts are test-only and public abuse protection is not activated.
 
 ### Request Service form layer
 
@@ -358,27 +358,27 @@ The current architecture provides conversion entry points and a fail-closed lead
 - Request Service links target `/request-service#request-form` so the shared CTA reaches the form directly.
 - All current phone and Request Service links emit bounded, placement-aware data-layer events. Phase 2.5 closed the two inline Request Service phone-link gaps and centralized every `tel:` surface behind `PhoneLink` or `CallLink`.
 - `/request-service` renders one short form with residential, commercial, contractor, and municipal paths, one shared field contract, authoritative server validation for all submitted data, advisory browser preflight for photo count/size/type, and safe failure states.
-- Form starts and Server Action validation/submission failures emit bounded events; client-only photo preflight errors remain local. Confirmed-lead events are unreachable until external delivery succeeds.
+- Form starts and Server Action validation/submission failures emit bounded events; client-only photo preflight errors remain local. Confirmed-lead events emit only after external delivery succeeds, a path proven by the August 11 Vercel Preview tests.
 - The current test-only lead and immediate-notification recipient is `needytrooper04@gmail.com`; an owner-confirmed real recipient must replace it before production.
 - The Resend adapter is implemented. It sends from `requests@notifications.ohioflowco.com` to the sole testing recipient, and its server-only API key is stored in Vercel. The local environment has no key, so local submissions still fail closed by design.
-- The Phase 2.4 same-page confirmation experience is connected to the adapter but remains unverified end to end until a deployed submission returns a Resend receipt and the message is confirmed in `needytrooper04@gmail.com`. It reveals no provider identifier or submitted values, states that another submission is unnecessary, explains review and follow-up without promising a response time, and supports a deliberate second request.
+- The Phase 2.4 same-page confirmation experience is connected to the adapter and was verified end to end for no-photo and photo Preview submissions whose messages arrived in `needytrooper04@gmail.com`. It reveals no provider identifier or submitted values, states that another submission is unnecessary, explains review and follow-up without promising a response time, and supports a deliberate second request.
 - A provider email workflow now exists; no CRM integration or customer autoresponder exists.
-- Optional project photos are normalized into generated JPEG attachments and passed directly to Resend without separate website storage. Live attachment encoding and mailbox receipt still require a deployed test.
+- Optional project photos are normalized into generated JPEG attachments and passed directly to Resend without separate website storage. The Preview test delivered `project-photo-1.jpg`, and the owner confirmed that it opened successfully.
 - The honeypot is baseline protection only. Per-request image limits do not limit request frequency, so compatible rate limiting or a bot challenge is required before this image-processing route is exposed on any public deployment.
 - No live GA4, GTM, advertising, or call-tracking transport is configured yet.
 - Pageview and conversion hooks remain local until the explicit analytics flag and a valid production GTM ID are supplied.
-- Remaining Phase 2 provider work is deployment-backed receipt and mailbox verification; analytics mapping remains separately paused.
+- Phase 2 provider-backed receipt, mailbox, and attachment verification is complete. External analytics mapping remains separately paused and is the only open Phase 2 subphase.
 
 ### Outbound-delivery safeguards and remaining gates
 
-Phase 2.6 owns the provider adapter, internal mailbox delivery, and durable receipt. The application safeguards are implemented; completing a live Vercel handoff will satisfy Phase 2.1's remaining success condition and prove the Phase 2.4 confirmation experience.
+Phase 2.6 owns the provider adapter, internal mailbox delivery, and durable receipt. The protected Vercel Preview handoff completed on August 11, 2026, satisfying Phase 2.1's remaining success condition and proving the Phase 2.4 confirmation experience.
 
 - The static sender is `requests@notifications.ohioflowco.com` on the owner-verified `notifications.ohioflowco.com` domain. The sole testing recipient remains `needytrooper04@gmail.com`; submitted values cannot control sender, recipient, subject, or reply headers.
 - Customer values are rendered only as inert plain-text body content. No HTML body or customer-controlled reply-to header is sent.
 - The adapter sends a versioned deterministic idempotency key. Identical normalized lead-and-attachment payloads receive the same key, while changed text or bytes receive a new key; Resend retains idempotency keys for 24 hours.
-- The bounded raw attachment envelope expands safely below Resend's documented 40 MB post-Base64 message limit. The deployed Node/Sharp/attachment path still requires an end-to-end test.
+- The bounded raw attachment envelope expands safely below Resend's documented 40 MB post-Base64 message limit. The Node/Sharp/attachment path passed the Vercel Preview end-to-end test; it must be revalidated in the final production environment.
 - `RESEND_API_KEY` is read only on the server and is stored in Vercel, not in the repository or a public environment variable.
-- Vercel production delivery is blocked while `contactDataStatus.productionReady` is `false`; current provider testing must use a Preview deployment.
+- Vercel production delivery is blocked while `contactDataStatus.productionReady` is `false`; the completed provider testing therefore used a protected Preview deployment.
 - The provider receipt remains server-only and is used only to gate success. Errors, response bodies, customer data, and attachment bytes are not logged.
 - Resend can store sent-message content and attachments. Exact provider/team settings and recipient-mailbox retention/deletion practice remain Privacy Policy and operating-procedure inputs.
 - Customer email remains optional and no customer autoresponder is authorized. Before production, replace the testing recipient and all other test contacts with owner-confirmed production values.
@@ -413,8 +413,8 @@ The register separates non-engineering decisions (business, product, content, an
 | B-020 | Photo copy must state limits, warn against IDs/account documents or other sensitive material, avoid promising storage the application does not provide, and explain reselection after failure. | Active | Phase 2.3 |
 | B-021 | `Keeping Northwest Ohio Flowing.` is the current working tagline in canonical data; separate owner approval has not been recorded. | Awaiting confirmation | Phase 1.1 brief audit |
 | B-022 | During development testing only, render `(419) 486-9657` and `needytrooper04@gmail.com`, and route any future test lead handoff only to that email. These values are not approved for production and must be replaced with owner-confirmed real contact information before launch. | Active test override; production launch blocker | Owner direction, August 7, 2026 |
-| B-023 | Confirm successful Request Service submissions on the same page only after provider-confirmed delivery. Do not send a customer autoresponder at this stage and do not promise a response time; explain the review/follow-up process and retain the phone path. | Active; connected to Resend, live verification pending | Phase 2.4; Phase 2.6 |
-| B-024 | Use Resend for the testing lead handoff. The verified sending domain is `notifications.ohioflowco.com`, the static sender is `requests@notifications.ohioflowco.com`, and the sole testing recipient remains `needytrooper04@gmail.com`. The API key is stored in Vercel. This testing configuration does not approve the current contacts for production or finalize Vercel as the production host. | Active testing integration; live receipt pending | Owner direction, Phase 2.6 |
+| B-023 | Confirm successful Request Service submissions on the same page only after provider-confirmed delivery. Do not send a customer autoresponder at this stage and do not promise a response time; explain the review/follow-up process and retain the phone path. | Active; live-verified in Vercel Preview | Phase 2.4; Phase 2.6 |
+| B-024 | Use Resend for the testing lead handoff. The verified sending domain is `notifications.ohioflowco.com`, the static sender is `requests@notifications.ohioflowco.com`, and the sole testing recipient remains `needytrooper04@gmail.com`. The API key is stored in Vercel. This testing configuration does not approve the current contacts for production or finalize Vercel as the production host. | Active testing integration; live handoff verified | Owner direction, Phase 2.6 |
 
 ### Technical and design decisions
 
@@ -438,7 +438,7 @@ The register separates non-engineering decisions (business, product, content, an
 | T-016 | Use Server Components by default and isolate browser-only state and effects in the smallest practical leaf components, currently the header, analytics trackers, and Request Service form. | Active | Phase 1.6 |
 | T-017 | Use one shared pure contract for Request Service field options, normalization, and server validation; the Client Component handles interaction while a Server Action owns submission. | Active | Phase 2.1 |
 | T-018 | A service request is successful only after the server-only delivery adapter returns a confirmed provider receipt. Unconfigured or failed delivery must preserve values, show a phone fallback, and emit no lead-success event. | Active | Phase 2.1 |
-| T-019 | Keep `/request-service` `noindex,follow` and outside `publishedRoutes` until external delivery is operational. | Active | Phase 2.1 |
+| T-019 | Keep `/request-service` `noindex,follow` and outside `publishedRoutes` until external delivery is operational. | Superseded by the broader T-037 prelaunch gate after delivery became operational | Phase 2.1 |
 | T-020 | Treat Vercel as the provisional production host, not a locked or configured deployment target. | Provisional; mirrored by B-017 | Phase 2.1 owner direction |
 | T-021 | Before outbound email is enabled, add Vercel-compatible abuse protection and idempotency; keep recipient/sender headers static and render all submitted values only as escaped, untrusted email content. | Superseded by T-026 and T-027 | Phase 2.1 |
 | T-022 | Use one shared Request Service form with four project audiences: residential, commercial, contractor, and municipal. Ask residential users for property relationship and all other audiences for company or organization name. | Active | Phase 2.2 |
@@ -446,17 +446,17 @@ The register separates non-engineering decisions (business, product, content, an
 | T-024 | Accept at most three JPEG/PNG/WebP project photos totaling 3 MiB through a 4 MiB Server Action request; keep bytes request-scoped and add no filesystem, database, cache, object-store, log, or analytics retention. | Active | Phase 2.3 |
 | T-025 | Decode accepted images under strict resource limits, auto-orient and resize them, strip embedded EXIF/GPS, ICC, IPTC, and XMP data by re-encoding to JPEG, generate attachment filenames, and pass only normalized attachments to the delivery adapter. | Active | Phase 2.3 |
 | T-026 | Before `/request-service` is exposed publicly, add rate limiting or a compatible bot challenge that protects multipart parsing and Sharp work; per-request file limits alone are insufficient. | Public-deployment activation gate | Phase 2.3 audit |
-| T-027 | Before outbound email activation, use static server-owned headers, inert body content, retry-safe idempotency, server-only credentials, a durable provider receipt, and a provider verified for the encoded attachment envelope and retention policy. | Application requirements implemented; live attachment and retention verification pending | Phase 2.3 audit; Phase 2.6 implementation |
+| T-027 | Before outbound email activation, use static server-owned headers, inert body content, retry-safe idempotency, server-only credentials, a durable provider receipt, and a provider verified for the encoded attachment envelope and retention policy. | Application and attachment-envelope requirements verified; retention procedure pending | Phase 2.3 audit; Phase 2.6 implementation and live verification |
 | T-028 | Keep `publishedRoutes` as the crawl-surface source, with `/` as a temporary prelaunch validation exception. Replace the placeholder homepage before public launch or sitemap submission; all later routes require substantive content. | Active | Phase 1.5 documentation audit |
-| T-029 | Sharp is the sole image-normalization dependency. Keep photo processing on the Node.js runtime, disable Sharp's cache, process files serially, and verify its native bundle and multipart behavior on the selected host. | Active; deployment verification pending | Phase 2.3 audit |
+| T-029 | Sharp is the sole image-normalization dependency. Keep photo processing on the Node.js runtime, disable Sharp's cache, process files serially, and verify its native bundle and multipart behavior on the selected host. | Active; Vercel Preview path verified, final production environment revalidation pending | Phase 2.3 audit; Phase 2.6 live verification |
 | T-030 | Any future submission-confirmation route must be `noindex` and excluded from `publishedRoutes`; it may present success only after a durable provider receipt. | Future-route constraint; current Phase 2.4 flow stays inline | Phase 2 documentation audit |
 | T-031 | Normalize only a sole exact empty optional-file sentinel—including React/Next's synthetic `blob` filename—to no attachment. Do not discard repeated, mixed, named, or MIME-altered zero-byte entries. | Active | Phase 2.3 no-photo regression |
 | T-032 | Keep the temporary phone, `tel:` link, public email, and inherited lead recipient centralized in `site.ts`; expose `contactDataStatus.productionReady = false` until Phase 5 replaces them with owner-confirmed production data. | Active production gate | Test-contact override |
-| T-033 | Replace the form with a focused same-page status panel only when submission state is `success`; success remains gated by a nonblank provider receipt. Keep provider receipts and submitted values out of client state, prevent accidental duplicate submission, and restore a cleared form only through an explicit second-request action. | Active; end-to-end provider verification pending | Phase 2.4 |
+| T-033 | Replace the form with a focused same-page status panel only when submission state is `success`; success remains gated by a nonblank provider receipt. Keep provider receipts and submitted values out of client state, prevent accidental duplicate submission, and restore a cleared form only through an explicit second-request action. | Active; end-to-end verified in Vercel Preview | Phase 2.4; Phase 2.6 live verification |
 | T-034 | Emit every `tel:` link through a shared tracked phone primitive using one typed attribute helper. Push only `ofc_phone_click` and an allowlisted `cta_location`; exclude the displayed number, `tel:` value, page data, and customer data. Keep GTM/GA4 transport disabled until account ownership, consent, mapping, and duplicate checks are complete. | Active application contract; external verification pending | Phase 2.5 |
-| T-035 | Send internal Request Service notifications through Resend using native server-side `fetch`, the Vercel-held `RESEND_API_KEY`, one verified static sender, one canonical recipient, a static subject, a plain-text body, Base64 normalized JPEG attachments, a 10-second timeout, and a nonblank Resend email ID as the only success receipt. Add no provider SDK, customer reply-to header, application persistence, or sensitive logging. | Active application contract; live handoff pending | Phase 2.6 |
+| T-035 | Send internal Request Service notifications through Resend using native server-side `fetch`, the Vercel-held `RESEND_API_KEY`, one verified static sender, one canonical recipient, a static subject, a plain-text body, Base64 normalized JPEG attachments, a 10-second timeout, and a nonblank Resend email ID as the only success receipt. Add no provider SDK, customer reply-to header, application persistence, or sensitive logging. | Active; live handoff verified in Vercel Preview | Phase 2.6 |
 | T-036 | Derive the Resend idempotency header from a versioned SHA-256 digest of the complete normalized lead and sanitized attachment payload. This makes retries of the same payload converge without returning the key or provider receipt in client state; any changed normalized content produces a new key. | Active | Phase 2.6 |
-| T-037 | Return `not_configured` on Vercel production while canonical contact data is marked test-only. Permit current provider testing only in a non-production environment and keep `/request-service` outside published crawl surfaces until the live handoff and public abuse controls are complete. | Active production guard | Phase 2.6 |
+| T-037 | Return `not_configured` on Vercel production while canonical contact data is marked test-only. Permit current provider testing only in a non-production environment and keep `/request-service` outside published crawl surfaces until real production contacts and public abuse controls are in place. | Active production and publication guard; Preview handoff complete | Phase 2.6 |
 | D-001 | Use deep navy, construction orange, light gray canvas, and white surfaces. | Active | Phase 1.3 |
 | D-002 | Use the darker `#b64f1f` accent for accessible white CTA text. | Active | Phase 1.3 |
 | D-003 | Use system fonts rather than remote font dependencies. | Active | Phase 1.3 |
@@ -468,7 +468,7 @@ The register separates non-engineering decisions (business, product, content, an
 
 These are planned boundaries, not implemented architecture:
 
-- **Remaining Phase 2:** deployed Resend receipt/mailbox verification, end-to-end verification of the implemented same-page confirmation, production click/form mapping, and handoff/tracking validation.
+- **Remaining Phase 2:** owner-approved GTM/GA4 activation, production click/form mapping, consent implementation, duplicate prevention, and analytics receipt validation. Provider delivery and same-page confirmation verification are complete.
 - **Phase 3:** full route tree for service, commercial, project, location, about, and contact content.
 - **Phase 4:** legal content, structured data, image pipeline, and complete accessibility QA.
 - **Phase 5:** redirects, deployment configuration, launch validation, and search-engine submission.
@@ -497,3 +497,4 @@ These are planned boundaries, not implemented architecture:
 | August 7, 2026 | Phase 2.4 in progress | Replaced the generic success notice with an accessible same-page confirmation experience, next-step guidance, duplicate-submission protection, and an explicit second-request path. The client receives no provider receipt or submitted values; live activation and end-to-end confirmation still depend on Phase 2.6. |
 | August 7, 2026 | Phase 2.5 in progress | Centralized all `tel:` surfaces behind tracked phone primitives, covered the Request Service failure and confirmation links, and added bounded-event regression tests. External GTM/GA4 mapping remains disabled pending the existing-account and consent decisions. |
 | August 7, 2026 | Phase 2.6 in progress | Added the Resend provider adapter, verified static sender configuration, testing-recipient routing, plain-text notification rendering, Base64 sanitized JPEG attachments, deterministic idempotency, server-only Vercel credential boundary, timeout/failure handling, and durable-receipt validation without adding an SDK or application storage. Live deployed receipt and mailbox verification remain pending. |
+| August 11, 2026 | Phases 2.1, 2.4, and 2.6 complete | Verified the protected Vercel Preview end to end with representative no-photo and photo requests. Provider-gated same-page confirmation appeared for both, both internal messages reached the sole testing recipient, and `project-photo-1.jpg` arrived and opened successfully. This changed no runtime architecture; it closed the external delivery gates while retaining the test-contact production block, public abuse-control gate, retention-policy input, and paused Phase 2.5 analytics activation. |

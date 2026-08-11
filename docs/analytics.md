@@ -35,7 +35,7 @@ The site fails its production build when analytics is enabled with a missing or 
 | `ofc_phone_click` | `cta_location` | Every rendered phone link through the shared tracked phone primitives | Map to the approved call-click conversion event |
 | `ofc_request_service_click` | `cta_location` | Shared Request Service links and footer navigation | Map to a CTA intent event |
 | `ofc_form_start` | `form_id` | First meaningful interaction with the Request Service form | Map after analytics ownership is confirmed |
-| `ofc_generate_lead` | `form_id` | Request Service success state, reachable only after confirmed external delivery | Map to GA4 `generate_lead` after delivery and analytics are active |
+| `ofc_generate_lead` | `form_id` | Request Service success state, emitted only after confirmed external delivery; the success path is live-verified in Vercel Preview | Map to GA4 `generate_lead` after analytics are active |
 | `ofc_form_error` | `form_id`, `error_type` | Request Service Server Action validation or submission failure | Use for aggregate form reliability reporting |
 
 Allowed CTA locations are `header_desktop`, `header_mobile`, `mobile_menu`, `mobile_call_bar`, `footer_contact`, `footer_nav`, and `page_content`.

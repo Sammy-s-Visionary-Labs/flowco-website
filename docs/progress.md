@@ -1,10 +1,10 @@
 # Ohio Flow Co — Project Progress
 
-**Progress status:** Phase 2.4–2.6 application work implemented; live provider and analytics verification remain pending
+**Progress status:** Phases 2.1–2.4 and 2.6 complete; Phase 2.5 analytics activation remains in progress
 
-**Last updated:** August 7, 2026
+**Last updated:** August 11, 2026
 
-**Recommended next task:** Deploy the Phase 2.6 adapter to a Vercel preview and verify Resend receipt, mailbox delivery, attachment delivery, and the Phase 2.4 success experience end to end
+**Recommended next task:** Resolve the paused Phase 2.5 analytics account and consent inputs, or begin Phase 3.1 while tracking analytics activation as an external hold
 
 ## Purpose and maintenance rule
 
@@ -31,7 +31,7 @@ At the completion of every phase or subphase:
 |---|---|---|
 | Phase 0 — Decisions and assets | In progress | Core brand, positioning, service scope, domain, and route direction are decided. Phone, public email, and lead recipient are temporarily overridden with test values and must be reconfirmed for production. Analytics ownership, approved marketing photos, case studies, and the Wix URL crawl remain open. |
 | Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated. Live analytics activation still depends on the Phase 0.4 owner/account decision. |
-| Phase 2 — Conversion system | In progress | The 2.1 form foundation, 2.2 audience paths, 2.3 photo boundary, 2.4 same-page confirmation UI, 2.5 application-side click-to-call coverage, and 2.6 Resend adapter are implemented. Phase 2.1, 2.4, and 2.6 require one deployed provider/mailbox test; Phase 2.5 still requires approved analytics activation and receipt testing. |
+| Phase 2 — Conversion system | In progress | Phases 2.1–2.4 and 2.6 are complete, including provider-confirmed Vercel Preview submissions and mailbox/attachment delivery. Phase 2.5 application coverage is implemented, but external GTM/GA4 activation remains paused pending owner/account and consent inputs. |
 | Phase 3 — Core pages | Not started | Only a minimal homepage placeholder exists. |
 | Phase 4 — Trust, legal, and polish | Not started | Legal pages, structured data, image pipeline, and final QA remain. |
 | Phase 5 — Launch engineering | Not started | Redirects, deployment, and launch validation remain. |
@@ -156,14 +156,14 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 2.1 Short Request Service form | Core contact, service, location, and source fields submit successfully | In progress | Built the `/request-service` route, short form, pure server validation, accessible error states, baseline honeypot, confirmed-receipt boundary, and Resend adapter. Completion now requires a deployed submission and verified external handoff. |
+| 2.1 Short Request Service form | Core contact, service, location, and source fields submit successfully | Complete | Built the `/request-service` route, short form, pure server validation, accessible error states, baseline honeypot, confirmed-receipt boundary, and Resend adapter. No-photo and photo submissions completed the provider and mailbox handoff in a protected Vercel Preview. |
 | 2.2 Residential and commercial paths | Distinct entry paths with appropriate questions | Complete | Added one accessible four-choice audience selector. Residential requests collect the person's property relationship; commercial, contractor, and municipal requests collect the company or organization name. Shared fields, validation, and submission remain unified. |
-| 2.3 Photo handling | Photos are selected, validated, normalized, and passed safely to the delivery boundary without application persistence | Complete | Added optional JPEG/PNG/WebP selection for up to three photos and 3 MiB combined. Files are decoded under strict limits, resized and re-encoded as EXIF/GPS/ICC/IPTC/XMP-stripped JPEG attachments, held only for the request, and passed to the fail-closed boundary. Phase 2.6 now encodes them for Resend; live attachment receipt remains a 2.6 verification step. |
-| 2.4 Post-delivery thank-you experience | Submitter receives confirmation only after provider-confirmed delivery | In progress | Implemented a focused same-page confirmation that replaces the form, explains review and follow-up, prevents accidental duplicate submission, and supports an explicit second request. It is now connected to Resend but still needs deployed receipt and mailbox proof. |
+| 2.3 Photo handling | Photos are selected, validated, normalized, and passed safely to the delivery boundary without application persistence | Complete | Added optional JPEG/PNG/WebP selection for up to three photos and 3 MiB combined. Files are decoded under strict limits, resized and re-encoded as EXIF/GPS/ICC/IPTC/XMP-stripped JPEG attachments, held only for the request, and passed to the fail-closed boundary. The generated `project-photo-1.jpg` was delivered and opened successfully in the live Phase 2.6 Preview test. |
+| 2.4 Post-delivery thank-you experience | Submitter receives confirmation only after provider-confirmed delivery | Complete | Implemented a focused same-page confirmation that replaces the form, explains review and follow-up, prevents accidental duplicate submission, and supports an explicit second request. Both live Preview tests showed this state only after provider-confirmed handoff. |
 | 2.5 Click-to-call tracking | Header, footer, menu, call-bar, and page interactions produce measurable events | In progress | Completed typed application-side coverage for every rendered `tel:` link, including Request Service failure and confirmation states, with privacy-safe placement-only payloads. Production GTM/GA4 mapping, consent activation, duplicate checks, and receipt validation remain paused pending owner/account inputs. |
-| 2.6 Provider email handoff and internal notification | Leads and attachments reach the configured internal mailbox with a durable provider receipt | In progress | Implemented Resend delivery from the verified notification subdomain to the sole testing recipient, static headers, plain-text content, sanitized attachments, deterministic idempotency, Vercel-secret handling, and durable-receipt validation. A Vercel preview submission and mailbox/attachment check remain before completion; production still requires replacing all test contacts. |
+| 2.6 Provider email handoff and internal notification | Leads and attachments reach the configured internal mailbox with a durable provider receipt | Complete | Implemented Resend delivery from the verified notification subdomain to the sole testing recipient, static headers, plain-text content, sanitized attachments, deterministic idempotency, Vercel-secret handling, and durable-receipt validation. Protected Vercel Preview tests delivered both no-photo and photo emails; the generated JPEG attachment arrived and opened successfully. Production still requires replacing all test contacts. |
 
-### Phase 2.1 in-progress summary
+### Phase 2.1 completion summary
 
 - Added a noindex `/request-service` page with canonical metadata, explicit breadcrumb, contact fallback, and Northwest Ohio service-area context.
 - Added required name, phone, service, city, ZIP, and self-reported source fields, plus optional email and project details.
@@ -171,10 +171,11 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Added one pure form-data parser and validator with trimming, allowlisted services and sources, phone/email/ZIP checks, length limits, duplicate/non-string rejection, and a honeypot.
 - Added a Server Action and server-only delivery boundary. The boundary fails closed until an email provider confirms handoff; it does not log, temporarily store, or falsely acknowledge leads.
 - Added accessible linked error summaries, field-level errors, pending-state protection, value preservation, and a phone fallback on submission failure.
-- Wired `ofc_form_start` and bounded validation/submission error events. `ofc_generate_lead` remains gated behind confirmed external delivery.
+- Wired `ofc_form_start` and bounded validation/submission error events. `ofc_generate_lead` remains gated behind confirmed external delivery and became reachable in the live Preview tests.
 - Added a zero-dependency unit-test harness with validator and delivery-orchestration coverage.
-- Kept the honeypot as baseline protection only. Rate limiting or a bot challenge is required before public image-processing traffic; idempotency and safe email rendering remain separate provider-activation gates.
-- Kept `/request-service` out of the published-route registry while delivery is incomplete.
+- Kept the honeypot as baseline protection only. Rate limiting or a bot challenge remains required before public image-processing traffic; idempotency and safe email rendering are implemented.
+- Kept `/request-service` `noindex` and out of the published-route registry because test contacts and the public abuse-control gate still make it prelaunch-only.
+- Completed the external handoff gate on August 11, 2026: the protected Vercel Preview accepted representative no-photo and photo requests, returned provider-gated confirmation, and delivered both messages to the testing mailbox.
 
 ### Phase 2.2 completion summary
 
@@ -199,9 +200,9 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Added accessible field errors and focused notices explaining that browsers clear file selections after a failed attempt and photos must be chosen again.
 - Extended the delivery contract to carry sanitized attachments alongside the minimized audience-specific lead while retaining the confirmed-receipt success gate.
 - Fixed the untouched optional-photo path after runtime testing exposed React/Next's synthetic zero-byte `blob` file. The server now normalizes only one exact empty native or reconstructed sentinel to no attachment, while named, altered, repeated, or mixed zero-byte entries remain invalid.
-- Originally kept actual external forwarding fail-closed for Phase 2.6. The implemented Resend adapter now receives the normalized output, while live attachment receipt remains unverified.
+- Originally kept actual external forwarding fail-closed for Phase 2.6. The implemented Resend adapter now receives the normalized output, and the live Preview test delivered an attachment named `project-photo-1.jpg` that opened successfully.
 
-### Phase 2.4 in-progress summary
+### Phase 2.4 completion summary
 
 - Replaced the small generic success notice with a dedicated same-page confirmation experience; no separate thank-you route or crawl surface was added.
 - Kept success unreachable unless the delivery adapter returns `confirmed` with a nonblank provider receipt. Validation, spam, unconfigured delivery, thrown failures, and blank receipts continue to show no confirmation.
@@ -210,7 +211,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Kept provider receipts, submitted values, filenames, and attachments out of confirmation state and rendered copy.
 - Retained the test phone path for additions or immediate discussion and kept the existing `ofc_generate_lead` event behind the same confirmed-delivery state.
 - Expanded the unit suite to 33 tests, including receipt non-disclosure and processing another request from a prior confirmed state.
-- Phase 2.4 remains in progress until the connected Resend adapter and confirmation are proven end to end after a real provider-confirmed test handoff.
+- The protected Vercel Preview showed provider-gated same-page success for both no-photo and photo submissions, and both corresponding emails arrived in the testing mailbox.
 
 ### Phase 2.5 in-progress summary
 
@@ -222,7 +223,7 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Added regression coverage for all allowed placements and the exact privacy-safe data-layer event, bringing the suite to 35 tests.
 - Kept GTM and GA4 disabled. Phase 2.5 remains in progress until account ownership and consent are resolved and the single event mapping is verified without duplicates in GTM Preview and GA4 DebugView.
 
-### Phase 2.6 in-progress summary
+### Phase 2.6 completion summary
 
 - Selected Resend for the testing handoff using the owner-verified `notifications.ohioflowco.com` sending domain and static sender `requests@notifications.ohioflowco.com`.
 - Kept the sole testing recipient at `needytrooper04@gmail.com`. Submitted names, emails, phone numbers, and other values cannot control sender, recipient, subject, or reply headers; no customer autoresponder was added.
@@ -232,9 +233,9 @@ The project now has a stable specialist identity, a bounded test recipient, and 
 - Added a versioned SHA-256 idempotency key derived from the normalized lead and attachment payload. Identical retries converge on one Resend operation during its 24-hour idempotency window; changed normalized text or attachment bytes produce a new key.
 - Reads `RESEND_API_KEY` only at the server boundary. The owner has stored it in Vercel; it is absent from source, public environment variables, client state, logs, and local example values.
 - Added a 10-second provider timeout and fail-closed handling for missing credentials, HTTP errors, malformed receipts, timeouts, and network failures. Only a nonblank Resend email ID unlocks the existing success state, and that receipt never reaches the browser.
-- Blocked Vercel production delivery while canonical contact data remains marked test-only. Current live verification must run on a Preview deployment.
+- Blocked Vercel production delivery while canonical contact data remains marked test-only. Live testing was therefore completed on a protected Preview deployment.
 - Expanded the suite to 40 tests and passed lint, whitespace validation, TypeScript checking, and a production build. Tests cover opaque/stable idempotency, exact static email routing, safe body/attachment construction, secret/idempotency headers, provider failures, receipt validation, and the test-contact production guard.
-- Phase 2.6 remains in progress until a Vercel preview submission is confirmed both by the returned success experience and by receipt of the message and sanitized attachment in the testing mailbox. That live check also closes Phase 2.1's delivery gate and Phase 2.4's external-verification gate.
+- Completed live verification on August 11, 2026. The Preview returned same-page success for a no-photo request and a photo request; the owner confirmed both emails arrived at the testing recipient and that `project-photo-1.jpg` arrived and opened. This closes Phase 2.1's delivery gate and Phase 2.4's external-verification gate.
 
 ## Phase documentation audit through 2.6
 
@@ -251,14 +252,14 @@ This audit compares the repository, phase ledger, architecture change log, and d
 | 1.4 | Complete | Metadata composition, canonical rules, social card, breadcrumbs, and deferred SEO work are recorded. |
 | 1.5 | Complete | Crawl endpoints and registry are recorded with the corrected prelaunch `/` exception; no claim of a finished homepage remains. |
 | 1.6 | Complete | Dormant GTM transport, typed events, data minimization, duplicate prevention, account-inventory pause, and activation gates are recorded. |
-| 2.1 | In progress | The short form, server-authoritative validation, fail-closed handoff, success gate, and anti-spam baseline are recorded; provider-confirmed delivery remains the explicit completion gap. |
+| 2.1 | Complete | The short form, server-authoritative validation, fail-closed handoff, success gate, anti-spam baseline, and provider/mailbox-backed Preview verification are recorded. |
 | 2.2 | Complete | Four audiences, conditional fields, progressive disclosure, active-field validation, and minimized discriminated payloads are recorded. |
 | 2.3 | Complete | Exact upload envelope, Sharp/Node constraints, EXIF/GPS/ICC/IPTC/XMP removal, accessibility/reselection behavior, request-only retention, and provider deferral are recorded. |
-| 2.4 | In progress | Same-page confirmation, focus behavior, next-step copy, duplicate-submission protection, second-request handling, receipt/data minimization, and the Phase 2.6 activation dependency are recorded. |
+| 2.4 | Complete | Same-page confirmation, focus behavior, next-step copy, duplicate-submission protection, second-request handling, receipt/data minimization, and the provider-backed no-photo/photo Preview proof are recorded. |
 | 2.5 | In progress | Complete application-side phone-link coverage, the typed placement-only payload, shared primitives, data minimization, analytics pause, and external mapping/verification gates are recorded. |
-| 2.6 | In progress | Resend selection, verified sender, sole testing recipient, Vercel secret boundary, static headers, plain-text content, normalized attachments, idempotency, fail-closed behavior, provider receipt, privacy implications, and live verification gate are recorded. |
+| 2.6 | Complete | Resend selection, verified sender, sole testing recipient, Vercel secret boundary, static headers, plain-text content, normalized attachments, idempotency, fail-closed behavior, provider receipt, privacy implications, and completed live verification are recorded. |
 
-Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.4 is implemented but awaits provider-backed end-to-end verification; Phase 2.5 is implemented but awaits approved external analytics mapping and verification; Phase 2.6 is implemented locally but awaits a deployed Resend receipt and mailbox/attachment check. No Phase 3, 4, 5, or 6 subphase is recorded as complete.
+Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.5 is the only open Phase 2 subphase: application coverage is implemented, but approved external analytics mapping and verification remain paused. No Phase 3, 4, 5, or 6 subphase is recorded as complete.
 
 ## Phase 3 — Core pages
 
@@ -318,7 +319,6 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.4 is implement
 
 ## Current open inputs
 
-- Deploy the Resend adapter to a Vercel preview where `RESEND_API_KEY` is available, submit representative requests with and without a photo, confirm the same-page success state, and verify the message and sanitized JPEG in `needytrooper04@gmail.com`.
 - Obtain the owner-confirmed production phone, `tel:` destination, public email, and internal lead recipient; replace every test fixture and mark canonical contact data production-ready before deployment.
 - Select a deployment-compatible rate limit or bot challenge before `/request-service` is exposed publicly. Retry idempotency and static non-customer headers are implemented, but they do not replace request-frequency abuse protection.
 - Decide and document lead/photo retention and deletion for the email provider and company mailbox before the Privacy Policy is finalized.
@@ -333,11 +333,11 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.4 is implement
 ## Current technical follow-ups
 
 - Replace the two narrative brand/city literals in the Request Service page with canonical `site.ts` values, or keep them explicitly reviewed with canonical-data changes.
-- Verify the Sharp native bundle, 4 MiB Server Action envelope, multipart behavior, rate limiting, and provider attachment encoding on the selected production host.
+- The protected Vercel Preview verified the Sharp/native image path and provider attachment encoding. Revalidate the 4 MiB Server Action envelope, multipart behavior, rate limiting, and production delivery on the final production host.
 - Keep the test-contact production blocker visible until Phase 5 replaces `(419) 486-9657`, `tel:+14194869657`, and `needytrooper04@gmail.com` with owner-confirmed real values.
-- Follow `docs/email-delivery.md` for the Vercel Preview handoff, mailbox, attachment, idempotency, privacy, and production-gate checklist.
+- Follow `docs/email-delivery.md` for the completed Preview verification record and the remaining retention, abuse-control, contact-replacement, and production-reverification gates.
 - Confirm the working tagline before public release. If it changes, update canonical data and rendered copy and regenerate `public/og.png`, where the current tagline is baked into the image.
-- Complete full browser, responsive, keyboard, assistive-technology, and production conversion QA in Phases 4.5 and 5.2; validations through Phase 2.3 are implementation-level rather than a final launch certification.
+- Complete full browser, responsive, keyboard, assistive-technology, and production conversion QA in Phases 4.5 and 5.2; validations through Phase 2.6 are implementation- and Preview-level rather than a final launch certification.
 
 ## Validation record
 
@@ -353,11 +353,12 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.4 is implement
 | August 7, 2026 | Phase 2.3 upload and delivery-boundary tests (31 total), real image decoding/re-encoding, corrupt-container and pixel-limit checks, embedded-metadata removal checks, production build, TypeScript checking, lint, whitespace validation, rendered upload-control check, and direct multipart fail-closed submission | Passed; valid photos were normalized into generated JPEG attachments, original filenames and EXIF/GPS/ICC/IPTC/XMP data were removed, text values were preserved, the reattachment notice appeared, and no false success or persistent website storage was introduced |
 | August 7, 2026 | Phase 2.3 no-photo runtime regression reproduction, expanded unit suite (32 total), lint, whitespace validation, and isolated production build | Passed; the React/Next multipart decoder's zero-byte `blob` sentinel is treated as no optional upload, delivery receives an empty attachment list, malformed sentinel variants remain rejected, no photo-reselection state is returned for a no-photo request, and the optimized build completes without disturbing the active development server |
 | August 7, 2026 | Phase 1.1 scaffold, configuration, package/runtime, and canonical-data audit, supported by every subsequent production build | Passed; no separate contemporaneous Phase 1.1 validation row existed, but the reconstructed scaffold remains the foundation used by all later passing builds |
-| August 7, 2026 | Documentation and repository audit through Phase 2.3 in the current working tree | Passed after correcting Phase 2 ownership/status, the placeholder-home crawl exception, the nonexistent redirect-map claim, upload/runtime gates, and incomplete non-engineering decision coverage; these audit edits and Phase 2.3 remain uncommitted |
+| August 7, 2026 | Documentation and repository audit through Phase 2.3 | Passed after correcting Phase 2 ownership/status, the placeholder-home crawl exception, the nonexistent redirect-map claim, upload/runtime gates, and incomplete non-engineering decision coverage; the resulting checkpoint was later committed on the Phase 2 branch |
 | August 7, 2026 | Canonical test-contact override, reference audit, 32 tests, lint, whitespace validation, isolated production build, and generated-output inspection | Passed; rendered pages and `llms.txt` use `(419) 486-9657`, `tel:+14194869657`, and `needytrooper04@gmail.com`, no old contact values remain in application source or generated routes, and the current contacts are explicitly marked as non-production fixtures |
 | August 7, 2026 | Phase 2.4 confirmation-state tests (33 total), lint, whitespace validation, isolated production build, and generated-bundle inspection | Passed; coverage verifies the confirmed-receipt gate, receipt non-disclosure, cleared success state, and a second request after confirmation, while the optimized client/server bundles contain the new confirmation experience |
 | August 7, 2026 | Phase 2.5 click-to-call contract tests (35 total), complete `tel:` source audit, lint, whitespace validation, isolated production build, and generated-output inspection | Passed; every allowlisted placement and the exact contact-free `ofc_phone_click` payload are covered, no direct phone destination remains outside the shared primitives, and all 13 prerendered phone-link instances contain the required event name and placement attributes |
-| August 7, 2026 | Phase 2.6 Resend request/idempotency/provider tests (40 total), TypeScript checking, lint, whitespace validation, and production build | Passed locally; exact static sender/recipient routing, plain-text body construction, Base64 normalized attachment handling, opaque payload-bound idempotency, secret headers, fail-closed responses, production test-contact blocking, and nonblank receipt validation are covered. A live Vercel receipt and testing-mailbox check remain pending. |
+| August 7, 2026 | Phase 2.6 Resend request/idempotency/provider tests (40 total), TypeScript checking, lint, whitespace validation, and production build | Passed locally; exact static sender/recipient routing, plain-text body construction, Base64 normalized attachment handling, opaque payload-bound idempotency, secret headers, fail-closed responses, production test-contact blocking, and nonblank receipt validation are covered. |
+| August 11, 2026 | Protected Vercel Preview end-to-end tests of the no-photo and photo Request Service paths | Passed; provider-gated same-page success appeared for both submissions, the owner confirmed both messages arrived at `needytrooper04@gmail.com`, and the generated `project-photo-1.jpg` attachment arrived and opened successfully. This closes Phases 2.1, 2.4, and 2.6. |
 
 ## Progress log
 
@@ -380,3 +381,4 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2.4 is implement
 | August 7, 2026 | Began Phase 2.4 by implementing the provider-gated same-page thank-you experience, next-step guidance, duplicate-submission protection, and an accessible second-request path; external activation remains dependent on Phase 2.6. |
 | August 7, 2026 | Began Phase 2.5 by completing application-side click-to-call coverage and privacy-safe event tests while preserving the owner-directed pause on GTM/GA4 activation. |
 | August 7, 2026 | Began Phase 2.6 by implementing the Resend internal-notification adapter for the verified notification subdomain, Vercel-held secret, sole testing recipient, sanitized JPEG attachments, deterministic idempotency, and durable-receipt success gate; live Vercel/mailbox verification remains pending. |
+| August 11, 2026 | Completed Phase 2.6 through protected Vercel Preview tests with and without a photo; provider-gated confirmation, both mailbox deliveries, and the generated attachment were verified. The same evidence completed the external gates for Phases 2.1 and 2.4. Phase 2 remains in progress only because Phase 2.5 external analytics activation is paused. |
