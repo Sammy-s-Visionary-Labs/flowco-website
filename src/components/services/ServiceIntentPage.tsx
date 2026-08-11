@@ -5,6 +5,7 @@ import { FaqList } from "@/components/ui/FaqList";
 import { PageHero } from "@/components/ui/PageHero";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
+import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import type { ServicePageDefinition } from "@/lib/service-pages";
 
 type ServiceIntentPageProps = {
@@ -26,12 +27,28 @@ export function ServiceIntentPage({ page }: ServiceIntentPageProps) {
       />
 
       <Section className="industrial-grid" id="scope" spacing="default">
-        <SectionHeading
-          as="h2"
-          description={page.scopeDescription}
-          eyebrow="What this service covers"
-          title="What this service includes"
-        />
+        <div
+          className={
+            page.photo
+              ? "grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(22rem,1.12fr)] lg:items-start lg:gap-16"
+              : undefined
+          }
+        >
+          <SectionHeading
+            as="h2"
+            description={page.scopeDescription}
+            eyebrow="What this service covers"
+            title="What this service includes"
+          />
+
+          {page.photo ? (
+            <WorkPhoto
+              aspect="landscape"
+              className="w-full max-w-3xl"
+              photo={page.photo}
+            />
+          ) : null}
+        </div>
 
         <ul className="mt-12 grid gap-4 md:grid-cols-2" role="list">
           {page.scope.map((item, index) => (

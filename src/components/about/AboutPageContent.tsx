@@ -6,9 +6,11 @@ import { FaqList } from "@/components/ui/FaqList";
 import { PageHero } from "@/components/ui/PageHero";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
+import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import { publishedLocationPages } from "@/lib/location-pages";
 import { publishedServicePages } from "@/lib/service-pages";
 import { confirmedServices, site } from "@/lib/site";
+import { workPhotos } from "@/lib/work-photos";
 
 const audiences = [
   {
@@ -71,12 +73,19 @@ export function AboutPageContent() {
       />
 
       <Section className="industrial-grid" spacing="default">
-        <SectionHeading
-          as="h2"
-          description={`${site.tagline} Our work centers on underground problems that require practical sewer, water, drainage, excavation, and utility field work.`}
-          eyebrow="Who we are"
-          title="An underground utility specialist for Northwest Ohio"
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(22rem,1.12fr)] lg:items-start lg:gap-16">
+          <SectionHeading
+            as="h2"
+            description={`${site.tagline} Our work centers on underground problems that require practical sewer, water, drainage, excavation, and utility field work.`}
+            eyebrow="Who we are"
+            title="An underground utility specialist for Northwest Ohio"
+          />
+
+          <WorkPhoto
+            className="w-full max-w-3xl"
+            photo={workPhotos.equipmentMobilization}
+          />
+        </div>
 
         <dl className="mt-12 grid gap-4 md:grid-cols-2">
           {[

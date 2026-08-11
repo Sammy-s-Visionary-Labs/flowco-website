@@ -4,9 +4,11 @@ import { CallLink, RequestServiceLink } from "@/components/ui/CtaLink";
 import { ConversionBand } from "@/components/ui/ConversionBand";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
+import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import { publishedLocationPages } from "@/lib/location-pages";
 import { publishedServicePages } from "@/lib/service-pages";
 import { confirmedServices, site } from "@/lib/site";
+import { workPhotos } from "@/lib/work-photos";
 
 const publishedServiceHrefById = new Map<string, string>();
 
@@ -102,6 +104,43 @@ export function HomePageContent() {
             </li>
           ))}
         </ol>
+      </Section>
+
+      <Section className="industrial-grid-inverse" spacing="default" tone="brand">
+        <SectionHeading
+          as="h2"
+          description="A look at the equipment, buried-line work, and larger site scopes behind the services we provide."
+          eyebrow="From the field"
+          title="Underground work, shown above ground"
+          tone="light"
+        />
+
+        <ul
+          className="mt-12 grid gap-7 md:grid-cols-2 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.85fr)] lg:items-start"
+          role="list"
+        >
+          <li className="md:col-span-2 lg:col-span-1">
+            <WorkPhoto
+              photo={workPhotos.residentialExcavation}
+              sizes="(min-width: 1024px) 40vw, (min-width: 768px) 90vw, 100vw"
+              tone="dark"
+            />
+          </li>
+          <li>
+            <WorkPhoto
+              photo={workPhotos.sewerLineReplacement}
+              sizes="(min-width: 1024px) 26vw, (min-width: 768px) 44vw, 100vw"
+              tone="dark"
+            />
+          </li>
+          <li>
+            <WorkPhoto
+              photo={workPhotos.commercialPrecastWork}
+              sizes="(min-width: 1024px) 26vw, (min-width: 768px) 44vw, 100vw"
+              tone="dark"
+            />
+          </li>
+        </ul>
       </Section>
 
       <Section className="industrial-grid" id="services" spacing="default">

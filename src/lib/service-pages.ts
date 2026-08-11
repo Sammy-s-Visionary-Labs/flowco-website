@@ -1,5 +1,6 @@
 import type { SitePath } from "@/lib/seo";
 import { confirmedServices, site } from "./site";
+import { workPhotos, type WorkPhoto } from "./work-photos";
 
 export type ConfirmedServiceId = (typeof confirmedServices)[number]["id"];
 
@@ -25,6 +26,7 @@ export type ServicePageDefinition = {
   intro: string;
   label: string;
   path: SitePath;
+  photo?: WorkPhoto;
   process: readonly {
     body: string;
     step: string;
@@ -47,6 +49,7 @@ export const sewerLineRepairPage = {
   path: "/services/sewer-line-repair",
   serviceIds: ["sewer_line_repair"],
   label: "Sewer line repair",
+  photo: workPhotos.sewerLineRepair,
   title: "Sewer Line Repair in Northwest Ohio",
   eyebrow: `${site.serviceArea} sewer services`,
   description: `${site.name} provides sewer line repair for homes, businesses, and properties across ${site.serviceArea}. Call ${site.phone} or request service for Toledo-area underground sewer problems.`,
@@ -138,6 +141,7 @@ export const sewerLineReplacementPage = {
   path: "/services/sewer-line-replacement",
   serviceIds: ["sewer_line_replacement"],
   label: "Sewer line replacement",
+  photo: workPhotos.sewerLineReplacement,
   title: "Sewer Line Replacement in Northwest Ohio",
   eyebrow: `${site.serviceArea} sewer services`,
   description: `${site.name} provides sewer line replacement for homes, businesses, and properties across ${site.serviceArea}. Call ${site.phone} or request service when a failing sewer line needs more than repair.`,
@@ -326,6 +330,7 @@ export const stormwaterAndDrainagePage = {
   path: "/services/stormwater-and-drainage",
   serviceIds: ["stormwater_management", "drainage_solutions"],
   label: "Stormwater and drainage",
+  photo: workPhotos.stormwaterInstallation,
   title: "Stormwater Management & Drainage in Northwest Ohio",
   eyebrow: `${site.serviceArea} drainage services`,
   description: `${site.name} provides stormwater management and drainage solutions for homes, businesses, and properties across ${site.serviceArea}. Call ${site.phone} or request service for standing water, poor drainage, and stormwater problems in the Toledo area.`,
@@ -418,6 +423,7 @@ export const excavationAndTrenchingPage = {
   path: "/services/excavation-and-trenching",
   serviceIds: ["site_excavation", "utility_trenching"],
   label: "Site excavation and utility trenching",
+  photo: workPhotos.residentialExcavation,
   title: "Site Excavation & Utility Trenching in Northwest Ohio",
   eyebrow: `${site.serviceArea} underground utility work`,
   description: `${site.name} provides site excavation and utility trenching for homes, businesses, contractors, and municipalities across ${site.serviceArea}. Call ${site.phone} or request service for Toledo-area underground utility and excavation work.`,
@@ -514,6 +520,7 @@ export const commercialServicesPage = {
   path: "/commercial",
   serviceIds: ["commercial_sewer_water", "contractor_municipal_support"],
   label: "Commercial services",
+  photo: workPhotos.commercialPrecastWork,
   title: "Commercial, Contractor & Municipal Underground Utility Work",
   eyebrow: `${site.serviceArea} commercial services`,
   description: `${site.name} supports commercial properties, contractors, and municipalities with underground sewer, water, drainage, excavation, and utility work across ${site.serviceArea}. Call ${site.phone} or request service.`,
