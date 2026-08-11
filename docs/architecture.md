@@ -1,8 +1,8 @@
 # Ohio Flow Co — Project Architecture
 
-**Architecture status:** Phase 2.2 complete; Phase 2.1 delivery pending
+**Architecture status:** Phase 3.9 complete; Phase 2 conversion delivery still pending
 
-**Last reviewed:** August 6, 2026
+**Last reviewed:** August 10, 2026
 
 **Project root:** `/Users/kinghill/Documents/ohio flow co`
 
@@ -38,7 +38,7 @@ Do not silently change canonical business details in individual components. Upda
 | Published-route registry | `src/lib/routes.ts` |
 | Analytics contract | Typed first-party `dataLayer` events with an optional GTM transport |
 | Global shell | Root layout with header, main content, footer, and mobile call bar |
-| Current routes | `/`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
+| Current routes | `/`, `/about`, `/commercial`, `/service-areas`, `/service-areas/toledo`, `/services/sewer-line-repair`, `/services/sewer-line-replacement`, `/services/water-service-line`, `/services/stormwater-and-drainage`, `/services/excavation-and-trenching`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
 | Crawl surfaces | Typed Next.js metadata routes plus a static plain-text route |
 | Build command | `npm run build`, using Next.js's Webpack build path |
 | Deployment target | Vercel is preferred provisionally but is not selected or configured yet |
@@ -65,6 +65,10 @@ ohio flow co/
 │   └── request-service-validation.test.ts
 └── src/
     ├── app/
+    │   ├── about/
+    │   │   └── page.tsx
+    │   ├── commercial/
+    │   │   └── page.tsx
     │   ├── globals.css
     │   ├── llms.txt/
     │   │   └── route.ts
@@ -74,18 +78,42 @@ ohio flow co/
     │   │   ├── actions.ts
     │   │   └── page.tsx
     │   ├── robots.ts
+    │   ├── service-areas/
+    │   │   ├── page.tsx
+    │   │   └── toledo/
+    │   │       └── page.tsx
+    │   ├── services/
+    │   │   ├── excavation-and-trenching/
+    │   │   │   └── page.tsx
+    │   │   ├── sewer-line-repair/
+    │   │   │   └── page.tsx
+    │   │   ├── sewer-line-replacement/
+    │   │   │   └── page.tsx
+    │   │   ├── stormwater-and-drainage/
+    │   │   │   └── page.tsx
+    │   │   └── water-service-line/
+    │   │       └── page.tsx
     │   └── sitemap.ts
     ├── components/
+    │   ├── about/
+    │   │   └── AboutPageContent.tsx
     │   ├── analytics/
     │   │   ├── Analytics.tsx
     │   │   ├── AnalyticsEventBridge.tsx
     │   │   └── PageViewTracker.tsx
     │   ├── forms/
     │   │   └── RequestServiceForm.tsx
+    │   ├── home/
+    │   │   ├── HomeHero.tsx
+    │   │   └── HomePageContent.tsx
     │   ├── layout/
     │   │   ├── MobileCallBar.tsx
     │   │   ├── SiteFooter.tsx
     │   │   └── SiteHeader.tsx
+    │   ├── locations/
+    │   │   └── LocationIntentPage.tsx
+    │   ├── services/
+    │   │   └── ServiceIntentPage.tsx
     │   └── ui/
     │       ├── Breadcrumbs.tsx
     │       ├── Container.tsx
@@ -102,6 +130,8 @@ ohio flow co/
         ├── request-service.ts
         ├── routes.ts
         ├── seo.ts
+        ├── service-pages.ts
+        ├── location-pages.ts
         └── site.ts
 ```
 
@@ -125,7 +155,13 @@ Analytics hooks (non-visual)
 
 The body is a minimum-height flex column and the main element uses `flex-1`, keeping the footer at the bottom on short pages.
 
-`src/app/page.tsx` remains a deliberately minimal placeholder. Full homepage content belongs to Phase 3.1.
+`src/app/page.tsx` composes the Phase 3.1 homepage from `HomeHero` and `HomePageContent`. The first viewport answers what Ohio Flow Co does, where it works, who it helps, and how to contact the company.
+
+`src/app/services/sewer-line-repair/page.tsx`, `src/app/services/sewer-line-replacement/page.tsx`, `src/app/services/water-service-line/page.tsx`, `src/app/services/stormwater-and-drainage/page.tsx`, `src/app/services/excavation-and-trenching/page.tsx`, and `src/app/commercial/page.tsx` are the published Phase 3 service and audience intent routes. Each pulls typed page content from `src/lib/service-pages.ts` and renders through the shared `ServiceIntentPage` Server Component.
+
+`src/app/service-areas/page.tsx` is the local-directory hub. `src/app/service-areas/toledo/page.tsx` is the first unique local landing page and renders through `LocationIntentPage` with content from `src/lib/location-pages.ts`.
+
+`src/app/about/page.tsx` is the entity and trust page. It composes confirmed public business facts through `AboutPageContent` and does not invent founding history, team biographies, or social profiles.
 
 `src/app/request-service/page.tsx` is the first implemented conversion route. It owns page metadata, breadcrumb and page composition while delegating form interaction to `RequestServiceForm`. The route fails closed while delivery is unconfigured, is `noindex,follow`, and remains outside `publishedRoutes` until external delivery is operational.
 
@@ -186,6 +222,12 @@ Components and machine-readable routes must import these values rather than dupl
 - `CtaLink`, `CallLink`, and `RequestServiceLink` provide consistent conversion links without duplicating contact destinations.
 - `Breadcrumbs` renders an explicit, accessible route trail without client-side pathname parsing. Ancestors are links and the final item is an unlinked `aria-current="page"` label.
 - `src/components/ui/index.ts` is the public export surface for shared UI primitives.
+- `HomeHero` and `HomePageContent` are Server Components that own the Phase 3.1 homepage composition without introducing Client Component state.
+- `ServiceIntentPage` is a reusable Server Component for service intent pages: breadcrumb, intro CTAs, scope, signs, process, FAQ, related-work links, and closing conversion section. Section titles and CTA copy are supplied by each page definition.
+- `src/lib/service-pages.ts` owns published service-page content and maps each page to one or more confirmed `serviceIds` for homepage and internal linking.
+- `LocationIntentPage` is a reusable Server Component for local service-area pages: breadcrumb, local context, services list, process, nearby communities, FAQ, related links, and closing CTA.
+- `src/lib/location-pages.ts` owns published local-page content and is the source for the `/service-areas` hub listing.
+- `AboutPageContent` is a Server Component entity page built only from confirmed public business constants and published route links.
 
 ## Design-system architecture
 
@@ -249,7 +291,7 @@ The accent is intentionally darker than the original suggested `#c45c26`, allowi
 
 ## Routing and SEO status
 
-The homepage remains a Phase 1 placeholder and `/request-service` is implemented as a noindex Phase 2 conversion route. Other navigation destinations intentionally exist before their pages and may return not found until Phase 3.
+The homepage is a substantive Phase 3.1 conversion page. Published service and audience intent pages currently cover sewer repair, sewer replacement, water service line work, stormwater/drainage, excavation/trenching, and commercial/contractor/municipal pathways. `/service-areas` and `/service-areas/toledo` are the first published local routes. `/about` is the published entity page. `/request-service` is implemented as a noindex Phase 2 conversion route. Other navigation destinations intentionally exist before their pages and may return not found until later Phase 3 work.
 
 `src/lib/seo.ts` now owns the shared SEO architecture:
 
@@ -261,7 +303,7 @@ The homepage remains a Phase 1 placeholder and `/request-service` is implemented
 - Route-specific canonical and Open Graph URLs do not live in the root layout, preventing homepage URLs from leaking into future nested routes.
 - The default 1200×630 social card is `public/og.png` and contains only confirmed brand, service-category, and service-area language.
 
-`src/lib/routes.ts` is the canonical registry of substantive routes that are ready for discovery. It currently contains only the homepage. Navigation may point at planned Phase 3 destinations, but those placeholder destinations are not added to the crawl inventory while they return not found.
+`src/lib/routes.ts` is the canonical registry of substantive routes that are ready for discovery. It currently contains the homepage, About, the service-areas hub, published service/audience pages from `publishedServicePages`, and published local pages from `publishedLocationPages`. Navigation may point at planned Phase 3 destinations, but those placeholder destinations are not added to the crawl inventory while they return not found.
 
 The crawl architecture is implemented as follows:
 
@@ -365,6 +407,9 @@ The current architecture provides conversion entry points and a fail-closed lead
 | D-003 | Use system fonts rather than remote font dependencies. | Active | Phase 1.3 |
 | D-004 | Use restrained radii, clear rails, subtle grids, and limited motion for an industrial/local character. | Active | Phase 1.3 |
 | D-005 | Use a typography-led 1200×630 default social card with no invented project photography, logo mark, equipment, or unsupported claims. | Active | Phase 1.4 |
+| D-006 | Homepage hero is a full-bleed brand plane with Ohio Flow Co as the primary first-viewport signal; specialty copy and CTAs follow. Do not invent project photos, testimonials, or unsupported service claims on the homepage. | Active | Phase 3.1 |
+| T-024 | Publish service intent pages under `/services/[service-slug]` with shared `ServiceIntentPage` composition and content owned by `src/lib/service-pages.ts`. Add each finished service page to `publishedRoutes` only after it has substantive content. A page may map to one or more confirmed `serviceIds` when a single URL covers related confirmed scopes. | Active | Phase 3.2 |
+| T-025 | Publish local landing pages under `/service-areas/[city-slug]` with shared `LocationIntentPage` composition and content owned by `src/lib/location-pages.ts`. Local pages must contain unique community substance; do not mass-produce city-name substitution pages. | Active | Phase 3.8 |
 | R-001 | Replace weak Wix URL names with descriptive service and service-area routes; preserve old traffic through 301 redirects at launch. | Active plan | Phase 0.6 |
 
 ## Expected future architectural additions
@@ -372,7 +417,7 @@ The current architecture provides conversion entry points and a fail-closed lead
 These are planned boundaries, not implemented architecture:
 
 - **Remaining Phase 2:** upload handling without long-term storage, provider-backed notification delivery, confirmation, and end-to-end handoff/tracking validation.
-- **Phase 3:** full route tree for service, commercial, project, location, about, and contact content.
+- **Remaining Phase 3:** projects/case-study and contact workflow content beyond the published homepage, core service pages, commercial pathway, Toledo service-area page, and About page.
 - **Phase 4:** legal content, structured data, image pipeline, and complete accessibility QA.
 - **Phase 5:** redirects, deployment configuration, launch validation, and search-engine submission.
 
@@ -390,3 +435,12 @@ These are planned boundaries, not implemented architecture:
 | August 6, 2026 | Phase 2.1 in progress | Added the noindex Request Service route, accessible short form, shared pure validator, Server Action, server-only fail-closed delivery boundary, form analytics wiring, and a zero-dependency unit-test harness. Locked the sole lead recipient and no-long-term-photo-storage direction; Vercel remains provisional. |
 | August 6, 2026 | Phase 2.2 complete | Added four audience paths to the shared Request Service form, pre-hydration conditional disclosure, audience-aware error handling, conditional server validation, a minimized discriminated delivery contract, and expanded tests without adding a dependency or route. |
 | August 6, 2026 | Project documentation | Added `docs/architecture.md` and `docs/progress.md` as required living records for every future phase and subphase. No runtime architecture changed. |
+| August 10, 2026 | Phase 3.1 complete | Replaced the homepage placeholder with a conversion-focused Server Component homepage (`HomeHero`, `HomePageContent`), full-bleed brand hero motion, and confirmed-scope content sections. No Phase 2 delivery, form, or dependency changes. |
+| August 10, 2026 | Phase 3.2 complete | Added `/services/sewer-line-repair`, `service-pages` content module, reusable `ServiceIntentPage`, crawl registration through `publishedRoutes`, and homepage internal linking by confirmed `serviceId`. |
+| August 10, 2026 | Phase 3.3 complete | Added `/services/sewer-line-replacement`, expanded page-owned section/CTA/related-link fields, and repair/replacement cross-links. No trenchless claims. |
+| August 10, 2026 | Phase 3.4 complete | Added `/services/water-service-line` covering repair, replacement, and installation; switched linking to `serviceIds` so both water homepage entries share one URL. |
+| August 10, 2026 | Phase 3.5 complete | Added `/services/stormwater-and-drainage` covering stormwater management and drainage solutions in one URL with multi-id homepage linking. |
+| August 10, 2026 | Phase 3.6 complete | Added `/services/excavation-and-trenching` covering site excavation and utility trenching with underground-utility positioning and multi-id homepage linking. |
+| August 10, 2026 | Phase 3.7 complete | Added `/commercial` for commercial, contractor, and municipal underground utility pathways without unsupported certification or procurement claims. |
+| August 10, 2026 | Phase 3.8 complete | Added `/service-areas/toledo` with unique local substance, a minimal `/service-areas` hub, `location-pages` content module, and `LocationIntentPage`. |
+| August 10, 2026 | Phase 3.9 complete | Added `/about` entity page from confirmed public business facts only; deferred founding story, team bios, and social profiles pending owner input. |

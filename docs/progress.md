@@ -1,10 +1,10 @@
 # Ohio Flow Co — Project Progress
 
-**Progress status:** Phase 2.2 complete; Phase 2.1 delivery pending
+**Progress status:** Phase 3.9 complete; Phase 3.10 deferred until Phase 2 delivery is available; Phase 2 conversion delivery still pending
 
-**Last updated:** August 6, 2026
+**Last updated:** August 10, 2026
 
-**Recommended next task:** Phase 2.1 — Select and configure the email delivery provider and adapter
+**Recommended next task:** Phase 3.11 — Projects and case-study template (Phase 3.10 Contact/Request Service deferred until Phase 2 email delivery and confirmation work is synced)
 
 ## Purpose and maintenance rule
 
@@ -32,7 +32,7 @@ At the completion of every phase or subphase:
 | Phase 0 — Decisions and assets | In progress | Core brand, phone, positioning, service scope, domain, route direction, and the sole lead recipient are decided. Analytics ownership, photos, case studies, and the final Wix URL crawl remain open. |
 | Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated. Live analytics activation still depends on the Phase 0.4 owner/account decision. |
 | Phase 2 — Conversion system | In progress | The short Request Service form now supports residential, commercial, contractor, and municipal paths through one validation and submission flow. Email delivery, photos, confirmation, and production tracking remain. |
-| Phase 3 — Core pages | Not started | Only a minimal homepage placeholder exists. |
+| Phase 3 — Core pages | In progress | Phases 3.1–3.9 are complete through About. Remaining projects/case-study and contact workflow pages are not started. |
 | Phase 4 — Trust, legal, and polish | Not started | Legal pages, structured data, image pipeline, and final QA remain. |
 | Phase 5 — Launch engineering | Not started | Redirects, deployment, and launch validation remain. |
 | Phase 6 — Expansion | Not started | Location expansion, articles, additional case studies, and reporting remain. |
@@ -176,17 +176,89 @@ The project now has a stable specialist identity, confirmed lead recipient, and 
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 3.1 Home | First screen answers what Ohio Flow Co does, where it works, and how to contact it | Not started | Current page is only a Phase 1 placeholder. |
-| 3.2 Sewer Line Repair | Complete intent page with scope, process, proof, FAQs, and CTAs | Not started | Use only confirmed capabilities. |
-| 3.3 Sewer Line Replacement | Complete replacement-intent page | Not started | Do not claim trenchless methods without confirmation. |
-| 3.4 Water Service Line | Repair and confirmed replacement/installation scope | Not started | Clarify page split only if search intent and content depth justify it. |
-| 3.5 Stormwater and Drainage | Complete stormwater/drainage intent coverage | Not started | May be one or two pages based on available proof and distinct intent. |
-| 3.6 Site Excavation and Utility Trenching | Complete excavation/trenching page or justified split | Not started | Emphasize underground utility specialization. |
-| 3.7 Commercial Services | Contractor, commercial, and municipal-ready service page | Not started | Must avoid unsupported certifications or procurement claims. |
-| 3.8 Toledo service-area page | Unique Toledo content, not a city-name substitution page | Not started | First local landing page. |
-| 3.9 About | Entity and trust page aligned with public business information | Not started | Requires authentic company facts from Sam. |
-| 3.10 Contact and Request Service | Full inquiry workflow page | Not started | Builds on Phase 2 conversion components. |
+| 3.1 Home | First screen answers what Ohio Flow Co does, where it works, and how to contact it | Complete | Replaced the placeholder with a full-bleed brand hero and conversion sections for trust, confirmed services, need-signs, process, audiences, communities, and a final CTA. Real photos, case studies, reviews, and FAQs remain deferred until approved assets or later subphases. |
+| 3.2 Sewer Line Repair | Complete intent page with scope, process, proof, FAQs, and CTAs | Complete | Published `/services/sewer-line-repair` with confirmed-scope copy, need-signs, process, FAQs, CTAs, crawl registration, and a homepage internal link. Real project proof remains deferred until Phase 0.5 assets arrive. |
+| 3.3 Sewer Line Replacement | Complete replacement-intent page | Complete | Published `/services/sewer-line-replacement` with confirmed-scope copy, need-signs, process, FAQs, CTAs, crawl registration, homepage linking, and cross-links to sewer repair. No trenchless or other unsupported method claims. |
+| 3.4 Water Service Line | Repair and confirmed replacement/installation scope | Complete | Published one `/services/water-service-line` page covering repair, replacement, and installation. Kept a single page because the shared underground water-line intent is strong enough without thin duplicate URLs. Both related homepage service items link here. |
+| 3.5 Stormwater and Drainage | Complete stormwater/drainage intent coverage | Complete | Published one `/services/stormwater-and-drainage` page covering stormwater management and drainage solutions. Kept a single page because the scopes overlap strongly and separate URLs would be thin without deeper proof assets. |
+| 3.6 Site Excavation and Utility Trenching | Complete excavation/trenching page or justified split | Complete | Published one `/services/excavation-and-trenching` page covering site excavation and utility trenching, with emphasis on underground utility specialization. Kept a single page because the scopes are tightly paired in field work. |
+| 3.7 Commercial Services | Contractor, commercial, and municipal-ready service page | Complete | Published `/commercial` covering commercial sewer/water plus contractor and municipal support. Avoided unsupported certification and procurement claims. Linked both related homepage service items and matched the existing `/commercial` nav destination. |
+| 3.8 Toledo service-area page | Unique Toledo content, not a city-name substitution page | Complete | Published `/service-areas/toledo` with Toledo-specific local context, services, process, FAQs, and CTAs. Added a minimal `/service-areas` hub so nav works and future city pages are listed only when they have unique substance. |
+| 3.9 About | Entity and trust page aligned with public business information | Complete | Published `/about` with confirmed entity details, positioning, services, territory, contact facts, and FAQs. Deeper founding story, team bios, and social-profile sections remain deferred until Sam provides authentic facts. |
+| 3.10 Contact and Request Service | Full inquiry workflow page | Awaiting input | Deferred on this machine until Phase 2 provider delivery, thank-you/confirmation, and related conversion work are available to build on. `/request-service` remains the current inquiry route. |
 | 3.11 Projects and case-study template | Gallery and reusable case-study structure with at least one real project if assets exist | Not started | Depends on Phase 0.5 assets and facts. |
+
+### Phase 3.1 completion summary
+
+- Replaced the Phase 1 homepage placeholder with a conversion-focused homepage.
+- Made **Ohio Flow Co** the primary first-viewport brand signal, followed by specialty positioning, service-area language, and Call / Request Service CTAs.
+- Added trust, confirmed-service list, need-signs, process, audience pathways, communities served, and closing CTA sections using existing design-system primitives.
+- Kept homepage content limited to confirmed business claims; omitted invented photography, testimonials, and unfinished service-route links.
+- Added restrained hero entrance and atmosphere motion with reduced-motion fallbacks.
+- Left Phase 2 form, delivery, and email provider files untouched.
+
+### Phase 3.2 completion summary
+
+- Added `/services/sewer-line-repair` as the first service intent page.
+- Introduced `src/lib/service-pages.ts` and a reusable `ServiceIntentPage` Server Component for scope, signs, process, FAQ, related-work note, and conversion CTA sections.
+- Limited copy to confirmed sewer repair capabilities; excluded camera inspection, trenchless, jetting, and other unsupported claims.
+- Registered the route in `publishedRoutes` for sitemap and `llms.txt` discovery.
+- Linked the homepage sewer line repair item to the new page once it became publishable.
+- Omitted invented project photography and testimonials pending Phase 0.5 assets.
+
+### Phase 3.3 completion summary
+
+- Added `/services/sewer-line-replacement` as the second service intent page.
+- Expanded `ServicePageDefinition` so section titles, FAQ headings, CTA copy, and related links are page-owned instead of hard-coded to repair language.
+- Cross-linked sewer repair and replacement pages; homepage and crawl inventory pick up the new route through `publishedServicePages`.
+- Kept replacement copy within confirmed scope and avoided trenchless or other unsupported method claims.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.4 completion summary
+
+- Added `/services/water-service-line` covering confirmed water service line repair, replacement, and installation in one intent page.
+- Changed service-page linking from a single `serviceId` to `serviceIds` so both water-line homepage entries can point to the same published route.
+- Cross-linked water service work with sewer repair and replacement pages.
+- Did not split into separate repair and replacement URLs because one page already covers the confirmed scope with enough depth.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.5 completion summary
+
+- Added `/services/stormwater-and-drainage` covering stormwater management and drainage solutions in one intent page.
+- Linked both related homepage service items through `serviceIds`.
+- Cross-linked the new page with sewer and water service pages.
+- Did not split stormwater and drainage into separate URLs because the site work overlaps and proof assets are not yet available for two deep pages.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.6 completion summary
+
+- Added `/services/excavation-and-trenching` covering site excavation and utility trenching in one intent page.
+- Positioned the page around underground utility specialization rather than general dirt work or landscaping.
+- Linked both related homepage service items through `serviceIds` and cross-linked with sewer, water, and stormwater/drainage pages.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.7 completion summary
+
+- Added `/commercial` as the commercial, contractor, and municipal pathway page.
+- Covered commercial sewer/water and contractor/municipal support without inventing certifications, bonding language, or procurement claims.
+- Linked both related homepage service items through `serviceIds` and cross-linked to core service intent pages.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.8 completion summary
+
+- Added `/service-areas/toledo` as the first unique local landing page with Toledo-specific context, not a city-name substitution template.
+- Added `/service-areas` as a lightweight hub listing only published local pages and stating the no-thin-city-page rule.
+- Introduced `location-pages.ts` and `LocationIntentPage` for reusable local-page composition.
+- Linked Toledo from the homepage communities list and registered both routes in `publishedRoutes`.
+- Left Phase 2 form and delivery files untouched.
+
+### Phase 3.9 completion summary
+
+- Added `/about` as the entity and trust page using confirmed public business information only.
+- Included operating/legal name, positioning, confirmed services, service territory, contact details, audience pathways, and FAQs.
+- Linked through to published service, commercial, and Toledo pages.
+- Explicitly deferred founding story, team bios, and social profiles until authentic owner-provided facts are available.
+- Left Phase 2 form and delivery files untouched.
 
 ## Phase 4 — Trust, legal, and polish
 
@@ -249,6 +321,15 @@ The project now has a stable specialist identity, confirmed lead recipient, and 
 | August 6, 2026 | Phase 1.6 lint, disabled production build, configured test build, invalid-config fail-closed check, rendered-loader count, CTA instrumentation inspection, and whitespace validation | Passed |
 | August 6, 2026 | Phase 2.1 validator and delivery-state unit tests (15), production build, TypeScript checking, lint, rendered 200/noindex metadata check, and direct valid-submission fail-closed check | Passed; entered values were preserved, no false success appeared, and provider delivery intentionally remains unconfigured |
 | August 6, 2026 | Phase 2.2 audience-path validation and delivery-state unit tests (23 total), production build, TypeScript checking, lint, whitespace validation, rendered 200/noindex form check, and direct non-residential fail-closed submission | Passed; all four paths render through one form, inactive data is omitted, the selected non-residential path and normalized organization value were preserved, and no false success appeared |
+| August 10, 2026 | Phase 3.1 homepage lint and production build | Passed |
+| August 10, 2026 | Phase 3.2 sewer line repair lint and production build | Passed |
+| August 10, 2026 | Phase 3.3 sewer line replacement lint and production build | Passed |
+| August 10, 2026 | Phase 3.4 water service line lint and production build | Passed |
+| August 10, 2026 | Phase 3.5 stormwater and drainage lint and production build | Passed |
+| August 10, 2026 | Phase 3.6 excavation and trenching lint and production build | Passed |
+| August 10, 2026 | Phase 3.7 commercial services lint and production build | Passed |
+| August 10, 2026 | Phase 3.8 Toledo service-area lint and production build | Passed |
+| August 10, 2026 | Phase 3.9 about page lint and production build | Passed |
 
 ## Progress log
 
@@ -264,3 +345,13 @@ The project now has a stable specialist identity, confirmed lead recipient, and 
 | August 6, 2026 | Phase 2.1 began with the short Request Service form, validation and test contracts, form analytics, and a server delivery boundary that fails closed pending provider setup. |
 | August 6, 2026 | Phase 2.2 completed the residential, commercial, contractor, and municipal Request Service paths with conditional questions, one shared server contract, minimized delivery payloads, and expanded regression coverage. |
 | August 6, 2026 | Living architecture and progress records were created for mandatory maintenance after future phases and subphases. |
+| August 10, 2026 | Phase 3.1 completed the conversion-focused homepage with a full-bleed brand hero and confirmed-scope content sections, without changing Phase 2 delivery work. |
+| August 10, 2026 | Phase 3.2 published the sewer line repair intent page, shared service-page primitives, crawl registration, and homepage internal linking. |
+| August 10, 2026 | Phase 3.3 published the sewer line replacement intent page, generalized service-page copy fields, and repair/replacement cross-links. |
+| August 10, 2026 | Phase 3.4 published the combined water service line page for repair, replacement, and installation, with multi-id homepage linking. |
+| August 10, 2026 | Phase 3.5 published the combined stormwater and drainage page with multi-id homepage linking and service cross-links. |
+| August 10, 2026 | Phase 3.6 published the combined excavation and utility trenching page with underground-utility positioning and service cross-links. |
+| August 10, 2026 | Phase 3.7 published the commercial, contractor, and municipal pathway page at `/commercial`. |
+| August 10, 2026 | Phase 3.8 published the unique Toledo service-area page and a minimal `/service-areas` hub. |
+| August 10, 2026 | Phase 3.9 published the About entity page from confirmed public business facts only. |
+| August 10, 2026 | Phase 3.10 was deferred until Phase 2 delivery/confirmation work can be synced from the other system. |
