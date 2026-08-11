@@ -41,13 +41,12 @@ At the completion of every phase or subphase:
 ## Confirmed owner directions
 
 - Use the supplied Ohio Flow Co brand guide for the visual system. The descriptor is **Sewer, Water, Drainage & Excavation**, and the provided logo artwork may be extracted into website-ready SVG exports.
-- During development testing only, display `(419) 486-9657` and `needytrooper04@gmail.com`, and route any future test leads only to that email.
-- Do not send the app to production with those test contacts. Replace the phone, `tel:` link, public email, and lead recipient with owner-confirmed real values first.
+- Use `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com` as the owner-confirmed production phone, clickable destination, public email, and Request Service notification recipient everywhere on the site.
 - Do not add an application-owned persistent photo store for customer uploads at this stage.
 - Treat Vercel as the preferred but unconfirmed production host. If another host is chosen, revalidate Node/Sharp support, request and memory limits, abuse controls, and preview indexing behavior.
 - Keep analytics configuration as disabled placeholders. Inventory any existing GA4, GTM, advertising, call-tracking, and CRM accounts before creating or enabling production integrations.
 - Finish building the website before integrating Google Analytics. Preserve the application event contract and tracked call primitives, then activate and verify the external GTM/GA4 mapping during pre-launch work.
-- Use Resend for development/test lead notification. Send only from `requests@notifications.ohioflowco.com` on the verified `notifications.ohioflowco.com` domain and only to `needytrooper04@gmail.com`; keep the API key server-only in Vercel.
+- Use Resend for lead notification. Send only from `requests@notifications.ohioflowco.com` on the verified `notifications.ohioflowco.com` domain and only to `Ohioflowcollc@gmail.com`; keep the API key server-only in Vercel.
 - Publish only confirmed company facts and services. Real project photography and case-study facts require permission; unsupported service, emergency, financing, or procurement claims remain excluded.
 
 ## Current project safeguards and working plans
@@ -55,7 +54,7 @@ At the completion of every phase or subphase:
 - Treat customer-uploaded photos as sanitized service-request evidence, not reusable marketing assets, unless separate permission is obtained.
 - Resend processes and may retain lead text and sanitized attachments under its policy. Delivered email remains in the company mailbox until deletion; the account setting and mailbox retention/deletion practices must be understood and reflected in the Privacy Policy.
 - Customer email remains optional. No customer autoresponder is authorized. Phase 2.4 uses a same-page confirmation only after provider-confirmed delivery, explains next steps without promising timing, and retains a phone path.
-- Canonical contact data is explicitly marked not production-ready. Phase 5 NAP and launch QA must treat replacement of the test phone and email as a blocking requirement.
+- Canonical contact data is marked production-ready. Production form delivery remains fail-closed under a separate readiness gate until rate limiting and production re-verification are complete; retention approval also remains a launch requirement.
 
 ## Phase 0 — Decisions and assets
 
@@ -64,15 +63,15 @@ At the completion of every phase or subphase:
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
 | 0.1 Brand identity and domain | One canonical public name, legal name, and primary domain | Complete | Locked **Ohio Flow Co** as the display/legal brand and `toledosewerandwater.com` as the primary domain. Buying `ohioflowco.com` is recommended as a redirect but is not confirmed. |
-| 0.2 Public phone | One number used everywhere | Awaiting input | The site now consistently uses test-only `(419) 486-9657`. Before production, replace it and its `tel:` link with an owner-confirmed real number; do not assume any historical value should be restored without confirmation. |
+| 0.2 Public phone | One number used everywhere | Complete | The site consistently uses the owner-confirmed `(419) 709-5808` and `tel:+14197095808`. |
 | 0.3 Offered services | Written yes/no service list | Complete | Locked the underground sewer, water, stormwater, drainage, excavation, trenching, commercial, and contractor/municipal scope. Unconfirmed services are explicitly excluded. |
-| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Awaiting input | During testing, public email and any future form notifications use only `needytrooper04@gmail.com`. The production public email and recipient still require owner confirmation. GA4, GTM, Google Ads, Meta, call-tracking, and CRM ownership remain unconfirmed and paused. |
+| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Partial | Public email and form notifications use the owner-confirmed `Ohioflowcollc@gmail.com`. GA4, GTM, Google Ads, Meta, call-tracking, and CRM ownership remain unconfirmed and paused. |
 | 0.5 Real photos and project facts | Enough approved assets for the home page and at least one or two case studies | Awaiting input | The plan is to use approved Instagram/Facebook project images. Sam still needs to provide permission and 2–3 project summaries with location, problem, work performed, result, and photos. |
 | 0.6 Wix URL inventory and redirect plan | Complete old-to-new map | Draft | A clean destination route direction exists, but no source-URL inventory or old-to-new redirect-map artifact exists yet. Crawl the live Wix site before creating and implementing the Phase 5 map. |
 
 ### Phase 0 summary
 
-The project now has a stable specialist identity, a bounded test recipient, and no unsupported service claims. Remaining Phase 0 inputs do not block local form development, but production contact confirmation, live analytics, final proof content, and launch validation remain blocked.
+The project now has a stable specialist identity, owner-confirmed production contacts, and no unsupported service claims. Remaining Phase 0 inputs include analytics ownership, final proof content, redirect mapping, and launch validation.
 
 ## Phase 1 — Foundation
 
@@ -347,7 +346,6 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 
 ## Current open inputs
 
-- Obtain the owner-confirmed production phone, `tel:` destination, public email, and internal lead recipient; replace every test fixture and mark canonical contact data production-ready before deployment.
 - Select a deployment-compatible rate limit or bot challenge before `/request-service` is exposed publicly. Retry idempotency and static non-customer headers are implemented, but they do not replace request-frequency abuse protection.
 - Decide and document lead/photo retention and deletion for the email provider and company mailbox before the Privacy Policy is finalized.
 - During pre-launch work, inventory existing GTM, GA4, Google Ads, Meta, call-tracking, and CRM accounts; confirm ownership, obtain the production GTM ID if one exists, and decide privacy/consent before activation. This is intentionally deferred while the website is built; do not create replacement production accounts without approval.
@@ -363,8 +361,7 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 - Obtain the licensed Sonar Sans webfont files if exact guide typography is required in-browser; the current design requests Sonar Sans and uses a deliberate local/system fallback without remote font loading.
 - Replace the two narrative brand/city literals in the Request Service page with canonical `site.ts` values, or keep them explicitly reviewed with canonical-data changes.
 - The protected Vercel Preview verified the Sharp/native image path and provider attachment encoding. Revalidate the 4 MiB Server Action envelope, multipart behavior, rate limiting, and production delivery on the final production host.
-- Keep the test-contact production blocker visible until Phase 5 replaces `(419) 486-9657`, `tel:+14194869657`, and `needytrooper04@gmail.com` with owner-confirmed real values.
-- Follow `docs/email-delivery.md` for the completed Preview verification record and the remaining retention, abuse-control, contact-replacement, and production-reverification gates.
+- Follow `docs/email-delivery.md` for the completed Preview verification record and the remaining retention, abuse-control, and production-reverification gates.
 - Confirm the working tagline before public release. If it changes, update canonical data and rendered copy and regenerate `public/og.png`, where the current tagline is baked into the image.
 - Complete full browser, responsive, keyboard, assistive-technology, and production conversion QA in Phases 4.5 and 5.2; Phase 3 integration checks are route-level implementation checks rather than a final launch certification.
 
@@ -391,6 +388,7 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 | August 11, 2026 | Controlled Phase 3 integration: 42 regression tests, lint, TypeScript production build, static route generation, desktop route inspection, 390×844 responsive inspection, mobile navigation interaction, metadata/canonical checks, rendered broken-link audit, tracked-phone audit, and Request Service form-preservation check | Passed; all 12 content/conversion routes rendered with one H1, correct unique metadata and canonical URLs, no horizontal overflow, no links to planned not-found destinations, no untracked phone actions, no browser warnings, and the intact four-audience form with optional multi-photo input. The build generated all 17 framework routes without changing the Phase 2 delivery boundary. |
 | August 11, 2026 | Deployed Vercel Preview verification for `codex/phase-3-core-pages-integration` across all 12 content/conversion routes, desktop and 390×844 mobile rendering, mobile-menu navigation, metadata/canonicals, tracked phone links, rendered link inventory, Request Service controls, browser console, and deployment crawl protection | Passed; every route loaded without a framework error, rendered one H1 with no horizontal overflow, retained the expected production canonical, and contained no unfinished navigation or untracked phone links. The mobile menu navigated and closed correctly, the four-audience form and optional multi-photo input remained intact, no browser warnings/errors appeared, and Vercel SSO returned `x-robots-tag: noindex`. No live lead was submitted because the unchanged Phase 2 email boundary already has provider-backed no-photo and photo verification. |
 | August 11, 2026 | Brand-guided design revamp: logo extraction, full route restyle, responsive shell, shared branded UI, social card, lint, 42 tests, production build, 12-route desktop inspection, representative 390×844 mobile route inspection, mobile-menu navigation, FAQ interaction, form-control audit, broken-image/overflow checks, and browser console review | Passed; all brand assets rendered, each audited route retained one H1 and no horizontal overflow, the mobile menu routed and closed correctly, native FAQ disclosures opened, the full Request Service control contract remained intact, no visible images failed, and no browser warning/error was captured. No live lead was submitted. |
+| August 11, 2026 | Owner-confirmed production contact replacement, repository reference audit, lint, 42 regression tests, TypeScript checking, and 17-route production build | Passed; rendered phone and email surfaces now resolve through `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com`, notification headers use the canonical recipient without the testing subject prefix, no superseded contact remains outside historical documentation, and a distinct production-delivery gate keeps the form fail-closed pending abuse protection and production re-verification. |
 
 ## Progress log
 
@@ -418,3 +416,4 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 | August 11, 2026 | Completed the controlled integration of the contributed Phase 3 core pages into the validated Phase 2.6 branch. Phase 3.1 and 3.3–3.8 are complete; Phase 3.2 remains open only for approved proof, and the contributed Phase 3.9 About page remains open for authentic owner facts and approval. Added a services hub, removed rendered links to unimplemented destinations, corrected customer-facing copy and phone tracking, preserved the full Request Service workflow, and passed the 42-test, lint, production-build, and browser validation set. |
 | August 11, 2026 | Verified the pushed integration on its protected Vercel Preview. All integrated routes, metadata, tracked calls, mobile layouts/navigation, and the preserved Request Service form passed; Vercel SSO and `x-robots-tag: noindex` protect the Preview. No runtime code changed during this deployed-validation checkpoint. |
 | August 11, 2026 | Completed the brand-guided design revamp. Extracted outlined standard/reverse SVG logo exports from the supplied PDF, added reusable logo/hero/FAQ/conversion components, rebuilt the header, footer, mobile call bar, homepage, service, location, About, and Request Service presentation in the official palette, and regenerated `public/og.png`. Existing form delivery and analytics boundaries were preserved and the full local validation set passed. |
+| August 11, 2026 | Replaced all active test contacts with the owner-confirmed production phone, clickable destination, public email, and Request Service recipient. Marked canonical contacts production-ready, retained historical Preview-delivery records, and passed the full local validation set. |

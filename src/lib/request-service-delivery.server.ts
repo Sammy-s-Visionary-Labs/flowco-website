@@ -8,13 +8,14 @@ import {
   isRequestServiceDeliveryAllowed,
   sendRequestServiceEmailWithResend,
 } from "./request-service-email";
-import { contactDataStatus } from "./site";
+import { contactDataStatus, requestServiceDeliveryStatus } from "./site";
 
 export async function deliverRequestServiceLead(
   payload: RequestServiceDeliveryPayload,
 ): Promise<RequestServiceDeliveryResult> {
   if (!isRequestServiceDeliveryAllowed({
     contactDataIsProductionReady: contactDataStatus.productionReady,
+    productionDeliveryIsReady: requestServiceDeliveryStatus.productionReady,
     vercelEnvironment: process.env.VERCEL_ENV,
   })) {
     return { status: "not_configured" };

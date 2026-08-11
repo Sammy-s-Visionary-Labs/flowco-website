@@ -4,16 +4,17 @@
 
 Phase 2.6 is complete. On August 11, 2026, a protected Vercel Preview accepted representative no-photo and photo requests, displayed provider-gated same-page success for both, and delivered both internal notifications to the testing mailbox. The generated `project-photo-1.jpg` attachment arrived and opened successfully.
 
-Production delivery is deliberately blocked while `contactDataStatus.productionReady` is `false`. Use a Vercel Preview deployment for development testing; do not promote the current test phone or email configuration to production.
+The owner has now supplied the production phone and email configuration, and `contactDataStatus.productionReady` is `true`. Production form delivery remains deliberately blocked through `requestServiceDeliveryStatus.productionReady = false` until public abuse protection is added and the no-photo/photo production paths are re-verified. Retention approval also remains a launch check.
 
-## Locked testing configuration
+## Locked production configuration
 
 | Concern | Value |
 |---|---|
 | Provider | Resend |
 | Verified sending domain | `notifications.ohioflowco.com` |
 | Static sender | `Ohio Flow Co <requests@notifications.ohioflowco.com>` |
-| Sole testing recipient | `needytrooper04@gmail.com` |
+| Sole notification recipient | `Ohioflowcollc@gmail.com` |
+| Production delivery | Blocked pending public abuse protection and production re-verification |
 | Customer autoresponder | Disabled; not authorized |
 | Credential | `RESEND_API_KEY`, stored only as a server-side Vercel secret |
 
@@ -27,7 +28,7 @@ Submitted values never control the sender, recipient, subject, or reply headers.
 4. The email layer creates a static-header, plain-text notification and Base64-encodes the request-scoped JPEG bytes.
 5. The server-only adapter reads `RESEND_API_KEY` and posts the message to Resend with the idempotency header and a 10-second timeout.
 6. Only a successful response containing a nonblank Resend email ID counts as confirmed handoff. The receipt remains on the server and is not returned to the browser.
-7. Missing credentials, Vercel production with test contacts, provider errors, malformed responses, timeouts, and network failures all fail closed. The form preserves text values, asks users to reselect any photos, and shows the phone fallback.
+7. Missing credentials, an inactive production-delivery gate, provider errors, malformed responses, timeouts, and network failures all fail closed. The form preserves text values, asks users to reselect any photos, and shows the phone fallback.
 
 No lead text or photo bytes are written to the application filesystem, database, cache, object storage, analytics, or logs.
 
@@ -52,7 +53,7 @@ This evidence closes Phase 2.6 and the remaining external-delivery gates for Pha
 
 ## Production re-verification checklist
 
-After real contacts, public abuse protection, retention practices, and the production environment are approved:
+After public abuse protection, retention practices, and the production environment are approved:
 
 1. Submit a valid request without a photo and confirm provider-gated same-page success and one internal message.
 2. Submit a representative request with a permitted photo and confirm one generated `.jpg` attachment arrives and opens.
@@ -68,7 +69,6 @@ Resend processes the message body and sanitized attachments, and the recipient m
 
 Before production:
 
-- Replace the test phone, public email, and lead recipient with owner-confirmed production values and set `contactDataStatus.productionReady` only after that review.
 - Confirm the production sender and recipient still use static server-owned configuration.
 - Add deployment-compatible rate limiting or a bot challenge before exposing the image-processing form publicly.
 - Confirm the Resend account's content-retention setting and the company mailbox deletion practice.

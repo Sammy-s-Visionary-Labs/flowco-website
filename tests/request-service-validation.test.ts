@@ -214,8 +214,8 @@ test("builds a static-header plain-text internal notification with sanitized att
     email.from,
     `${leadDelivery.senderName} <${leadDelivery.senderEmail}>`,
   );
-  assert.deepEqual(email.to, ["needytrooper04@gmail.com"]);
-  assert.equal(email.subject, `[TEST] New ${site.name} service request`);
+  assert.deepEqual(email.to, ["Ohioflowcollc@gmail.com"]);
+  assert.equal(email.subject, `New ${site.name} service request`);
   assert.equal(Object.hasOwn(email, "html"), false);
   assert.equal(Object.hasOwn(email, "reply_to"), false);
   assert.equal(serializedHeaders.includes(payload.lead.fullName), false);
@@ -313,11 +313,12 @@ test("fails closed for missing credentials and unconfirmed Resend responses", as
   assert.equal(readResendProviderReceipt(null), null);
 });
 
-test("blocks test contact routing on Vercel production only", () => {
+test("blocks production delivery until contacts and public safeguards are ready", () => {
   for (const vercelEnvironment of [undefined, "development", "preview"]) {
     assert.equal(
       isRequestServiceDeliveryAllowed({
         contactDataIsProductionReady: false,
+        productionDeliveryIsReady: false,
         vercelEnvironment,
       }),
       true,
@@ -327,6 +328,7 @@ test("blocks test contact routing on Vercel production only", () => {
   assert.equal(
     isRequestServiceDeliveryAllowed({
       contactDataIsProductionReady: false,
+      productionDeliveryIsReady: true,
       vercelEnvironment: "production",
     }),
     false,
@@ -334,6 +336,15 @@ test("blocks test contact routing on Vercel production only", () => {
   assert.equal(
     isRequestServiceDeliveryAllowed({
       contactDataIsProductionReady: true,
+      productionDeliveryIsReady: false,
+      vercelEnvironment: "production",
+    }),
+    false,
+  );
+  assert.equal(
+    isRequestServiceDeliveryAllowed({
+      contactDataIsProductionReady: true,
+      productionDeliveryIsReady: true,
       vercelEnvironment: "production",
     }),
     true,

@@ -102,12 +102,17 @@ export function readResendProviderReceipt(value: unknown) {
 
 export function isRequestServiceDeliveryAllowed({
   contactDataIsProductionReady,
+  productionDeliveryIsReady,
   vercelEnvironment,
 }: Readonly<{
   contactDataIsProductionReady: boolean;
+  productionDeliveryIsReady: boolean;
   vercelEnvironment: string | undefined;
 }>) {
-  return vercelEnvironment !== "production" || contactDataIsProductionReady;
+  return (
+    vercelEnvironment !== "production" ||
+    (contactDataIsProductionReady && productionDeliveryIsReady)
+  );
 }
 
 export async function sendRequestServiceEmailWithResend(
