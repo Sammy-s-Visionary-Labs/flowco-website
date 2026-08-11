@@ -1,6 +1,6 @@
 # Ohio Flow Co — Project Architecture
 
-**Architecture status:** Phase 2 is complete for the current build scope with external analytics activation deferred; Phase 3 core pages are integrated, with proof and owner-content gates still open for Phases 3.2 and 3.9
+**Architecture status:** Consent-gated direct GA4 and the technical SEO/structured-data layer are implemented; the owner-controlled GA4 property and production Measurement ID remain external activation inputs
 
 **Last reviewed:** August 11, 2026
 
@@ -36,12 +36,12 @@ Do not silently change canonical business details in individual components. Upda
 | Canonical business data | `src/lib/site.ts` |
 | SEO metadata composition | `src/lib/seo.ts` |
 | Crawl-surface registry | `src/lib/routes.ts` |
-| Analytics contract | Typed first-party `dataLayer` events with an optional GTM transport |
+| Analytics contract | Typed, consent-gated direct GA4 events with no GTM dependency |
 | Upload normalization | Sharp decodes and re-encodes bounded project photos in request memory |
 | Lead notification | Server-only Resend email handoff with static headers, plain-text content, normalized JPEG attachments, and deterministic idempotency |
 | Global shell | Root layout with a Bedrock header, main content, branded footer, and mobile call bar |
 | Brand assets | Six SVG exports derived from the supplied OFC brand-guidelines PDF, wrapped by one typed `BrandLogo` component |
-| Current routes | `/`, `/services`, five service-intent routes, `/commercial`, `/service-areas`, `/service-areas/toledo`, `/about`, `/request-service`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and the framework-provided not-found route |
+| Current routes | `/`, `/services`, five service-intent routes, `/commercial`, `/service-areas`, `/service-areas/toledo`, `/about`, `/request-service`, `/privacy`, `/terms`, `/accessibility`, `/robots.txt`, `/sitemap.xml`, `/manifest.webmanifest`, `/llms.txt`, and a custom not-found route |
 | Crawl surfaces | Typed Next.js metadata routes plus a static plain-text route |
 | Build command | `npm run build`, using Next.js's Webpack build path |
 | Deployment target | Vercel remains the provisional production target; the Resend secret is stored there for testing, and the Node/Sharp/Resend path is verified on a protected Vercel Preview. Final production hosting confirmation remains pending. |
@@ -257,21 +257,22 @@ The owner-confirmed production phone, phone link, public email, and inherited le
 
 - `SiteHeader.tsx` is a Client Component because it owns mobile-menu state, pathname-aware navigation, Escape handling, and focus return. The desktop and mobile shells use the reverse OFC monogram on a Bedrock surface with Excavation Gold conversion controls.
 - `SiteFooter.tsx` is a Server Component containing the reverse primary logo, company information, navigation, cities, legal links, and conversion calls to action.
-- Footer legal destinations are filtered against `publishedRoutes`, so the planned Privacy, Terms, and Accessibility links do not render or lead to not-found pages before Phase 4 publishes them.
+- Footer legal destinations are filtered against `publishedRoutes`; the published Privacy, Terms, and Accessibility pages now render there. A consent-choice control also appears when GA4 is configured.
 - `MobileCallBar.tsx` is a Server Component that keeps Call Now and Request Service fixed at the bottom below the large-desktop breakpoint.
 
 ### Analytics layer
 
-- `Analytics.tsx` is a Server Component mounted once in the root layout. It reads the build-time analytics configuration and conditionally emits one `next/script` GTM bootstrap.
-- `PageViewTracker.tsx` is a Client Component that emits one `ofc_page_view` event for the initial pathname and each distinct App Router pathname change.
-- `AnalyticsEventBridge.tsx` is a Client Component with one delegated click listener for typed Call and Request Service data attributes. It does not delay or replace link navigation.
-- `src/lib/analytics.ts` owns the event-name allowlist, CTA-location allowlist, narrow event helpers, pathname normalization, lead-form events, and the canonical tracked-phone attribute helper.
+- `Analytics.tsx` is a Server Component mounted once in the root layout. It reads the build-time GA4 configuration and renders nothing when the Measurement ID is absent.
+- `GoogleAnalytics.tsx` owns the explicit allow/decline experience. It does not request `gtag.js` until consent is granted, persists the choice in first-party local storage, supports later revocation, and keeps advertising/personalization signals disabled.
+- `PageViewTracker.tsx` emits one consented `page_view` event for the initial pathname and each distinct App Router pathname change.
+- `AnalyticsEventBridge.tsx` attaches its delegated Call and Request Service click listener only while analytics consent is active. It does not delay or replace link navigation.
+- `src/lib/analytics.ts` owns the GA4 initialization, disable/cookie cleanup behavior, event-name allowlist, CTA-location allowlist, narrow event helpers, pathname normalization, lead-form events, and canonical tracked-phone attribute helper.
 - `PhoneLink` and `CallLink` are the only components that emit `tel:` links. Both use the typed phone-attribute helper. Footer phone text, header/menu/call-bar controls, Request Service page calls, failure fallback, and confirmation follow-up are therefore covered without duplicating event literals.
-- `src/lib/analytics-config.ts` requires both `NEXT_PUBLIC_ANALYTICS_ENABLED=true` and a syntactically valid `NEXT_PUBLIC_GTM_ID`; otherwise the transport is disabled or the enabled build fails closed.
-- GTM is the only planned transport. GA4 will be configured inside the confirmed production GTM container rather than loaded independently.
+- `src/lib/analytics-config.ts` enables analytics only when a syntactically valid `NEXT_PUBLIC_GA_MEASUREMENT_ID` is present. Empty disables the integration; malformed values fail the build.
+- Direct `gtag.js` is the sole transport. No GTM container, API token, provider SDK, or second analytics loader is required.
 - Events contain bounded structural fields only. Application code excludes contact details, form contents, uploaded-file information, raw URLs, query strings, referrers, and arbitrary payloads.
-- Analytics activation is intentionally deferred until the website is otherwise ready for pre-launch integration. Existing GA4, GTM, advertising, call-tracking, and CRM accounts must then be inventoried before anyone creates replacement production accounts or enables the placeholder environment values.
-- Server-returned validation and submission failures emit bounded form-error events. A client-only photo preflight error is displayed accessibly but is not currently sent to the data layer.
+- The owner confirmed there is no existing Analytics credential. External activation now requires creation of one owner-controlled GA4 account/property/web stream, its public Measurement ID, deployment, and Realtime/DebugView verification.
+- Server-returned validation and submission failures emit bounded form-error events after consent. A client-only photo preflight error is displayed accessibly but is not sent to Analytics.
 - `docs/analytics.md` is the activation, event-mapping, data-minimization, and duplicate-prevention contract.
 
 ### Shared UI layer
@@ -381,9 +382,9 @@ The crawl architecture is implemented as follows:
 - `llms.txt` is supplemental machine-readable context. It is not treated as an access-control, indexing, ranking, or training directive.
 - Public preview deployments must receive platform-level crawl protection after a deployment provider is selected; production `robots.txt` is not used to conceal unfinished preview environments.
 
-`Breadcrumbs` accepts explicit labels and links from each page rather than generating labels from URL slugs. The homepage does not render a redundant breadcrumb. Breadcrumb JSON-LD remains deferred to Phase 4.3.
+`Breadcrumbs` accepts explicit labels and links from each page rather than generating labels from URL slugs. The homepage does not render a redundant breadcrumb. It emits matching `BreadcrumbList` microdata.
 
-Structured data belongs to Phase 4.3.
+The root layout emits one `Organization`/`WebSite` JSON-LD graph, with `HomeAndConstructionBusiness` as the additional business type, using confirmed canonical data and no invented storefront address. Service pages add `Service` JSON-LD, and the shared visible FAQ renderer adds matching `FAQPage`, `Question`, and `Answer` microdata.
 
 Current and planned route families include:
 
@@ -411,7 +412,7 @@ The current architecture provides conversion entry points and a fail-closed lead
 
 - Phone links use the owner-confirmed production destination `tel:+14197095808`.
 - Request Service links target `/request-service#request-form` so the shared CTA reaches the form directly.
-- All current phone and Request Service links emit bounded, placement-aware data-layer events. Phase 2.5 centralized every `tel:` surface behind `PhoneLink` or `CallLink`; the Phase 3 regression guard rejects new raw phone destinations.
+- All current phone and Request Service links can emit bounded, placement-aware GA4 events after consent. Every `tel:` surface remains behind `PhoneLink` or `CallLink`; the regression guard rejects new raw phone destinations.
 - `/request-service` renders one short form with residential, commercial, contractor, and municipal paths, one shared field contract, authoritative server validation for all submitted data, advisory browser preflight for photo count/size/type, and safe failure states.
 - Form starts and Server Action validation/submission failures emit bounded events; client-only photo preflight errors remain local. Confirmed-lead events emit only after external delivery succeeds, a path proven by the August 11 Vercel Preview tests.
 - The owner-confirmed lead and immediate-notification recipient is `Ohioflowcollc@gmail.com`.
@@ -420,9 +421,9 @@ The current architecture provides conversion entry points and a fail-closed lead
 - A provider email workflow now exists; no CRM integration or customer autoresponder exists.
 - Optional project photos are normalized into generated JPEG attachments and passed directly to Resend without separate website storage. The Preview test delivered `project-photo-1.jpg`, and the owner confirmed that it opened successfully.
 - The honeypot is baseline protection only. Per-request image limits do not limit request frequency, so compatible rate limiting or a bot challenge is required before this image-processing route is exposed on any public deployment.
-- No live GA4, GTM, advertising, or call-tracking transport is configured yet; the owner intentionally deferred that external integration until pre-launch.
-- Pageview and conversion hooks remain local until the explicit analytics flag and a valid production GTM ID are supplied.
-- Phase 2 provider-backed receipt, mailbox, and attachment verification is complete. The application-side analytics contract is also complete for the current build scope; external analytics mapping is a deferred pre-launch task rather than an active Phase 2 blocker.
+- The direct GA4 transport and privacy controls are implemented but no live Measurement ID is configured yet. GTM, advertising pixels, and call-tracking are not installed.
+- Pageview and conversion hooks remain inactive until the production build receives a valid Measurement ID and each visitor grants analytics consent.
+- Phase 2 provider-backed receipt, mailbox, and attachment verification is complete. Analytics code is complete; only owner-account creation, environment configuration, deployment, and live receipt verification remain.
 
 ### Outbound-delivery safeguards and remaining gates
 
@@ -459,7 +460,7 @@ The register separates non-engineering decisions (business, product, content, an
 | B-011 | Real project photography should be used with permission; generic plumbing imagery and glossy CGI pipes are excluded. | Locked approach | Phase 0.5 |
 | B-012 | Request Service leads and immediate notifications were originally directed only to `Ohioflowcollc@gmail.com` for the initial email handoff. | Confirmed for production by B-029 | Phase 2.1 owner decision |
 | B-013 | Customer-submitted photos use no application-owned persistent store. Resend processes and may retain sanitized attachments under its policy; delivered email remains in the company mailbox until deletion under the eventual retention practice. | Locked storage approach; Resend/mailbox retention procedure pending | Phase 2.1 owner decision for Phase 2.3; Phase 2.6 provider selection |
-| B-014 | Keep GA4/GTM activation paused and keep placeholder values disabled until existing account ownership and the privacy/consent approach are confirmed; do not create replacement production accounts without owner approval. | Locked current approach | Phase 2.1 owner decision |
+| B-014 | Keep GA4/GTM activation paused and keep placeholder values disabled until existing account ownership and the privacy/consent approach are confirmed; do not create replacement production accounts without owner approval. | Superseded by B-030 | Phase 2.1 owner decision |
 | B-015 | Customer-submitted photos are service-request evidence only and are not approved for galleries, case studies, social media, or other marketing without separate permission. | Active privacy boundary | Phase 2.3 documentation audit |
 | B-016 | Internal lead and immediate-notification delivery was authorized only to `Ohioflowcollc@gmail.com`, and customer email is optional. No customer autoresponder was authorized; on-site submitter confirmation was the working Phase 2.4 plan. | Recipient confirmed by B-029; confirmation plan superseded by B-023 | Phase 2.1 owner direction; Phase 2.4 working plan |
 | B-017 | Vercel is the preferred production host because the application uses Next.js, but it is not confirmed. A different host requires revalidation of request-size, Node/Sharp, memory, abuse-control, and preview-indexing assumptions. | Provisional | Phase 2.1 owner direction |
@@ -470,11 +471,12 @@ The register separates non-engineering decisions (business, product, content, an
 | B-022 | During development testing only, render `(419) 486-9657` and `needytrooper04@gmail.com`, and route any future test lead handoff only to that email. These values are not approved for production and must be replaced with owner-confirmed real contact information before launch. | Superseded by B-029 | Owner direction, August 7, 2026 |
 | B-023 | Confirm successful Request Service submissions on the same page only after provider-confirmed delivery. Do not send a customer autoresponder at this stage and do not promise a response time; explain the review/follow-up process and retain the phone path. | Active; live-verified in Vercel Preview | Phase 2.4; Phase 2.6 |
 | B-024 | Use Resend for the testing lead handoff. The verified sending domain is `notifications.ohioflowco.com`, the static sender is `requests@notifications.ohioflowco.com`, and the sole testing recipient remains `needytrooper04@gmail.com`. The API key is stored in Vercel. This testing configuration does not approve the current contacts for production or finalize Vercel as the production host. | Historical testing configuration; recipient superseded by B-029 | Owner direction, Phase 2.6 |
-| B-025 | Finish the website before integrating Google Analytics. Preserve the application-owned pageview, conversion, form, and phone event contract, but defer external GTM/GA4 account selection, consent, activation, mapping, and receipt verification until pre-launch. | Active owner direction | Phase 2.5 deferral, August 11, 2026 |
+| B-025 | Finish the website before integrating Google Analytics. Preserve the application-owned pageview, conversion, form, and phone event contract, but defer external GTM/GA4 account selection, consent, activation, mapping, and receipt verification until pre-launch. | Superseded by B-030 | Phase 2.5 deferral, August 11, 2026 |
 | B-026 | Do not fabricate project proof or use customer-uploaded service-request photos as marketing proof. Phase 3.2 cannot be called complete against its defined proof requirement until approved real project facts and assets exist. | Active content gate | Phases 0.5 and 3.2 |
 | B-027 | Keep water-service repair/replacement, stormwater/drainage, and excavation/trenching combined while confirmed scope and available content do not justify separate substantive pages. Split them only after distinct intent, facts, and proof support each route. | Active content architecture | Phases 3.4–3.6 |
 | B-028 | The About page may use confirmed positioning and service-area facts now, but final Phase 3.9 completion requires authentic owner-approved company history, team, experience, and operating facts. | Awaiting owner content | Phase 3.9 integration |
 | B-029 | Use `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com` as the owner-confirmed production phone, phone link, public email, and Request Service notification recipient everywhere on the site. | Active production contact configuration | Owner direction, August 11, 2026 |
+| B-030 | Complete Google Analytics and SEO now; no pre-existing Google Analytics credential or property needs to be preserved. Use one owner-controlled GA4 property and a consent-gated direct Measurement ID integration. | Active | Owner direction, August 11, 2026 |
 
 ### Technical and design decisions
 
@@ -491,10 +493,10 @@ The register separates non-engineering decisions (business, product, content, an
 | T-009 | `publishedRoutes` is the single crawl-inventory source; a route enters the sitemap and `llms.txt` links only after it has substantive published content. | Superseded by T-028 | Phase 1.5 |
 | T-010 | Production robots rules permit crawling and advertise the canonical sitemap; preview crawl protection will be deployment-level rather than encoded in production rules. | Active | Phase 1.5 |
 | T-011 | `llms.txt` is generated from canonical project constants as force-static supplemental context and is not treated as a crawler-control mechanism. | Active | Phase 1.5 |
-| T-012 | Load GTM as the sole analytics transport and configure GA4 inside GTM; do not ship parallel GTM and direct GA4 loaders. | Active | Phase 1.6 |
-| T-013 | Analytics transport is disabled by default and requires an explicit enable flag plus a valid production GTM ID. Enabled builds with invalid configuration fail closed. | Active | Phase 1.6 |
+| T-012 | Load GTM as the sole analytics transport and configure GA4 inside GTM; do not ship parallel GTM and direct GA4 loaders. | Superseded by T-043 | Phase 1.6 |
+| T-013 | Analytics transport is disabled by default and requires an explicit enable flag plus a valid production GTM ID. Enabled builds with invalid configuration fail closed. | Superseded by T-043 | Phase 1.6 |
 | T-014 | Application-owned analytics events use a typed allowlist and bounded parameters; personal information, form contents, query strings, referrers, and arbitrary payloads are excluded. | Active | Phase 1.6 |
-| T-015 | Application code owns pathname pageviews. Future GTM configuration must disable automatic/history-change duplicates and map each data-layer event once. | Active | Phase 1.6 |
+| T-015 | Application code owns pathname pageviews. Future GTM configuration must disable automatic/history-change duplicates and map each data-layer event once. | Superseded in transport detail by T-043; application-owned pageviews remain active | Phase 1.6 |
 | T-016 | Use Server Components by default and isolate browser-only state and effects in the smallest practical leaf components, currently the header, analytics trackers, and Request Service form. | Active | Phase 1.6 |
 | T-017 | Use one shared pure contract for Request Service field options, normalization, and server validation; the Client Component handles interaction while a Server Action owns submission. | Active | Phase 2.1 |
 | T-018 | A service request is successful only after the server-only delivery adapter returns a confirmed provider receipt. Unconfigured or failed delivery must preserve values, show a phone fallback, and emit no lead-success event. | Active | Phase 2.1 |
@@ -513,7 +515,7 @@ The register separates non-engineering decisions (business, product, content, an
 | T-031 | Normalize only a sole exact empty optional-file sentinel—including React/Next's synthetic `blob` filename—to no attachment. Do not discard repeated, mixed, named, or MIME-altered zero-byte entries. | Active | Phase 2.3 no-photo regression |
 | T-032 | Keep the phone, `tel:` link, public email, and inherited lead recipient centralized in `site.ts`; expose contact readiness through `contactDataStatus`. | Active; production contacts supplied under T-042 | Test-contact override; B-029 |
 | T-033 | Replace the form with a focused same-page status panel only when submission state is `success`; success remains gated by a nonblank provider receipt. Keep provider receipts and submitted values out of client state, prevent accidental duplicate submission, and restore a cleared form only through an explicit second-request action. | Active; end-to-end verified in Vercel Preview | Phase 2.4; Phase 2.6 live verification |
-| T-034 | Emit every `tel:` link through a shared tracked phone primitive using one typed attribute helper. Push only `ofc_phone_click` and an allowlisted `cta_location`; exclude the displayed number, `tel:` value, page data, and customer data. Keep GTM/GA4 transport disabled until account ownership, consent, mapping, and duplicate checks are complete. | Active application contract; external activation deferred to pre-launch | Phase 2.5; B-025 |
+| T-034 | Emit every `tel:` link through a shared tracked phone primitive using one typed attribute helper. Send only `phone_click` and an allowlisted `cta_location`; exclude the displayed number, `tel:` value, page data, and customer data. | Active application contract; transport portion superseded by T-043 | Phase 2.5; B-025 |
 | T-035 | Send internal Request Service notifications through Resend using native server-side `fetch`, the Vercel-held `RESEND_API_KEY`, one verified static sender, one canonical recipient, a static subject, a plain-text body, Base64 normalized JPEG attachments, a 10-second timeout, and a nonblank Resend email ID as the only success receipt. Add no provider SDK, customer reply-to header, application persistence, or sensitive logging. | Active; live handoff verified in Vercel Preview | Phase 2.6 |
 | T-036 | Derive the Resend idempotency header from a versioned SHA-256 digest of the complete normalized lead and sanitized attachment payload. This makes retries of the same payload converge without returning the key or provider receipt in client state; any changed normalized content produces a new key. | Active | Phase 2.6 |
 | T-037 | Return `not_configured` on Vercel production while canonical contact data is marked test-only. Permit current provider testing only in a non-production environment and keep `/request-service` outside published crawl surfaces until real production contacts and public abuse controls are in place. | Contact-data block cleared by T-042; public abuse-control and crawl-surface gates remain active | Phase 2.6 |
@@ -522,6 +524,8 @@ The register separates non-engineering decisions (business, product, content, an
 | T-040 | Preserve tracked phone coverage across new pages with two static regressions: every primary navigation destination must be registered as published, and source files outside the CTA primitive may not emit `site.phoneHref` or literal `tel:` links directly. | Active | Phase 3 integration audit |
 | T-041 | Keep `publishedRoutes` as the substantive crawl-surface source. Register the completed homepage and core Phase 3 pages; withhold `/request-service` under T-037 and withhold planned routes until their public content exists. | Active | Phase 3.1–3.9 integration |
 | T-042 | Mark canonical contact data production-ready after replacing every rendered/test contact with `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com`. Resend messages use the canonical recipient and omit the testing subject prefix. Keep the separate `requestServiceDeliveryStatus.productionReady` gate false until public abuse protection and production delivery re-verification are complete. | Active contact configuration; production form delivery still gated | B-029, August 11, 2026 |
+| T-043 | Use direct `gtag.js` with one public `G-` Measurement ID and no GTM dependency. Do not load Google code until explicit visitor consent; support decline/revocation, keep advertising and personalization storage denied, and fail builds with malformed configured IDs. | Active; live ID and receipt verification pending | B-030, August 11, 2026 |
+| T-044 | Emit confirmed organization, service, FAQ, and breadcrumb structured data; publish legal routes, a manifest, canonical crawler directives, a custom noindex 404, and permanent redirects for every legacy Wix route in the archived inventory. Do not invent a storefront address, reviews, ratings, hours, or unconfirmed services. | Active | Technical SEO completion, August 11, 2026 |
 | D-001 | Use deep navy, construction orange, light gray canvas, and white surfaces. | Superseded by D-007 | Phase 1.3 |
 | D-002 | Use the darker `#b64f1f` accent for accessible white CTA text. | Superseded by D-007 | Phase 1.3 |
 | D-003 | Use system fonts rather than remote font dependencies. | Superseded by D-008 | Phase 1.3 |
@@ -538,10 +542,10 @@ The register separates non-engineering decisions (business, product, content, an
 
 These are planned boundaries, not implemented architecture:
 
-- **Deferred analytics:** owner-approved GTM/GA4 account selection, production click/form mapping, consent implementation, duplicate prevention, and receipt validation during pre-launch. The current application event contract remains active and tested.
+- **External analytics activation:** sign in to the owner Google account, create the GA4 property/web stream, configure its public Measurement ID, deploy, and complete Realtime/DebugView verification. Consent, event transport, data minimization, and duplicate controls are implemented.
 - **Remaining Phase 3:** approved real proof for Phase 3.2, authentic owner-approved About facts for Phase 3.9, Phase 3.10 contact/content work on the existing Request Service foundation, and Phase 3.11 projects/case studies.
-- **Phase 4:** legal content, structured data, image pipeline, and complete accessibility QA.
-- **Phase 5:** redirects, deployment configuration, launch validation, and search-engine submission.
+- **Phase 4:** complete dedicated accessibility/browser QA and any approved image/proof follow-up; legal content and structured data are implemented.
+- **Phase 5:** complete deployment configuration, live redirect/schema checks, Search Console verification/submission, and launch validation; the code redirect map is implemented.
 
 ## Architecture change log
 
@@ -572,3 +576,4 @@ These are planned boundaries, not implemented architecture:
 | August 11, 2026 | Phase 3 integration Preview verification | Verified the deployed branch across all 12 content/conversion routes at desktop and 390×844 mobile sizes. Metadata, canonicals, one-H1 structure, navigation, tracked phone attributes, horizontal overflow, the four-audience Request Service form, optional photo input, and browser console all passed. Vercel SSO and `x-robots-tag: noindex` provide the required Preview crawl protection. No runtime architecture changed, and no new lead was submitted because the unchanged Phase 2 provider handoff was already verified. |
 | August 11, 2026 | Brand-guided design revamp | Replaced the provisional navy/orange system with the supplied Bedrock, Trench Green, Excavation Gold, and Porcelain palette. Extracted the primary, monogram, and mark artwork into outlined standard/reverse SVGs; added a typed logo wrapper, shared page hero, FAQ, and conversion-band components; redesigned the global shell and every implemented content/conversion route; regenerated the social card; and preserved the existing route, analytics, form, upload, and delivery architecture. |
 | August 11, 2026 | Production contact confirmation | Replaced the temporary test phone, `tel:` destination, public email, and notification recipient with the owner-confirmed `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com`. Marked canonical contact data production-ready and removed the test subject prefix from notifications. Added a distinct production-delivery readiness gate so the form remains fail-closed until abuse protection and production re-verification are complete. |
+| August 11, 2026 | Google Analytics and technical SEO completion | Superseded the GTM transport with one consent-gated direct GA4 Measurement ID integration; added preference persistence/revocation, privacy-safe standard/custom events, legal routes, Organization/WebSite/Service/FAQ/Breadcrumb structured data, manifest, crawler metadata, optional Search Console verification, a custom noindex 404, and permanent redirects for every discontinued Wix route in the archived inventory. No Google account credential was stored; live activation remains an owner sign-in and deployment task. |

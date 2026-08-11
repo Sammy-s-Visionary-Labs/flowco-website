@@ -1,82 +1,100 @@
-# Ohio Flow Co — Analytics Contract
+# Ohio Flow Co — Google Analytics Contract
 
 ## Current status
 
-The Phase 1.6 analytics foundation and Phase 2.5 application-side click-to-call coverage are implemented, but external analytics delivery is disabled by default. Page and conversion events are written to the browser's `dataLayer`; no Google Tag Manager request is made unless both analytics environment values are deliberately configured.
+The website is ready to send consented events directly to one Google Analytics 4 web stream. It does not require an API token or Google Tag Manager. The only application value needed is the stream's public Measurement ID, which starts with `G-`.
 
-GA4 must be configured inside one production GTM container. The application does not load a second direct GA4 script, preventing two integrations from reporting the same pageview.
+If the Measurement ID is empty, no Google script, consent prompt, analytics cookie, or analytics event is emitted. If the value is malformed, the production build fails with a clear configuration error.
 
-Per the current owner direction, analytics remains paused. Inventory existing GA4, GTM, Google Ads, Meta, call-tracking, and CRM accounts before creating or connecting any replacement production account. The environment values below are disabled placeholders, not approval to activate tracking.
+The remaining external step is to create the owner-controlled GA4 account/property/web stream, add its Measurement ID to the production environment, deploy, and verify receipt in Realtime and DebugView.
 
-## Activation requirements
+## Google account setup
 
-Do not enable the GTM loader until all of these are complete:
+Use an owner-controlled Google account and create this simple structure:
 
-1. Sam confirms whether production GTM and GA4 accounts already exist and who owns them.
-2. The production GTM container ID is available.
-3. The privacy disclosure reflects the analytics configuration.
-4. The project has made and implemented its consent decision for the jurisdictions it serves.
-5. GTM Preview confirms the event mappings below without duplicates or personal information.
+- Account: `Ohio Flow Co`
+- Property: `Ohio Flow Co Website`
+- Reporting time zone: `United States — Eastern Time`
+- Currency: `United States Dollar (USD)`
+- Web stream URL: `https://www.toledosewerandwater.com`
+- Web stream name: `Ohio Flow Co Website`
 
-Set these build-time values in the production environment, then rebuild and deploy:
+Google enables Enhanced Measurement by default. In the web stream's Enhanced Measurement settings:
+
+1. Turn off **Page views** because the application sends one explicit `page_view` for the initial route and each App Router route change.
+2. Turn off **Form interactions** because the application sends its own minimized `form_start` and `generate_lead` events.
+3. Other Enhanced Measurement options can remain off until they have a defined reporting purpose.
+
+Copy the stream's public Measurement ID and set it in the production deployment:
 
 ```dotenv
-NEXT_PUBLIC_ANALYTICS_ENABLED=true
-NEXT_PUBLIC_GTM_ID=GTM-ABC1234
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-ABC1234567
 ```
 
-The site fails its production build when analytics is enabled with a missing or malformed GTM ID. Development and preview deployments should remain disabled unless they use a separate test container.
+An optional Google Search Console HTML-tag verification value can be provided separately:
+
+```dotenv
+GOOGLE_SITE_VERIFICATION=verification-value-from-google
+```
+
+Neither value is a secret API credential. Do not store a Google password, OAuth token, service-account key, or Analytics Admin API credential in the website.
+
+## Consent behavior
+
+- The Google tag is not requested until a visitor selects **Allow analytics**.
+- Declining analytics does not block site content, phone actions, or the service-request form.
+- The choice is stored only in first-party local storage under `ohio-flow-co.analytics-consent.v1`.
+- Visitors can reopen the choice from the footer or Privacy Policy.
+- Revoking consent stops application events, sets Google's per-property disable flag, sends a denied consent update if the tag was already loaded, and removes first-party cookies whose names begin with `_ga`.
+- Advertising storage, ad-user data, ad personalization, Google Signals, and personalization storage remain denied or disabled.
+
+The Privacy Policy at `/privacy` describes the implementation and the data excluded from Analytics.
 
 ## Event contract
 
-| Data-layer event | Allowed payload | Current source | Intended GTM/GA4 handling |
+| GA4 event | Allowed parameters | Source | Reporting use |
 |---|---|---|---|
-| `ofc_page_view` | `page_path` | Initial load and App Router pathname changes | Map to one GA4 `page_view` event |
-| `ofc_phone_click` | `cta_location` | Every rendered phone link through the shared tracked phone primitives | Map to the approved call-click conversion event |
-| `ofc_request_service_click` | `cta_location` | Shared Request Service links and footer navigation | Map to a CTA intent event |
-| `ofc_form_start` | `form_id` | First meaningful interaction with the Request Service form | Map after analytics ownership is confirmed |
-| `ofc_generate_lead` | `form_id` | Request Service success state, emitted only after confirmed external delivery; the success path is live-verified in Vercel Preview | Map to GA4 `generate_lead` after analytics are active |
-| `ofc_form_error` | `form_id`, `error_type` | Request Service Server Action validation or submission failure | Use for aggregate form reliability reporting |
+| `page_view` | `page_path`, query-free `page_location` | Initial consented view and distinct App Router pathname changes | Page and landing-page reporting |
+| `phone_click` | `cta_location` | Every rendered phone link through the shared phone primitives | Call intent; mark as a key event after verification |
+| `request_service_click` | `cta_location` | Shared Request Service links | CTA intent |
+| `form_start` | `form_id` | First meaningful Request Service form interaction | Form funnel start |
+| `generate_lead` | `form_id` | Request Service success state after confirmed external delivery | Lead conversion; mark as a key event |
+| `form_error` | `form_id`, `error_type` | Authoritative validation or delivery failure | Aggregate form reliability |
 
 Allowed CTA locations are `header_desktop`, `header_mobile`, `mobile_menu`, `mobile_call_bar`, `footer_contact`, `footer_nav`, and `page_content`.
 
-### Phase 2.5 phone-link coverage
-
-- Desktop header call control: `header_desktop`
-- Mobile navigation call control: `mobile_menu`
-- Persistent mobile call bar: `mobile_call_bar`
-- Footer phone text link and call control: `footer_contact`
-- Request Service page call control, unconfirmed-submission fallback, and confirmed-submission follow-up link: `page_content`
-
-`PhoneLink` and `CallLink` are the only application components that emit `tel:` links. Both receive their event attributes from the typed `getPhoneAnalyticsAttributes` helper, preventing a phone surface from using an arbitrary event name or placement. The delegated bridge pushes one synchronous `ofc_phone_click` event for normal click, touch, or keyboard link activation before the browser handles the phone link. The payload contains only `cta_location`; it never contains the displayed number, `tel:` value, route, or customer data.
-
-The mobile header has no separate call link; its persistent phone action is the mobile call bar, while the header's compact CTA is Request Service. No synthetic phone-click event is emitted for a surface that does not initiate a call.
-
-`page_path` contains the pathname only. Query strings, fragments, page titles, and referrers are intentionally excluded.
-
-Client-only photo count, size, and type preflight errors are shown accessibly but are not currently sent to the data layer. Authoritative server-returned validation and submission failures emit `ofc_form_error`.
+`PhoneLink` and `CallLink` are the only components that emit `tel:` destinations. The phone event includes only the allowlisted placement; it excludes the displayed number and `tel:` value.
 
 ## Data rules
 
-Analytics events must never contain:
+Application analytics events must never contain:
 
 - Names, email addresses, phone numbers, or street addresses
-- Form field values or free-text messages
+- Form-field values or free-text messages
 - Uploaded filenames, file metadata, or image contents
 - Query strings, search terms, or raw referrers
-- User, session, or advertising identifiers added by application code
+- Google or advertising identifiers added by application code
 
-Add future events through the typed helpers in `src/lib/analytics.ts`. Do not push arbitrary objects directly from page or form components.
+Add future events through the typed helpers in `src/lib/analytics.ts`. Do not call `gtag` directly from page or form components.
 
 ## Duplicate-prevention rules
 
-- Maintain one GTM container loader in `src/components/analytics/Analytics.tsx`.
-- Configure GA4 inside GTM; do not add a parallel direct `gtag.js` integration.
-- The application owns route pageviews through `ofc_page_view`.
-- Disable automatic pageview sending for the GTM-managed Google tag.
-- Do not add a second GTM History Change pageview trigger.
-- Map each data-layer event to one GA4 tag and verify it once in GTM Preview and GA4 DebugView.
+- Maintain one direct Google tag loader in `GoogleAnalytics.tsx`.
+- Do not add a parallel GTM loader, second GA library, or framework analytics plugin.
+- Keep `send_page_view: false`; the application owns pageviews.
+- Keep GA4 Enhanced Measurement **Page views** and **Form interactions** off.
+- Do not create GA4 custom events that duplicate an event already sent by the application.
 
-The environment flag is an operational activation gate, not a substitute for any per-visitor consent mechanism the project may later require.
+## Verification checklist
 
-Phase 2.5 remains operationally incomplete until the existing-account inventory and consent decision are resolved, GTM maps `ofc_phone_click` exactly once, and a production-like click is verified in GTM Preview and GA4 DebugView without duplicate or personal data.
+After the production Measurement ID is configured and deployed:
+
+1. Open a clean browser session and verify there is no request to `googletagmanager.com` before a consent choice.
+2. Select **Decline** and verify the Google tag remains unloaded.
+3. Reopen Analytics choices, select **Allow analytics**, and verify exactly one tag request.
+4. Navigate across several client-side routes and confirm one `page_view` per distinct pathname.
+5. Test a phone link and confirm one `phone_click` with only `cta_location`.
+6. Submit a production-like service request and confirm one provider-gated `generate_lead` with only `form_id`.
+7. Confirm no query string, contact data, form value, filename, or photo content appears in DebugView.
+8. Mark `phone_click` and `generate_lead` as key events after their payloads are verified.
+9. Link the GA4 property to the verified Search Console property if Search Console is being used.

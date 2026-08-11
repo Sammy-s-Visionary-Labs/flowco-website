@@ -7,17 +7,17 @@ import { trackPageView } from "@/lib/analytics";
 
 let lastTrackedPath: string | undefined;
 
-export function PageViewTracker() {
+export function PageViewTracker({ active }: { active: boolean }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!pathname || pathname === lastTrackedPath) {
+    if (!active || !pathname || pathname === lastTrackedPath) {
       return;
     }
 
     lastTrackedPath = pathname;
     trackPageView(pathname);
-  }, [pathname]);
+  }, [active, pathname]);
 
   return null;
 }

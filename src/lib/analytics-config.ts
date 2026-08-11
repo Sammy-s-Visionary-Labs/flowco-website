@@ -1,22 +1,22 @@
-const gtmIdPattern = /^GTM-[A-Z0-9]+$/;
+const gaMeasurementIdPattern = /^G-[A-Z0-9]+$/;
 
 export type AnalyticsConfig =
-  | { enabled: false; gtmId: null }
-  | { enabled: true; gtmId: string };
+  | { enabled: false; measurementId: null }
+  | { enabled: true; measurementId: string };
 
 export function getAnalyticsConfig(): AnalyticsConfig {
-  const enabled = process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "true";
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim() ?? "";
+  const measurementId =
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim().toUpperCase() ?? "";
 
-  if (!enabled) {
-    return { enabled: false, gtmId: null };
+  if (!measurementId) {
+    return { enabled: false, measurementId: null };
   }
 
-  if (!gtmIdPattern.test(gtmId)) {
+  if (!gaMeasurementIdPattern.test(measurementId)) {
     throw new Error(
-      "Analytics is enabled, but NEXT_PUBLIC_GTM_ID is missing or invalid. Expected a value such as GTM-ABC1234.",
+      "NEXT_PUBLIC_GA_MEASUREMENT_ID is invalid. Expected a GA4 Measurement ID such as G-ABC1234567.",
     );
   }
 
-  return { enabled: true, gtmId };
+  return { enabled: true, measurementId };
 }

@@ -1,10 +1,10 @@
 # Ohio Flow Co — Project Progress
 
-**Progress status:** Phase 2 is complete for the current build scope with analytics activation deferred; Phase 3.1 and 3.3–3.8 are complete, while Phase 3.2 proof and Phase 3.9 owner-content review remain in progress
+**Progress status:** Direct consent-gated GA4 and the technical SEO/legal/structured-data scope are implemented; live Analytics activation now depends only on owner Google sign-in, property creation, a production Measurement ID, deployment, and receipt verification
 
 **Last updated:** August 11, 2026
 
-**Recommended next task:** Continue Phase 3.10 while approved project proof for Phase 3.2 and authentic owner/company facts for Phase 3.9 remain tracked inputs
+**Recommended next task:** Sign in to the owner Google account, create the GA4 property/web stream, add its `G-` Measurement ID to production, deploy, and complete Realtime/DebugView verification
 
 ## Purpose and maintenance rule
 
@@ -30,12 +30,12 @@ At the completion of every phase or subphase:
 
 | Phase | Status | Current summary |
 |---|---|---|
-| Phase 0 — Decisions and assets | In progress | Core brand, positioning, service scope, domain, and route direction are decided. Phone, public email, and lead recipient are temporarily overridden with test values and must be reconfirmed for production. Analytics ownership, approved marketing photos, case studies, and the Wix URL crawl remain open. |
-| Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated. Live analytics activation still depends on the Phase 0.4 owner/account decision. |
-| Phase 2 — Conversion system | Complete | Phases 2.1–2.4 and 2.6 are complete, including provider-confirmed Vercel Preview submissions and mailbox/attachment delivery. Phase 2.5 application coverage is complete; the owner intentionally deferred external GTM/GA4 activation until the website is otherwise ready for pre-launch integration. |
+| Phase 0 — Decisions and assets | In progress | Core brand, positioning, services, domain, and production contacts are decided. The old Wix route inventory and redirect map are complete. GA4 ownership will be established when the owner signs in to create the new property; approved case-study proof remains open. |
+| Phase 1 — Foundation | Complete | Phases 1.1 through 1.6 are implemented and validated, including the consent-gated direct GA4 transport and fail-closed Measurement ID configuration. |
+| Phase 2 — Conversion system | In progress | Provider-confirmed lead delivery is complete. Analytics event coverage, consent, and direct transport are implemented; Phase 2.5 awaits only the live production Measurement ID and GA4 receipt checks. |
 | Phase 3 — Core pages | In progress | Phase 3.1 and 3.3–3.8 are complete. Phase 3.2 has complete service-page structure and copy but cannot meet its proof requirement until approved real assets exist. The integrated Phase 3.9 About page remains in owner-content review; Phases 3.10 and 3.11 have not begun. |
-| Phase 4 — Trust, legal, and polish | Not started | Legal pages, structured data, image pipeline, and final QA remain. |
-| Phase 5 — Launch engineering | Not started | Redirects, deployment, and launch validation remain. |
+| Phase 4 — Trust, legal, and polish | In progress | Privacy, Terms, Accessibility, organization/service/FAQ/breadcrumb structured data, manifest, and crawler metadata are implemented. Dedicated cross-device/accessibility QA and final image/proof review remain. |
+| Phase 5 — Launch engineering | In progress | Every archived Wix route has a permanent code redirect. Deployment, live redirect/schema checks, Search Console verification/submission, and production conversion/analytics validation remain. |
 | Phase 6 — Expansion | Not started | Location expansion, articles, additional case studies, and reporting remain. |
 
 ## Confirmed owner directions
@@ -44,8 +44,8 @@ At the completion of every phase or subphase:
 - Use `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com` as the owner-confirmed production phone, clickable destination, public email, and Request Service notification recipient everywhere on the site.
 - Do not add an application-owned persistent photo store for customer uploads at this stage.
 - Treat Vercel as the preferred but unconfirmed production host. If another host is chosen, revalidate Node/Sharp support, request and memory limits, abuse controls, and preview indexing behavior.
-- Keep analytics configuration as disabled placeholders. Inventory any existing GA4, GTM, advertising, call-tracking, and CRM accounts before creating or enabling production integrations.
-- Finish building the website before integrating Google Analytics. Preserve the application event contract and tracked call primitives, then activate and verify the external GTM/GA4 mapping during pre-launch work.
+- Complete Google Analytics and SEO now. No pre-existing Analytics credential needs to be preserved; create one owner-controlled GA4 property and use its public Measurement ID.
+- Use a direct, explicit-consent GA4 integration with no GTM dependency. Keep advertising/personalization signals disabled and exclude lead/contact/photo contents from events.
 - Use Resend for lead notification. Send only from `requests@notifications.ohioflowco.com` on the verified `notifications.ohioflowco.com` domain and only to `Ohioflowcollc@gmail.com`; keep the API key server-only in Vercel.
 - Publish only confirmed company facts and services. Real project photography and case-study facts require permission; unsupported service, emergency, financing, or procurement claims remain excluded.
 
@@ -65,9 +65,9 @@ At the completion of every phase or subphase:
 | 0.1 Brand identity and domain | One canonical public name, legal name, and primary domain | Complete | Locked **Ohio Flow Co** as the display/legal brand and `toledosewerandwater.com` as the primary domain. Buying `ohioflowco.com` is recommended as a redirect but is not confirmed. |
 | 0.2 Public phone | One number used everywhere | Complete | The site consistently uses the owner-confirmed `(419) 709-5808` and `tel:+14197095808`. |
 | 0.3 Offered services | Written yes/no service list | Complete | Locked the underground sewer, water, stormwater, drainage, excavation, trenching, commercial, and contractor/municipal scope. Unconfirmed services are explicitly excluded. |
-| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Partial | Public email and form notifications use the owner-confirmed `Ohioflowcollc@gmail.com`. GA4, GTM, Google Ads, Meta, call-tracking, and CRM ownership remain unconfirmed and paused. |
+| 0.4 Lead destination and tracking owners | Agreed form recipient, notification owner, and account ownership | Partial | Public email and form notifications use the owner-confirmed `Ohioflowcollc@gmail.com`. The owner directed creation of a new GA4 property; its ownership will be established during Google sign-in. No GTM, Google Ads, Meta, call-tracking, or CRM integration is part of this scope. |
 | 0.5 Real photos and project facts | Enough approved assets for the home page and at least one or two case studies | Awaiting input | The plan is to use approved Instagram/Facebook project images. Sam still needs to provide permission and 2–3 project summaries with location, problem, work performed, result, and photos. |
-| 0.6 Wix URL inventory and redirect plan | Complete old-to-new map | Draft | A clean destination route direction exists, but no source-URL inventory or old-to-new redirect-map artifact exists yet. Crawl the live Wix site before creating and implementing the Phase 5 map. |
+| 0.6 Wix URL inventory and redirect plan | Complete old-to-new map | Complete | Archived the Wix sitemap-derived inventory of 28 fetched pages and implemented permanent redirects for every discontinued path while preserving already-canonical routes. |
 
 ### Phase 0 summary
 
@@ -84,7 +84,7 @@ The project now has a stable specialist identity, owner-confirmed production con
 | 1.3 Design system | Colors, typography, spacing, surfaces, and components match the industrial/local brief | Complete | Added semantic visual tokens, responsive gutters and section spacing, system font stacks, focus treatment, industrial grid motifs, and reusable Container, Section, Eyebrow, SectionHeading, Surface, and refined CTA primitives. Applied the system to the shell and kept the homepage minimal. |
 | 1.4 Shared SEO shell | Reusable title, description, canonical, Open Graph, and breadcrumb behavior | Complete | Added typed metadata and canonical helpers, explicit homepage metadata, complete Open Graph/Twitter defaults, a validated social card, and an accessible breadcrumb primitive. |
 | 1.5 Crawl files | `robots.txt`, sitemap, and `llms.txt` stub | Complete | Added crawl endpoints, a canonical crawl-surface registry, and a static machine-readable business summary. The registry now contains the substantive Phase 3 homepage, service, commercial, service-area, and About routes. |
-| 1.6 Analytics foundation | GA4/GTM integration points and event stubs | Complete | Added a dormant-by-default GTM loader, application-owned pageviews, conversion click events, typed form-event stubs, validation, and an activation contract. Live GA4 delivery awaits the confirmed production container and privacy/consent decision. |
+| 1.6 Analytics foundation | GA4 integration points and event stubs | Complete | Replaced the dormant GTM assumption with one consent-gated direct GA4 loader, application-owned pageviews, typed conversion/form events, revocation/cookie cleanup, fail-closed `G-` ID validation, privacy disclosure, and an activation contract. Live receipt awaits the new owner property and production Measurement ID. |
 
 ### Phase 1.1 completion summary
 
@@ -141,15 +141,15 @@ The project now has a stable specialist identity, owner-confirmed production con
 ### Phase 1.6 completion summary
 
 - Added one root analytics integration using built-in `next/script`, without adding a dependency.
-- Selected GTM as the sole future transport, with GA4 to be configured inside the confirmed production container.
-- Added a typed, namespaced data-layer contract for pageviews, phone clicks, Request Service clicks, form starts, confirmed leads, and form errors.
+- Replaced the original GTM plan with one direct GA4 transport configured by a public `G-` Measurement ID.
+- Added a typed event contract for pageviews, phone clicks, Request Service clicks, form starts, confirmed leads, and form errors.
 - Added pathname-only pageview tracking for the initial route and distinct App Router route changes.
 - Instrumented every shell Call and Request Service surface with bounded placement values.
-- Added future form helpers that cannot accept contact details, messages, filenames, or arbitrary payloads.
-- Kept third-party analytics dormant unless `NEXT_PUBLIC_ANALYTICS_ENABLED=true` and a valid `NEXT_PUBLIC_GTM_ID` are supplied.
-- Added `.env.example` and `docs/analytics.md` with activation, GTM mapping, privacy boundary, and duplicate-prevention instructions.
-- Verified disabled output contains no GTM request, a valid test configuration emits exactly one loader, and invalid enabled configuration fails the build clearly.
-- Live GA4 receipt was not claimed or tested because account ownership, the production ID, and the privacy/consent approach remain unconfirmed.
+- Added form helpers that cannot accept contact details, messages, filenames, or arbitrary payloads.
+- Added explicit allow/decline controls, first-party consent persistence, later preference changes, revocation/cookie cleanup, and advertising/personalization denials.
+- Kept Google code absent when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is empty and failed configured builds with malformed IDs.
+- Added `.env.example` and `docs/analytics.md` with owner-account creation, activation, privacy boundaries, duplicate prevention, and live verification steps.
+- Live GA4 receipt remains unclaimed until the owner signs in, creates the property/web stream, and provides the production Measurement ID.
 
 ## Phase 2 — Conversion system
 
@@ -161,7 +161,7 @@ The project now has a stable specialist identity, owner-confirmed production con
 | 2.2 Residential and commercial paths | Distinct entry paths with appropriate questions | Complete | Added one accessible four-choice audience selector. Residential requests collect the person's property relationship; commercial, contractor, and municipal requests collect the company or organization name. Shared fields, validation, and submission remain unified. |
 | 2.3 Photo handling | Photos are selected, validated, normalized, and passed safely to the delivery boundary without application persistence | Complete | Added optional JPEG/PNG/WebP selection for up to three photos and 3 MiB combined. Files are decoded under strict limits, resized and re-encoded as EXIF/GPS/ICC/IPTC/XMP-stripped JPEG attachments, held only for the request, and passed to the fail-closed boundary. The generated `project-photo-1.jpg` was delivered and opened successfully in the live Phase 2.6 Preview test. |
 | 2.4 Post-delivery thank-you experience | Submitter receives confirmation only after provider-confirmed delivery | Complete | Implemented a focused same-page confirmation that replaces the form, explains review and follow-up, prevents accidental duplicate submission, and supports an explicit second request. Both live Preview tests showed this state only after provider-confirmed handoff. |
-| 2.5 Click-to-call tracking | Header, footer, menu, call-bar, and page interactions produce measurable events | Deferred | Completed typed application-side coverage for every rendered `tel:` link, including the Phase 3 pages and Request Service failure/confirmation states, with privacy-safe placement-only payloads. The owner intentionally deferred production GTM/GA4 mapping, consent activation, duplicate checks, and receipt validation until pre-launch. |
+| 2.5 Click-to-call tracking | Header, footer, menu, call-bar, and page interactions produce measurable events | In progress | Every rendered `tel:` link is covered by a privacy-safe placement-only `phone_click` event. Consent gating and direct GA4 delivery are implemented; the completion gate is live production receipt and duplicate verification after the Measurement ID is created. |
 | 2.6 Provider email handoff and internal notification | Leads and attachments reach the configured internal mailbox with a durable provider receipt | Complete | Implemented Resend delivery from the verified notification subdomain to the sole testing recipient, static headers, plain-text content, sanitized attachments, deterministic idempotency, Vercel-secret handling, and durable-receipt validation. Protected Vercel Preview tests delivered both no-photo and photo emails; the generated JPEG attachment arrived and opened successfully. Production still requires replacing all test contacts. |
 
 ### Phase 2.1 completion summary
@@ -214,15 +214,15 @@ The project now has a stable specialist identity, owner-confirmed production con
 - Expanded the unit suite to 33 tests, including receipt non-disclosure and processing another request from a prior confirmed state.
 - The protected Vercel Preview showed provider-gated same-page success for both no-photo and photo submissions, and both corresponding emails arrived in the testing mailbox.
 
-### Phase 2.5 deferred summary
+### Phase 2.5 implementation summary
 
 - Audited every active phone surface: desktop header, mobile menu, persistent mobile call bar, footer number and CTA, Request Service page CTA, unconfirmed-submission fallback, and confirmed-submission follow-up.
 - Added a shared inline `PhoneLink` and retained the styled `CallLink`; these are now the only components that emit `tel:` destinations.
-- Centralized phone event attributes in a typed helper so every call action uses `ofc_phone_click` and one allowlisted placement.
+- Centralized phone event attributes in a typed helper so every call action uses `phone_click` and one allowlisted placement.
 - Closed the two previously untracked Request Service inline phone links without changing their visible design or navigation behavior.
 - Kept payloads limited to `cta_location`. Phone numbers, email addresses, routes, customer data, form values, and uploaded-file information are excluded.
-- Added regression coverage for all allowed placements and the exact privacy-safe data-layer event. Phase 3 integration extended that guard so every source phone link must still use a shared tracked primitive.
-- Kept GTM and GA4 disabled. The application-side deliverable is complete; external activation and single-mapping verification in GTM Preview and GA4 DebugView are intentionally deferred until pre-launch.
+- Added regression coverage for all allowed placements and the exact privacy-safe GA4 call. Phase 3 integration extended that guard so every source phone link must still use a shared tracked primitive.
+- Direct GA4 delivery and consent are implemented. The remaining completion gate is one live `phone_click` receipt with no duplicate or personal data after the production Measurement ID is available.
 
 ### Phase 2.6 completion summary
 
@@ -245,19 +245,19 @@ This audit compares the repository, phase ledger, architecture change log, and d
 | Subphase | Audit result | Documentation coverage |
 |---|---|---|
 | 0.1 | Complete | Brand/domain decisions B-001–B-003 and the unresolved redirect-domain purchase are recorded. |
-| 0.2 | Awaiting input | Historical phone decision B-004, active test override B-022, and the pre-production replacement gate are recorded; the real production contact remains unconfirmed. |
+| 0.2 | Complete | Historical phone values and the active owner-confirmed production contact under B-029 are recorded. |
 | 0.3 | Complete | Confirmed service scope, specialist positioning, and excluded claims are recorded in B-006–B-008 and canonical service data. |
 | 1.1 | Complete | Stack, package/runtime requirements, strict TypeScript, build path, canonical data, and scaffold reconstruction are recorded. |
 | 1.2 | Complete | Global shell, conversion surfaces, responsive breakpoint, mobile behavior, and accessibility foundations are recorded. |
 | 1.3 | Complete | Semantic tokens, typography, spacing, components, contrast decision, and the later Phase 3.1 replacement of the original placeholder are recorded. |
-| 1.4 | Complete | Metadata composition, canonical rules, social card, breadcrumbs, and deferred SEO work are recorded. |
+| 1.4 | Complete | Metadata composition, canonical rules, social card, crawler controls, manifest, structured breadcrumbs, and the later Phase 4.3 schema layer are recorded. |
 | 1.5 | Complete | Crawl endpoints and the canonical substantive-route registry are recorded; the original temporary homepage exception is superseded by the completed Phase 3.1 page. |
-| 1.6 | Complete | Dormant GTM transport, typed events, data minimization, duplicate prevention, account-inventory pause, and activation gates are recorded. |
+| 1.6 | Complete | Consent-gated direct GA4 transport, typed events, data minimization, duplicate prevention, fail-closed Measurement ID configuration, and activation gates are recorded. |
 | 2.1 | Complete | The short form, server-authoritative validation, fail-closed handoff, success gate, anti-spam baseline, and provider/mailbox-backed Preview verification are recorded. |
 | 2.2 | Complete | Four audiences, conditional fields, progressive disclosure, active-field validation, and minimized discriminated payloads are recorded. |
 | 2.3 | Complete | Exact upload envelope, Sharp/Node constraints, EXIF/GPS/ICC/IPTC/XMP removal, accessibility/reselection behavior, request-only retention, and provider deferral are recorded. |
 | 2.4 | Complete | Same-page confirmation, focus behavior, next-step copy, duplicate-submission protection, second-request handling, receipt/data minimization, and the provider-backed no-photo/photo Preview proof are recorded. |
-| 2.5 | Deferred | Complete application-side phone-link coverage, the typed placement-only payload, shared primitives, data minimization, and the owner-directed pre-launch deferral of external analytics activation are recorded. |
+| 2.5 | In progress | Complete phone-link coverage, the typed placement-only payload, shared primitives, data minimization, consent, and direct GA4 transport are recorded; live receipt verification remains. |
 | 2.6 | Complete | Resend selection, verified sender, sole testing recipient, Vercel secret boundary, static headers, plain-text content, normalized attachments, idempotency, fail-closed behavior, provider receipt, privacy implications, and completed live verification are recorded. |
 | 3.1 | Complete | Full homepage hierarchy, confirmed service scope, service-area context, conversion paths, responsive behavior, and restrained motion are recorded. |
 | 3.2 | In progress | The sewer-repair intent page, process, FAQs, metadata, breadcrumbs, and CTAs are implemented; the defined proof requirement remains blocked by Phase 0.5 approved assets and facts. |
@@ -312,9 +312,9 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 4.1 Privacy, Terms, and Accessibility | Clean legal pages with no draft titles | Not started | Legal text must cover contact data, free text, photo normalization, no application photo store, email-provider/company-mailbox retention, no marketing reuse without permission, and analytics only if later activated. |
-| 4.2 FAQ coverage | Strong FAQs on service pages or a justified FAQ hub | Not started | Answers must be concise, accurate, and based on confirmed operations. |
-| 4.3 Structured data | Organization/LocalBusiness, Service, FAQ, and Breadcrumb schema | Not started | Schema must match visible content and the service-area business model. |
+| 4.1 Privacy, Terms, and Accessibility | Clean legal pages with no draft titles | Complete | Published canonical Privacy, Website Terms, and Accessibility pages. Privacy covers lead data, photo normalization/storage boundaries, email retention, no unapproved marketing reuse, consented GA4, excluded event data, and preference revocation. |
+| 4.2 FAQ coverage | Strong FAQs on service pages or a justified FAQ hub | Complete | Service, Toledo service-area, and About FAQs are substantive, visible, route-specific, and rendered through one accessible disclosure component. |
+| 4.3 Structured data | Organization/LocalBusiness, Service, FAQ, and Breadcrumb schema | Complete | Added a confirmed service-area `Organization`/`WebSite` graph with `HomeAndConstructionBusiness` as its additional type, per-page `Service` JSON-LD, visible FAQ microdata, and matching breadcrumb microdata without inventing an address, hours, reviews, or ratings. |
 | 4.4 Image pipeline | Optimized WebP/AVIF assets with useful filenames, dimensions, and alt text | Not started | Depends on approved real photography. |
 | 4.5 Mobile and accessibility QA | Keyboard, labels, contrast, responsive behavior, and CTA clearance verified | Not started | Foundation accessibility and implementation-level checks exist; the dedicated cross-device, browser-interaction, and route-level QA subphase has not begun. |
 
@@ -324,8 +324,8 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 
 | Subphase | Expected deliverable | Status | Work completed or remaining |
 |---|---|---|---|
-| 5.1 Implement 301 redirects | Every discovered Wix URL resolves to the best new destination | Not started | No source Wix inventory or redirect-map artifact exists yet; crawl first, then create and verify the map. |
-| 5.2 Form, phone, and analytics QA | Every conversion path works and records correctly | Not started | Earlier implementation-level checks exist, but production end-to-end QA requires completed delivery, analytics activation decisions, deployment, and removal of all test contact values. |
+| 5.1 Implement 301 redirects | Every discovered Wix URL resolves to the best new destination | In progress | Implemented permanent Next.js redirects for every discontinued route in the 28-page archived Wix inventory. Local status/destination checks are required in this pass; production verification remains a launch check. |
+| 5.2 Form, phone, and analytics QA | Every conversion path works and records correctly | In progress | Form delivery and application analytics events are covered. Production GA4 Realtime/DebugView checks remain after the Measurement ID is created and deployed. |
 | 5.3 NAP consistency audit | Name, phone, and service area match the website and listings | Not started | This is a production gate: replace the test phone/email/recipient in `site.ts`, set `contactDataStatus.productionReady` only after owner confirmation, and verify the resulting values against company listings. |
 | 5.4 Back up Wix site | Recoverable snapshot of the previous site | Not started | Complete immediately before migration. |
 | 5.5 Deploy and submit sitemap | Production site is live and Search Console receives the sitemap | Not started | Hosting is unconfirmed, and production deployment is blocked while `contactDataStatus.productionReady` is false. |
@@ -347,14 +347,13 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 ## Current open inputs
 
 - Select a deployment-compatible rate limit or bot challenge before `/request-service` is exposed publicly. Retry idempotency and static non-customer headers are implemented, but they do not replace request-frequency abuse protection.
-- Decide and document lead/photo retention and deletion for the email provider and company mailbox before the Privacy Policy is finalized.
-- During pre-launch work, inventory existing GTM, GA4, Google Ads, Meta, call-tracking, and CRM accounts; confirm ownership, obtain the production GTM ID if one exists, and decide privacy/consent before activation. This is intentionally deferred while the website is built; do not create replacement production accounts without approval.
+- Establish the internal mailbox deletion procedure and have the published Privacy/Terms language reviewed by the owner or counsel before public launch.
+- Sign in to the owner Google account, create the approved new GA4 account/property/web stream, configure the public production Measurement ID, and verify consented receipt without duplicates or personal information.
 - Confirm Vercel as the production host. If a different host is selected, revalidate request limits, Node/Sharp/native bundling, memory behavior, abuse controls, and preview crawl protection.
 - Obtain permission to use real social-media project photos. This blocks the proof portion of Phase 3.2 and the project work in Phase 3.11.
 - Obtain 2–3 project summaries and matching images from Sam, plus authentic company-history/team facts for final Phase 3.9 review.
 - Confirm whether `Keeping Northwest Ohio Flowing.` is approved as the public tagline.
 - Confirm whether `ohioflowco.com` was purchased for redirect use.
-- Crawl the full Wix site, inventory every source URL, and create the first old-to-new redirect map before implementation.
 
 ## Current technical follow-ups
 
@@ -389,6 +388,7 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 | August 11, 2026 | Deployed Vercel Preview verification for `codex/phase-3-core-pages-integration` across all 12 content/conversion routes, desktop and 390×844 mobile rendering, mobile-menu navigation, metadata/canonicals, tracked phone links, rendered link inventory, Request Service controls, browser console, and deployment crawl protection | Passed; every route loaded without a framework error, rendered one H1 with no horizontal overflow, retained the expected production canonical, and contained no unfinished navigation or untracked phone links. The mobile menu navigated and closed correctly, the four-audience form and optional multi-photo input remained intact, no browser warnings/errors appeared, and Vercel SSO returned `x-robots-tag: noindex`. No live lead was submitted because the unchanged Phase 2 email boundary already has provider-backed no-photo and photo verification. |
 | August 11, 2026 | Brand-guided design revamp: logo extraction, full route restyle, responsive shell, shared branded UI, social card, lint, 42 tests, production build, 12-route desktop inspection, representative 390×844 mobile route inspection, mobile-menu navigation, FAQ interaction, form-control audit, broken-image/overflow checks, and browser console review | Passed; all brand assets rendered, each audited route retained one H1 and no horizontal overflow, the mobile menu routed and closed correctly, native FAQ disclosures opened, the full Request Service control contract remained intact, no visible images failed, and no browser warning/error was captured. No live lead was submitted. |
 | August 11, 2026 | Owner-confirmed production contact replacement, repository reference audit, lint, 42 regression tests, TypeScript checking, and 17-route production build | Passed; rendered phone and email surfaces now resolve through `(419) 709-5808`, `tel:+14197095808`, and `Ohioflowcollc@gmail.com`, notification headers use the canonical recipient without the testing subject prefix, no superseded contact remains outside historical documentation, and a distinct production-delivery gate keeps the form fail-closed pending abuse protection and production re-verification. |
+| August 11, 2026 | Google Analytics and technical SEO completion: lint, 45 regression tests, disabled/configured/invalid-ID production builds, 21-route generation, local response and legacy-redirect checks, structured-data parsing, consent browser flow, route navigation, 390×844 consent/call-bar clearance, horizontal-overflow check, and console review | Passed locally; the empty build emits no Google integration, the configured build adds no Google request before consent, decline keeps it unloaded, allow inserts one loader, revocation preserves site use, malformed IDs fail closed, legal/crawl/schema routes render, all tested legacy redirects return 308, parsed schema contains Organization/WebSite/Service plus visible FAQ/Breadcrumb microdata, and no browser warning/error appeared. Live GA4 receipt remains pending the owner property and production Measurement ID. |
 
 ## Progress log
 
@@ -417,3 +417,4 @@ Phase 0.2 and 0.4–0.6 remain partial or awaiting input. Phase 2 is complete fo
 | August 11, 2026 | Verified the pushed integration on its protected Vercel Preview. All integrated routes, metadata, tracked calls, mobile layouts/navigation, and the preserved Request Service form passed; Vercel SSO and `x-robots-tag: noindex` protect the Preview. No runtime code changed during this deployed-validation checkpoint. |
 | August 11, 2026 | Completed the brand-guided design revamp. Extracted outlined standard/reverse SVG logo exports from the supplied PDF, added reusable logo/hero/FAQ/conversion components, rebuilt the header, footer, mobile call bar, homepage, service, location, About, and Request Service presentation in the official palette, and regenerated `public/og.png`. Existing form delivery and analytics boundaries were preserved and the full local validation set passed. |
 | August 11, 2026 | Replaced all active test contacts with the owner-confirmed production phone, clickable destination, public email, and Request Service recipient. Marked canonical contacts production-ready, retained historical Preview-delivery records, and passed the full local validation set. |
+| August 11, 2026 | Replaced the deferred GTM design with a consent-gated direct GA4 integration; published Privacy, Terms, Accessibility, manifest, custom 404, organization/service/FAQ/breadcrumb schema, Google verification support, and every archived Wix redirect. Local lint, tests, builds, rendered output, redirects, and desktop/mobile browser behavior passed. Owner Google sign-in, Measurement ID configuration, deployment, and live Realtime/DebugView verification remain. |

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnalyticsPreferencesButton } from "@/components/analytics/AnalyticsPreferencesButton";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   CallLink,
@@ -8,10 +9,12 @@ import {
 } from "@/components/ui/CtaLink";
 import { Container } from "@/components/ui/Container";
 import { analyticsEventNames } from "@/lib/analytics";
+import { getAnalyticsConfig } from "@/lib/analytics-config";
 import { publishedRoutes } from "@/lib/routes";
 import { navigation, site } from "@/lib/site";
 
 export function SiteFooter() {
+  const analytics = getAnalyticsConfig();
   const publishedPaths = new Set<string>(
     publishedRoutes.map(({ path }) => path),
   );
@@ -139,6 +142,11 @@ export function SiteFooter() {
                     </Link>
                   </li>
                 ))}
+                {analytics.enabled ? (
+                  <li>
+                    <AnalyticsPreferencesButton className="inline-flex min-h-11 items-center text-xs font-semibold text-canvas/60 underline decoration-transparent underline-offset-4 transition-colors hover:text-canvas hover:decoration-accent focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-accent" />
+                  </li>
+                ) : null}
               </ul>
             </nav>
           ) : null}

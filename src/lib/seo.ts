@@ -105,6 +105,7 @@ export function createPageMetadata({
 export const rootMetadata: Metadata = {
   metadataBase: new URL(site.domain),
   applicationName: site.name,
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: "/brand/logo-mark.svg",
     shortcut: "/brand/logo-mark.svg",
@@ -117,6 +118,25 @@ export const rootMetadata: Metadata = {
   creator: site.name,
   publisher: site.legalName,
   category: "construction",
+  formatDetection: {
+    address: false,
+    email: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  verification: process.env.GOOGLE_SITE_VERIFICATION?.trim()
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION.trim() }
+    : undefined,
   openGraph: {
     title: defaultSeoTitle,
     description: defaultSeoDescription,

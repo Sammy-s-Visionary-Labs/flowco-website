@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { JsonLd } from "@/components/seo/JsonLd";
 import { ConversionBand } from "@/components/ui/ConversionBand";
 import { FaqList } from "@/components/ui/FaqList";
 import { PageHero } from "@/components/ui/PageHero";
@@ -7,6 +8,7 @@ import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
 import { WorkPhoto } from "@/components/ui/WorkPhoto";
 import type { ServicePageDefinition } from "@/lib/service-pages";
+import { createServiceStructuredData } from "@/lib/structured-data";
 
 type ServiceIntentPageProps = {
   page: ServicePageDefinition;
@@ -15,6 +17,7 @@ type ServiceIntentPageProps = {
 export function ServiceIntentPage({ page }: ServiceIntentPageProps) {
   return (
     <>
+      <JsonLd data={createServiceStructuredData(page)} />
       <PageHero
         breadcrumbs={[
           { href: "/", label: "Home" },

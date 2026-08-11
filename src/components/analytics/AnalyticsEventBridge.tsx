@@ -9,8 +9,12 @@ import {
   trackRequestServiceClick,
 } from "@/lib/analytics";
 
-export function AnalyticsEventBridge() {
+export function AnalyticsEventBridge({ active }: { active: boolean }) {
   useEffect(() => {
+    if (!active) {
+      return;
+    }
+
     function handleClick(event: MouseEvent) {
       if (!(event.target instanceof Element)) {
         return;
@@ -45,7 +49,7 @@ export function AnalyticsEventBridge() {
     return () => {
       document.removeEventListener("click", handleClick);
     };
-  }, []);
+  }, [active]);
 
   return null;
 }

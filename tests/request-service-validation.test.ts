@@ -7,10 +7,14 @@ import sharp from "sharp";
 import {
   analyticsEventNames,
   analyticsLocations,
+  disableGoogleAnalytics,
   getPhoneAnalyticsAttributes,
+  initializeGoogleAnalytics,
   isAnalyticsLocation,
+  trackPageView,
   trackPhoneClick,
 } from "../src/lib/analytics";
+import { getAnalyticsConfig } from "../src/lib/analytics-config";
 import {
   emptyRequestServiceValues,
   initialRequestServiceSubmissionState,
@@ -60,25 +64,58 @@ test("defines bounded click-to-call attributes for every allowed placement", () 
   assert.equal(isAnalyticsLocation("phone_number"), false);
 });
 
+test("keeps GA4 disabled without a Measurement ID and fails malformed builds", () => {
+  const originalMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
+  try {
+    delete process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    assert.deepEqual(getAnalyticsConfig(), {
+      enabled: false,
+      measurementId: null,
+    });
+
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = " g-test1234567 ";
+    assert.deepEqual(getAnalyticsConfig(), {
+      enabled: true,
+      measurementId: "G-TEST1234567",
+    });
+
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = "GTM-NOT-GA4";
+    assert.throws(
+      getAnalyticsConfig,
+      /NEXT_PUBLIC_GA_MEASUREMENT_ID is invalid/,
+    );
+  } finally {
+    if (originalMeasurementId === undefined) {
+      delete process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    } else {
+      process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = originalMeasurementId;
+    }
+  }
+});
+
 test("emits one privacy-safe click-to-call event without contact data", () => {
   const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-  const dataLayer: unknown[] = [];
+  const analyticsCalls: unknown[] = [];
 
   Object.defineProperty(globalThis, "window", {
     configurable: true,
-    value: { dataLayer },
+    value: {
+      gtag: (...args: unknown[]) => analyticsCalls.push(args),
+    },
   });
 
   try {
     trackPhoneClick("page_content");
-    assert.deepEqual(dataLayer, [
-      {
-        cta_location: "page_content",
-        event: analyticsEventNames.phoneClick,
-      },
+    assert.deepEqual(analyticsCalls, [
+      [
+        "event",
+        analyticsEventNames.phoneClick,
+        { cta_location: "page_content" },
+      ],
     ]);
-    assert.equal(JSON.stringify(dataLayer).includes(site.phone), false);
-    assert.equal(JSON.stringify(dataLayer).includes(site.email), false);
+    assert.equal(JSON.stringify(analyticsCalls).includes(site.phone), false);
+    assert.equal(JSON.stringify(analyticsCalls).includes(site.email), false);
   } finally {
     if (originalWindow) {
       Object.defineProperty(globalThis, "window", originalWindow);
@@ -88,10 +125,113 @@ test("emits one privacy-safe click-to-call event without contact data", () => {
   }
 });
 
+test("initializes one privacy-limited GA4 queue and supports revocation", () => {
+  const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
+  const originalDocument = Object.getOwnPropertyDescriptor(
+    globalThis,
+    "document",
+  );
+  const dataLayer: unknown[] = [];
+  const cookieWrites: string[] = [];
+  const mockDocument = {};
+
+  Object.defineProperty(mockDocument, "cookie", {
+    configurable: true,
+    get: () => "_ga=test-value; other_cookie=keep",
+    set: (value: string) => cookieWrites.push(value),
+  });
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: {
+      dataLayer,
+      location: { origin: "https://www.toledosewerandwater.com" },
+    },
+  });
+  Object.defineProperty(globalThis, "document", {
+    configurable: true,
+    value: mockDocument,
+  });
+
+  try {
+    initializeGoogleAnalytics("G-TEST1234567");
+    trackPageView("/services?ignored=yes#scope");
+
+    const commandNames = dataLayer.map((entry) =>
+      Array.isArray(entry) ? entry[0] : null,
+    );
+    assert.deepEqual(commandNames, [
+      "consent",
+      "js",
+      "set",
+      "config",
+      "event",
+    ]);
+    assert.deepEqual(dataLayer[3], [
+      "config",
+      "G-TEST1234567",
+      { send_page_view: false },
+    ]);
+    assert.deepEqual(dataLayer[4], [
+      "event",
+      analyticsEventNames.pageView,
+      {
+        page_location: "https://www.toledosewerandwater.com/services",
+        page_path: "/services",
+      },
+    ]);
+
+    disableGoogleAnalytics("G-TEST1234567");
+    assert.equal(
+      (globalThis.window as unknown as Record<string, unknown>)[
+        "ga-disable-G-TEST1234567"
+      ],
+      true,
+    );
+    assert.deepEqual(dataLayer.at(-1), [
+      "consent",
+      "update",
+      {
+        ad_personalization: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        analytics_storage: "denied",
+        functionality_storage: "denied",
+        personalization_storage: "denied",
+        security_storage: "granted",
+      },
+    ]);
+    assert.ok(cookieWrites.some((value) => value.startsWith("_ga=")));
+  } finally {
+    if (originalWindow) {
+      Object.defineProperty(globalThis, "window", originalWindow);
+    } else {
+      Reflect.deleteProperty(globalThis, "window");
+    }
+
+    if (originalDocument) {
+      Object.defineProperty(globalThis, "document", originalDocument);
+    } else {
+      Reflect.deleteProperty(globalThis, "document");
+    }
+  }
+});
+
 test("keeps every main navigation destination on a published route", () => {
   const publishedPaths = new Set<string>(publishedRoutes.map(({ path }) => path));
 
   for (const item of navigation.main) {
+    assert.equal(
+      publishedPaths.has(item.href),
+      true,
+      `${item.label} points to unpublished route ${item.href}`,
+    );
+  }
+});
+
+test("keeps every legal navigation destination on a published route", () => {
+  const publishedPaths = new Set<string>(publishedRoutes.map(({ path }) => path));
+
+  for (const item of navigation.legal) {
     assert.equal(
       publishedPaths.has(item.href),
       true,

@@ -30,6 +30,21 @@ export const publishedRoutes: readonly PublishedRoute[] = [
     label: "Service Areas",
     description: `${site.name} local service-area directory for ${site.serviceArea}.`,
   },
+  {
+    path: "/privacy",
+    label: "Privacy Policy",
+    description: `${site.name} website privacy, service-request data, photo, and analytics disclosure.`,
+  },
+  {
+    path: "/terms",
+    label: "Website Terms",
+    description: `Terms for using the ${site.name} website and service-request tools.`,
+  },
+  {
+    path: "/accessibility",
+    label: "Accessibility Statement",
+    description: `${site.name} website accessibility approach and contact alternatives.`,
+  },
   ...publishedServicePages.map((page) => ({
     path: page.path,
     label: page.label,

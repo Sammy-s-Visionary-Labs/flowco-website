@@ -1,10 +1,10 @@
 export const analyticsEventNames = {
-  pageView: "ofc_page_view",
-  phoneClick: "ofc_phone_click",
-  requestServiceClick: "ofc_request_service_click",
-  formStart: "ofc_form_start",
-  generateLead: "ofc_generate_lead",
-  formError: "ofc_form_error",
+  pageView: "page_view",
+  phoneClick: "phone_click",
+  requestServiceClick: "request_service_click",
+  formStart: "form_start",
+  generateLead: "generate_lead",
+  formError: "form_error",
 } as const;
 
 export const analyticsLocations = [
@@ -21,41 +21,120 @@ export type AnalyticsLocation = (typeof analyticsLocations)[number];
 export type LeadFormId = "request_service";
 export type LeadFormErrorType = "validation" | "submission";
 
-type AnalyticsDataLayerEvent =
+type GoogleAnalyticsEvent =
   | {
-      event: typeof analyticsEventNames.pageView;
+      eventName: typeof analyticsEventNames.pageView;
+      page_location: string;
       page_path: string;
     }
   | {
       cta_location: AnalyticsLocation;
-      event:
+      eventName:
         | typeof analyticsEventNames.phoneClick
         | typeof analyticsEventNames.requestServiceClick;
     }
   | {
-      event:
+      eventName:
         | typeof analyticsEventNames.formStart
         | typeof analyticsEventNames.generateLead;
       form_id: LeadFormId;
     }
   | {
       error_type: LeadFormErrorType;
-      event: typeof analyticsEventNames.formError;
+      eventName: typeof analyticsEventNames.formError;
       form_id: LeadFormId;
     };
 
 type AnalyticsWindow = Window & {
   dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
 };
 
-function pushAnalyticsEvent(event: AnalyticsDataLayerEvent) {
+const googleAnalyticsConsentDefaults = {
+  ad_personalization: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  analytics_storage: "granted",
+  functionality_storage: "denied",
+  personalization_storage: "denied",
+  security_storage: "granted",
+} as const;
+
+function setGoogleAnalyticsDisabled(measurementId: string, disabled: boolean) {
+  const analyticsWindow = window as unknown as Record<string, unknown>;
+  analyticsWindow[`ga-disable-${measurementId}`] = disabled;
+}
+
+function clearGoogleAnalyticsCookies() {
+  for (const cookie of document.cookie.split(";")) {
+    const name = cookie.split("=", 1)[0]?.trim();
+
+    if (name?.startsWith("_ga")) {
+      document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
+    }
+  }
+}
+
+export function initializeGoogleAnalytics(measurementId: string) {
   if (typeof window === "undefined") {
     return;
   }
 
   const analyticsWindow = window as AnalyticsWindow;
+  const analyticsState = analyticsWindow as unknown as Record<string, unknown>;
+  const initializedKey = `ofc-ga-initialized-${measurementId}`;
   analyticsWindow.dataLayer ??= [];
-  analyticsWindow.dataLayer.push(event);
+  analyticsWindow.gtag ??= function gtag(...args: unknown[]) {
+    analyticsWindow.dataLayer?.push(args);
+  };
+
+  setGoogleAnalyticsDisabled(measurementId, false);
+
+  if (analyticsState[initializedKey] === true) {
+    analyticsWindow.gtag(
+      "consent",
+      "update",
+      googleAnalyticsConsentDefaults,
+    );
+    return;
+  }
+
+  analyticsState[initializedKey] = true;
+  analyticsWindow.gtag(
+    "consent",
+    "default",
+    googleAnalyticsConsentDefaults,
+  );
+  analyticsWindow.gtag("js", new Date());
+  analyticsWindow.gtag("set", {
+    allow_ad_personalization_signals: false,
+    allow_google_signals: false,
+  });
+  analyticsWindow.gtag("config", measurementId, {
+    send_page_view: false,
+  });
+}
+
+export function disableGoogleAnalytics(measurementId: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const analyticsWindow = window as AnalyticsWindow;
+  setGoogleAnalyticsDisabled(measurementId, true);
+  analyticsWindow.gtag?.("consent", "update", {
+    ...googleAnalyticsConsentDefaults,
+    analytics_storage: "denied",
+  });
+  clearGoogleAnalyticsCookies();
+}
+
+function sendAnalyticsEvent({ eventName, ...parameters }: GoogleAnalyticsEvent) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  (window as AnalyticsWindow).gtag?.("event", eventName, parameters);
 }
 
 function normalizePagePath(pathname: string) {
@@ -77,36 +156,40 @@ export function getPhoneAnalyticsAttributes(location: AnalyticsLocation) {
 }
 
 export function trackPageView(pathname: string) {
-  pushAnalyticsEvent({
-    event: analyticsEventNames.pageView,
-    page_path: normalizePagePath(pathname),
+  const pagePath = normalizePagePath(pathname);
+  const pageLocation = `${window.location.origin}${pagePath}`;
+
+  sendAnalyticsEvent({
+    eventName: analyticsEventNames.pageView,
+    page_location: pageLocation,
+    page_path: pagePath,
   });
 }
 
 export function trackPhoneClick(location: AnalyticsLocation) {
-  pushAnalyticsEvent({
+  sendAnalyticsEvent({
     cta_location: location,
-    event: analyticsEventNames.phoneClick,
+    eventName: analyticsEventNames.phoneClick,
   });
 }
 
 export function trackRequestServiceClick(location: AnalyticsLocation) {
-  pushAnalyticsEvent({
+  sendAnalyticsEvent({
     cta_location: location,
-    event: analyticsEventNames.requestServiceClick,
+    eventName: analyticsEventNames.requestServiceClick,
   });
 }
 
 export function trackLeadFormStart(formId: LeadFormId) {
-  pushAnalyticsEvent({
-    event: analyticsEventNames.formStart,
+  sendAnalyticsEvent({
+    eventName: analyticsEventNames.formStart,
     form_id: formId,
   });
 }
 
 export function trackLeadFormSuccess(formId: LeadFormId) {
-  pushAnalyticsEvent({
-    event: analyticsEventNames.generateLead,
+  sendAnalyticsEvent({
+    eventName: analyticsEventNames.generateLead,
     form_id: formId,
   });
 }
@@ -115,9 +198,9 @@ export function trackLeadFormError(
   formId: LeadFormId,
   errorType: LeadFormErrorType,
 ) {
-  pushAnalyticsEvent({
+  sendAnalyticsEvent({
     error_type: errorType,
-    event: analyticsEventNames.formError,
+    eventName: analyticsEventNames.formError,
     form_id: formId,
   });
 }

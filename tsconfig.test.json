@@ -16,6 +16,7 @@
     "src/lib/request-service-submission.ts",
     "src/lib/request-service-email.ts",
     "src/lib/analytics.ts",
+    "src/lib/analytics-config.ts",
     "src/lib/location-pages.ts",
     "src/lib/routes.ts",
     "src/lib/service-pages.ts",

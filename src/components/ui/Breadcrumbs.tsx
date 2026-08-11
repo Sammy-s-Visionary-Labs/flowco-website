@@ -21,7 +21,12 @@ export function Breadcrumbs({
   }
 
   return (
-    <nav aria-label="Breadcrumb" className={className}>
+    <nav
+      aria-label="Breadcrumb"
+      className={className}
+      itemScope
+      itemType="https://schema.org/BreadcrumbList"
+    >
       <ol
         className={`flex flex-wrap items-center gap-y-2 text-sm ${
           tone === "light" ? "text-white/60" : "text-ink-muted"
@@ -32,7 +37,13 @@ export function Breadcrumbs({
           const isCurrent = index === items.length - 1;
 
           return (
-            <li className="flex min-w-0 items-center" key={`${item.label}-${index}`}>
+            <li
+              className="flex min-w-0 items-center"
+              itemProp="itemListElement"
+              itemScope
+              itemType="https://schema.org/ListItem"
+              key={`${item.label}-${index}`}
+            >
               {index > 0 ? (
                 <span
                   aria-hidden="true"
@@ -49,6 +60,7 @@ export function Breadcrumbs({
                   className={`font-bold ${
                     tone === "light" ? "text-accent-light" : "text-brand"
                   }`}
+                  itemProp="name"
                 >
                   {item.label}
                 </span>
@@ -58,12 +70,16 @@ export function Breadcrumbs({
                     tone === "light" ? "hover:text-white" : "hover:text-brand"
                   }`}
                   href={item.href}
+                  itemProp="item"
                 >
-                  {item.label}
+                  <span itemProp="name">{item.label}</span>
                 </Link>
               ) : (
-                <span className="font-semibold">{item.label}</span>
+                <span className="font-semibold" itemProp="name">
+                  {item.label}
+                </span>
               )}
+              <meta content={String(index + 1)} itemProp="position" />
             </li>
           );
         })}
