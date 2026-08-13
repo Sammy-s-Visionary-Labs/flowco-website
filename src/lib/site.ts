@@ -6,7 +6,7 @@ export const contactDataStatus = {
 
 export const requestServiceDeliveryStatus = {
   activationRequirement:
-    "Add public abuse protection and complete production delivery re-verification before enabling production submissions.",
+    "Deploy and verify BotID on Vercel and complete production delivery re-verification before enabling production submissions.",
   productionReady: false,
 } as const;
 

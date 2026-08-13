@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 
 import {
   emptyRequestServiceValues,
+  getNextRequestServiceAttempt,
+  requestServiceSubmissionErrorMessage,
   type RequestServiceDelivery,
   type RequestServiceDeliveryPayload,
   type RequestServiceLead,
@@ -10,9 +12,6 @@ import {
   validateRequestServiceFormData,
 } from "./request-service";
 import { validateRequestServicePhotos } from "./request-service-photos";
-
-const submissionErrorMessage =
-  "We couldn't confirm your request was sent. Please try again later.";
 
 export function createRequestServiceIdempotencyKey(payload: Readonly<{
   attachments: readonly RequestServiceAttachment[];
@@ -40,22 +39,14 @@ export async function processRequestServiceSubmission(
   formData: FormData,
   deliver: RequestServiceDelivery,
 ): Promise<RequestServiceSubmissionState> {
-  const submittedAttempt =
-    typeof previousState === "object" &&
-    previousState !== null &&
-    Number.isSafeInteger(previousState.attempt) &&
-    previousState.attempt >= 0
-      ? previousState.attempt
-      : 0;
-  const attempt =
-    submittedAttempt < Number.MAX_SAFE_INTEGER ? submittedAttempt + 1 : 1;
+  const attempt = getNextRequestServiceAttempt(previousState);
   const validation = validateRequestServiceFormData(formData);
 
   if (!validation.success && validation.spam) {
     return {
       attempt,
       fieldErrors: {},
-      formError: submissionErrorMessage,
+      formError: requestServiceSubmissionErrorMessage,
       photosNeedReselection: false,
       status: "submission_error",
       values: validation.values,
@@ -94,7 +85,7 @@ export async function processRequestServiceSubmission(
       return {
         attempt,
         fieldErrors: {},
-        formError: submissionErrorMessage,
+        formError: requestServiceSubmissionErrorMessage,
         photosNeedReselection: photoValidation.hadPhotos,
         status: "submission_error",
         values: validation.values,
@@ -112,7 +103,7 @@ export async function processRequestServiceSubmission(
     return {
       attempt,
       fieldErrors: {},
-      formError: submissionErrorMessage,
+      formError: requestServiceSubmissionErrorMessage,
       photosNeedReselection: photoValidation.hadPhotos,
       status: "submission_error",
       values: validation.values,

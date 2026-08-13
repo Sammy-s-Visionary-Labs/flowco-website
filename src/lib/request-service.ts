@@ -175,6 +175,9 @@ export type RequestServiceSubmissionState = {
   values: RequestServiceFormValues;
 };
 
+export const requestServiceSubmissionErrorMessage =
+  "We couldn't confirm your request was sent. Please try again later.";
+
 export type RequestServiceValidationResult =
   | {
       data: RequestServiceLead;
@@ -210,6 +213,33 @@ export const initialRequestServiceSubmissionState: RequestServiceSubmissionState
     status: "idle",
     values: emptyRequestServiceValues,
   };
+
+export function getNextRequestServiceAttempt(
+  previousState: RequestServiceSubmissionState,
+) {
+  const submittedAttempt =
+    typeof previousState === "object" &&
+    previousState !== null &&
+    Number.isSafeInteger(previousState.attempt) &&
+    previousState.attempt >= 0
+      ? previousState.attempt
+      : 0;
+
+  return submittedAttempt < Number.MAX_SAFE_INTEGER ? submittedAttempt + 1 : 1;
+}
+
+export function hasSubmittedRequestServicePhotos(formData: FormData) {
+  const submittedEntries = formData.getAll("photos");
+
+  return !(
+    submittedEntries.length === 0 ||
+    (submittedEntries.length === 1 &&
+      typeof submittedEntries[0] !== "string" &&
+      (submittedEntries[0].name === "" || submittedEntries[0].name === "blob") &&
+      submittedEntries[0].size === 0 &&
+      submittedEntries[0].type === "application/octet-stream")
+  );
+}
 
 const fieldNames = Object.keys(
   emptyRequestServiceValues,

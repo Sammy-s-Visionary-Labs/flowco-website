@@ -15,6 +15,7 @@ import {
   trackPhoneClick,
 } from "../src/lib/analytics";
 import { getAnalyticsConfig } from "../src/lib/analytics-config";
+import { screenRequestServiceSubmission } from "../src/lib/request-service-abuse";
 import {
   emptyRequestServiceValues,
   initialRequestServiceSubmissionState,
@@ -1020,6 +1021,60 @@ test("treats a populated honeypot as spam without field detail", () => {
     assert.equal(result.spam, true);
     assert.deepEqual(result.fieldErrors, {});
   }
+});
+
+test("allows a BotID-verified human submission to continue", async () => {
+  let verificationCalls = 0;
+  const result = await screenRequestServiceSubmission(
+    initialRequestServiceSubmissionState,
+    createFormData(),
+    async () => {
+      verificationCalls += 1;
+      return { isBot: false };
+    },
+  );
+
+  assert.equal(result, null);
+  assert.equal(verificationCalls, 1);
+});
+
+test("fails closed with a generic retry state when BotID blocks a request", async () => {
+  const formData = createFormData({ fullName: "  Sam   Customer  " });
+  formData.append(
+    "photos",
+    new File(["not read"], "customer-private-name.jpg", {
+      type: "image/jpeg",
+    }),
+  );
+  const result = await screenRequestServiceSubmission(
+    initialRequestServiceSubmissionState,
+    formData,
+    async () => ({ isBot: true }),
+  );
+
+  assert.ok(result);
+  assert.equal(result.status, "submission_error");
+  assert.equal(result.attempt, 1);
+  assert.equal(result.values.fullName, validValues.fullName);
+  assert.deepEqual(result.fieldErrors, {});
+  assert.equal(result.photosNeedReselection, true);
+  assert.equal(JSON.stringify(result).includes("customer-private-name"), false);
+  assert.equal(result.formError?.includes(validValues.fullName), false);
+});
+
+test("fails closed when BotID verification is unavailable", async () => {
+  const result = await screenRequestServiceSubmission(
+    initialRequestServiceSubmissionState,
+    createFormData(),
+    async () => {
+      throw new Error("BotID unavailable for sam@example.com");
+    },
+  );
+
+  assert.ok(result);
+  assert.equal(result.status, "submission_error");
+  assert.equal(result.values.email, validValues.email);
+  assert.equal(result.formError?.includes(validValues.email), false);
 });
 
 test("accepts no photos and normalizes empty browser and server-action file placeholders", async () => {

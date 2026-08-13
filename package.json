@@ -10,6 +10,7 @@
     "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/request-service-validation.test.js"
   },
   "dependencies": {
+    "botid": "^1.5.11",
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

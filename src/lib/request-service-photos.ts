@@ -2,6 +2,7 @@ import sharp from "sharp";
 
 import {
   getRequestServicePhotoMetadataError,
+  hasSubmittedRequestServicePhotos,
   normalizeRequestServicePhotoContentType,
   requestServicePhotoLimits,
   type RequestServiceAttachment,
@@ -99,15 +100,6 @@ function detectContentType(
   return null;
 }
 
-function isEmptyFileInputPlaceholder(entry: FormDataEntryValue) {
-  return (
-    typeof entry !== "string" &&
-    (entry.name === "" || entry.name === "blob") &&
-    entry.size === 0 &&
-    entry.type === "application/octet-stream"
-  );
-}
-
 async function normalizePhoto(
   content: Uint8Array,
   index: number,
@@ -163,11 +155,7 @@ export async function validateRequestServicePhotos(
 ): Promise<RequestServicePhotoValidationResult> {
   const submittedEntries = formData.getAll("photos");
 
-  if (
-    submittedEntries.length === 0 ||
-    (submittedEntries.length === 1 &&
-      isEmptyFileInputPlaceholder(submittedEntries[0]))
-  ) {
+  if (!hasSubmittedRequestServicePhotos(formData)) {
     return { attachments: [], hadPhotos: false, success: true };
   }
 
