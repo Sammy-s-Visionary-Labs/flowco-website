@@ -463,11 +463,12 @@ test("fails closed for missing credentials and unconfirmed Resend responses", as
   assert.equal(readResendProviderReceipt(null), null);
 });
 
-test("blocks production delivery until contacts and public safeguards are ready", () => {
-  for (const vercelEnvironment of [undefined, "development", "preview"]) {
+test("blocks preview and production delivery until explicitly enabled", () => {
+  for (const vercelEnvironment of [undefined, "development"]) {
     assert.equal(
       isRequestServiceDeliveryAllowed({
         contactDataIsProductionReady: false,
+        previewDeliveryIsEnabled: false,
         productionDeliveryIsReady: false,
         vercelEnvironment,
       }),
@@ -478,6 +479,25 @@ test("blocks production delivery until contacts and public safeguards are ready"
   assert.equal(
     isRequestServiceDeliveryAllowed({
       contactDataIsProductionReady: false,
+      previewDeliveryIsEnabled: false,
+      productionDeliveryIsReady: false,
+      vercelEnvironment: "preview",
+    }),
+    false,
+  );
+  assert.equal(
+    isRequestServiceDeliveryAllowed({
+      contactDataIsProductionReady: false,
+      previewDeliveryIsEnabled: true,
+      productionDeliveryIsReady: false,
+      vercelEnvironment: "preview",
+    }),
+    true,
+  );
+  assert.equal(
+    isRequestServiceDeliveryAllowed({
+      contactDataIsProductionReady: false,
+      previewDeliveryIsEnabled: false,
       productionDeliveryIsReady: true,
       vercelEnvironment: "production",
     }),
@@ -486,6 +506,7 @@ test("blocks production delivery until contacts and public safeguards are ready"
   assert.equal(
     isRequestServiceDeliveryAllowed({
       contactDataIsProductionReady: true,
+      previewDeliveryIsEnabled: false,
       productionDeliveryIsReady: false,
       vercelEnvironment: "production",
     }),
@@ -494,6 +515,7 @@ test("blocks production delivery until contacts and public safeguards are ready"
   assert.equal(
     isRequestServiceDeliveryAllowed({
       contactDataIsProductionReady: true,
+      previewDeliveryIsEnabled: false,
       productionDeliveryIsReady: true,
       vercelEnvironment: "production",
     }),

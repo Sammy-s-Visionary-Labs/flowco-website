@@ -15,6 +15,8 @@ export async function deliverRequestServiceLead(
 ): Promise<RequestServiceDeliveryResult> {
   if (!isRequestServiceDeliveryAllowed({
     contactDataIsProductionReady: contactDataStatus.productionReady,
+    previewDeliveryIsEnabled:
+      process.env.REQUEST_SERVICE_PREVIEW_DELIVERY_ENABLED === "true",
     productionDeliveryIsReady: requestServiceDeliveryStatus.productionReady,
     vercelEnvironment: process.env.VERCEL_ENV,
   })) {
