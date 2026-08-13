@@ -26,7 +26,7 @@ export function HomeHero() {
           </p>
 
           <h1
-            className="mt-6 font-display text-[clamp(3.5rem,9vw,7.25rem)] font-black leading-[0.83] tracking-[-0.065em] text-balance"
+            className="mt-6 font-display text-[clamp(3.5rem,9vw,7.25rem)] font-extrabold leading-[0.98] tracking-[-0.02em] text-balance"
             id="home-hero-heading"
           >
             Underground utility specialists.

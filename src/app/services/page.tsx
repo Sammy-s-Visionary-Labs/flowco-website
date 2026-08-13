@@ -77,7 +77,7 @@ export default function ServicesPage() {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-end lg:gap-16">
           <div>
             <Eyebrow tone="light">Commercial and partner work</Eyebrow>
-            <h2 className="mt-6 font-display text-[clamp(2.5rem,5vw,4.75rem)] font-black leading-[0.9] tracking-[-0.055em] text-canvas text-balance">
+            <h2 className="mt-6 font-display text-[clamp(2.5rem,5vw,4.75rem)] font-extrabold leading-[0.98] tracking-[-0.025em] text-canvas text-balance">
               Planning work for a business, contractor, or municipality?
             </h2>
           </div>

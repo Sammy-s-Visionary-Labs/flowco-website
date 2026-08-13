@@ -44,9 +44,9 @@
   --color-ink-subtle: var(--ink-subtle);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
-  --font-sans: "Source Sans 3", "Avenir Next", "Segoe UI", ui-sans-serif,
-    system-ui, sans-serif;
-  --font-display: "Sonar Sans", "Avenir Next", "Arial Black", "Arial",
+  --font-sans: var(--font-source-sans-3), "Segoe UI", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-display: var(--font-barlow-semi-condensed), "Arial Narrow", "Arial",
     ui-sans-serif, system-ui, sans-serif;
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
@@ -101,7 +101,7 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-stretch: condensed;
+  font-kerning: normal;
 }
 
 ::selection {

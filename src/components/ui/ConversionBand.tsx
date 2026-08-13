@@ -23,7 +23,7 @@ export function ConversionBand({ body, eyebrow, title }: ConversionBandProps) {
       <Container className="relative z-10 py-[var(--section-space-spacious)]">
         <div className="max-w-4xl border-l-4 border-accent pl-5 sm:pl-8">
           <Eyebrow tone="light">{eyebrow}</Eyebrow>
-          <h2 className="mt-5 font-display text-[clamp(2.4rem,6vw,5rem)] font-black leading-[0.91] tracking-[-0.05em] text-balance">
+          <h2 className="mt-5 font-display text-[clamp(2.4rem,6vw,5rem)] font-extrabold leading-[0.98] tracking-[-0.02em] text-balance">
             {title}
           </h2>
           <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8">

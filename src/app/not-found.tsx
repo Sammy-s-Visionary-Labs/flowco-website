@@ -20,7 +20,7 @@ export default function NotFound() {
           <p className="text-[0.6875rem] font-black uppercase tracking-[0.2em] text-accent-deep">
             404 · Page not found
           </p>
-          <h1 className="mt-5 font-display text-5xl font-black leading-[0.9] tracking-[-0.055em] text-brand-deep sm:text-6xl">
+          <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-[-0.025em] text-brand-deep sm:text-6xl">
             This page is not in the current flow.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-ink-muted sm:text-lg sm:leading-8">

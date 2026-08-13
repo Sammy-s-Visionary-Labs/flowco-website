@@ -39,9 +39,9 @@ type SectionHeadingProps = {
 };
 
 const headingSizeStyles: Record<HeadingLevel, string> = {
-  h1: "text-[clamp(3rem,7vw,5.75rem)] leading-[0.9] tracking-[-0.055em]",
-  h2: "text-[clamp(2.25rem,5vw,4.15rem)] leading-[0.94] tracking-[-0.05em]",
-  h3: "text-[clamp(1.5rem,3vw,2.15rem)] leading-[1.02] tracking-[-0.04em]",
+  h1: "text-[clamp(3rem,7vw,5.75rem)] leading-[0.98] tracking-[-0.025em]",
+  h2: "text-[clamp(2.25rem,5vw,4.15rem)] leading-none tracking-[-0.02em]",
+  h3: "text-[clamp(1.5rem,3vw,2.15rem)] leading-[1.05] tracking-[-0.015em]",
 };
 
 export function SectionHeading({
@@ -64,7 +64,7 @@ export function SectionHeading({
         </Eyebrow>
       ) : null}
       <Heading
-        className={`font-display font-black text-balance ${headingSizeStyles[as]} ${
+        className={`font-display font-extrabold text-balance ${headingSizeStyles[as]} ${
           eyebrow ? "mt-5" : ""
         } ${tone === "light" ? "text-canvas" : "text-brand-deep"}`}
       >

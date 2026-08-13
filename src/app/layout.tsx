@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Barlow_Semi_Condensed, Source_Sans_3 } from "next/font/google";
 
 import { Analytics } from "@/components/analytics/Analytics";
 import { MobileCallBar } from "@/components/layout/MobileCallBar";
@@ -10,11 +11,28 @@ import { createSiteStructuredData } from "@/lib/structured-data";
 
 import "./globals.css";
 
+const barlowSemiCondensed = Barlow_Semi_Condensed({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-barlow-semi-condensed",
+  weight: ["700", "800", "900"],
+});
+
+const sourceSans = Source_Sans_3({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-source-sans-3",
+  weight: "variable",
+});
+
 export const metadata = rootMetadata;
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en">
+    <html
+      className={`${barlowSemiCondensed.variable} ${sourceSans.variable}`}
+      lang="en"
+    >
       <body className="flex min-h-screen flex-col bg-canvas text-ink antialiased">
         <JsonLd data={createSiteStructuredData()} />
         <a
